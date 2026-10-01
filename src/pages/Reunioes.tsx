@@ -13,6 +13,8 @@ import {
   X,
   FileText,
   Pencil,
+  ArrowLeft,
+  ChevronRight,
   Loader2
 } from "lucide-react";
 import { api } from "../lib/api";
@@ -329,6 +331,8 @@ export default function Reunioes({ liderId }: ReunioesProps) {
         </div>
       )}
 
+      {!mostrarForm && (
+      <>
       {/* HEADER */}
       <div>
         <h1 className="text-xl font-bold text-slate-950 dark:text-white tracking-tight leading-none flex items-center gap-1.5 font-sans">
@@ -402,11 +406,26 @@ export default function Reunioes({ liderId }: ReunioesProps) {
       >
         <Plus className="w-6 h-6" />
       </button>
+      </>
+      )}
 
       {/* FORMULÁRIO (NOVA REUNIÃO / EDIÇÃO) */}
       {mostrarForm && (
-      <div className="fixed inset-0 z-40 bg-black/50 overflow-y-auto p-4" onClick={fecharForm}>
-      <section onClick={(e) => e.stopPropagation()} className="bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 rounded-3xl p-4.5 space-y-4 w-full max-w-3xl mx-auto my-4">
+      <>
+      {/* BREADCRUMB */}
+      <nav aria-label="Navegação" className="flex items-center gap-1.5 text-[0.6875rem] font-bold font-sans">
+        <button
+          type="button"
+          onClick={fecharForm}
+          className="flex items-center gap-1 text-teal-700 dark:text-teal-400 hover:underline cursor-pointer"
+        >
+          <ArrowLeft className="w-3.5 h-3.5" /> Reuniões
+        </button>
+        <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
+        <span className="text-slate-900 dark:text-white">{editandoId ? "Editar Reunião" : "Nova Reunião"}</span>
+      </nav>
+
+      <section className="bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 rounded-3xl p-4.5 space-y-4 w-full max-w-3xl">
         <div className="flex justify-between items-center pb-2 border-b border-gray-100 dark:border-zinc-800/40">
           <span className="text-xs font-black uppercase text-teal-750 dark:text-teal-450 tracking-wider flex items-center gap-1">
             <Clock className="w-4 h-4 text-teal-600" /> {editandoId ? "Editar Reunião" : "Nova Reunião"}
@@ -419,9 +438,6 @@ export default function Reunioes({ liderId }: ReunioesProps) {
               onChange={(e) => setDataReuniao(e.target.value)}
               className="text-[0.6563rem] font-bold px-2 py-1 bg-slate-50 dark:bg-zinc-950 border border-gray-100 dark:border-zinc-805 rounded-lg text-slate-900 dark:text-white outline-none cursor-pointer"
             />
-            <button type="button" onClick={fecharForm} className="p-1 text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer" aria-label="Fechar">
-              <X className="w-4 h-4" />
-            </button>
           </div>
         </div>
 
@@ -561,7 +577,7 @@ export default function Reunioes({ liderId }: ReunioesProps) {
 
         </form>
       </section>
-      </div>
+      </>
       )}
 
       {/* CHECKLIST "NADA ACONTECEU" (SEGURANÇA APÓS SALVAR) */}
