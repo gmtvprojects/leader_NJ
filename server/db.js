@@ -44,7 +44,7 @@ export const TABELAS = {
     via: { tabela: 'reunioes', fk: 'reuniao_id', dono: 'lider_id' },
   },
   oracao_pedidos: {
-    colunas: ['id', 'lider_id', 'membro_id', 'membro_nome', 'texto', 'respondido', 'criado_em'],
+    colunas: ['id', 'lider_id', 'membro_id', 'membro_nome', 'texto', 'respondido', 'status', 'reuniao_id', 'criado_em'],
     dono: 'lider_id',
   },
   treinandos: {

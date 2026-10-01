@@ -70,6 +70,10 @@ export default function Reunioes({ liderId }: ReunioesProps) {
   const [lanche, setLanche] = useState("");
   const [lancheEquipe, setLancheEquipe] = useState("");
   const [oracoes, setOracoes] = useState("");
+  // Pedidos de oração novos (viram registros na aba Pedidos de Oração ao salvar)
+  const [pedidosNovos, setPedidosNovos] = useState<{ membroId: string; texto: string }[]>([]);
+  // Pedidos já enviados, agrupados por reunião
+  const [pedidosPorReuniao, setPedidosPorReuniao] = useState<Record<string, { id: string; membroNome: string; texto: string }[]>>({});
   const [presentesIds, setPresentesIds] = useState<string[]>([]);
   
   // Controle de Interface
@@ -120,6 +124,19 @@ export default function Reunioes({ liderId }: ReunioesProps) {
       }));
 
       setReunioes(formattedReunioes);
+
+      // 3. Pedidos de oração vinculados às reuniões
+      const { data: pedidosData } = await api
+        .from('oracao_pedidos')
+        .select('*')
+        .eq('lider_id', liderId);
+
+      const agrupados: Record<string, { id: string; membroNome: string; texto: string }[]> = {};
+      (pedidosData || []).forEach((o: any) => {
+        if (!o.reuniao_id) return;
+        (agrupados[o.reuniao_id] = agrupados[o.reuniao_id] || []).push({ id: o.id, membroNome: o.membro_nome || '', texto: o.texto || '' });
+      });
+      setPedidosPorReuniao(agrupados);
     } catch (error: any) {
       console.error('Erro ao carregar reuniões:', error);
       alert('Não foi possível carregar as reuniões do servidor.');
@@ -132,6 +149,26 @@ export default function Reunioes({ liderId }: ReunioesProps) {
     carregarDados();
     setDataReuniao(getSabado());
   }, [liderId]);
+
+  // Cria os pedidos de oração digitados na reunião (aparecem na aba Pedidos de Oração)
+  const salvarPedidosDaReuniao = async (reuniaoId: string) => {
+    const validos = pedidosNovos.filter(p => p.membroId && p.texto.trim());
+    if (validos.length === 0) return;
+
+    const { error } = await api
+      .from('oracao_pedidos')
+      .insert(validos.map(p => ({
+        lider_id: liderId,
+        membro_id: p.membroId,
+        membro_nome: membros.find(m => m.id === p.membroId)?.nome || '',
+        texto: p.texto.trim(),
+        respondido: false,
+        status: 'pendente',
+        reuniao_id: reuniaoId,
+        criado_em: `${dataReuniao}T12:00:00`
+      })));
+    if (error) throw error;
+  };
 
   // Salvar uma Reunião
   const handleSalvarReuniao = async (e: React.FormEvent) => {
@@ -152,7 +189,7 @@ export default function Reunioes({ liderId }: ReunioesProps) {
             tema: tema.trim(),
             lanche: lanche.trim(),
             lanche_equipe: lancheEquipe || null,
-            oracoes: oracoes.trim()
+            oracoes: oracoes
           })
           .eq('id', editandoId);
         if (updError) throw updError;
@@ -170,6 +207,8 @@ export default function Reunioes({ liderId }: ReunioesProps) {
           if (insError) throw insError;
         }
 
+        await salvarPedidosDaReuniao(editandoId);
+
         fecharForm();
         await carregarDados();
         setMensagemSucesso("Reunião atualizada!");
@@ -186,7 +225,7 @@ export default function Reunioes({ liderId }: ReunioesProps) {
           tema: tema.trim(),
           lanche: lanche.trim(),
           lanche_equipe: lancheEquipe || null,
-          oracoes: oracoes.trim()
+          oracoes: oracoes
         })
         .select()
         .single();
@@ -208,6 +247,8 @@ export default function Reunioes({ liderId }: ReunioesProps) {
 
         if (presencasError) throw presencasError;
       }
+
+      await salvarPedidosDaReuniao(reuniaoCriadaId);
 
       // 3. Atualizar inteligência de faltas e status dos membros
       const promises = membros.map(async (m) => {
@@ -264,6 +305,7 @@ export default function Reunioes({ liderId }: ReunioesProps) {
     setLanche("");
     setLancheEquipe("");
     setOracoes("");
+    setPedidosNovos([]);
     setPresentesIds([]);
     setIsFazerChamada(false);
     setDataReuniao(getSabado());
@@ -283,6 +325,7 @@ export default function Reunioes({ liderId }: ReunioesProps) {
     setLanche(r.lanche || "");
     setLancheEquipe(r.lancheEquipe || "");
     setOracoes(r.oracoes || "");
+    setPedidosNovos([]);
     setPresentesIds(r.presentes || []);
     setIsFazerChamada(false);
     setMostrarForm(true);
@@ -575,18 +618,71 @@ export default function Reunioes({ liderId }: ReunioesProps) {
           </div>
 
           {/* Pedidos de oração do dia */}
-          <div className="space-y-1 lg:col-span-2">
-            <label htmlFor="oracao-reuniao" className="block text-[0.625rem] font-black text-gray-400 dark:text-zinc-500 uppercase tracking-widest font-sans flex items-center gap-1">
-               <Heart className="w-3.5 h-3.5 text-rose-500" /> PEDIDOS DE ORAÇÃO
-            </label>
-            <textarea
-              id="oracao-reuniao"
-              rows={2}
-              value={oracoes}
-              onChange={(e) => setOracoes(e.target.value)}
-              placeholder="Insira pedidos importantes de oração do grupo..."
-              className="w-full text-xs p-3 bg-slate-50 dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-xl focus:outline-none focus:border-teal-500 text-slate-900 dark:text-white leading-relaxed resize-none"
-            />
+          <div className="space-y-2 lg:col-span-2">
+            <span className="block text-[0.625rem] font-black text-gray-400 dark:text-zinc-500 uppercase tracking-widest font-sans flex items-center gap-1">
+              <Heart className="w-3.5 h-3.5 text-rose-500" /> PEDIDOS DE ORAÇÃO
+            </span>
+
+            {oracoes && (
+              <p className="p-3 bg-slate-50 dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-xl italic text-gray-500 leading-relaxed">
+                {oracoes}
+              </p>
+            )}
+
+            {editandoId && (pedidosPorReuniao[editandoId] || []).map(p => (
+              <div key={p.id} className="p-3 bg-slate-50 dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-xl">
+                <span className="block text-[0.625rem] font-black uppercase text-teal-700 dark:text-teal-400">{p.membroNome}</span>
+                <p className="italic text-slate-700 dark:text-zinc-300 leading-relaxed">"{p.texto}"</p>
+              </div>
+            ))}
+
+            {pedidosNovos.map((p, idx) => (
+              <div key={idx} className="p-3 bg-slate-50 dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-xl space-y-2">
+                <div className="flex items-center gap-2">
+                  <select
+                    aria-label="Membro do pedido"
+                    required
+                    value={p.membroId}
+                    onChange={(e) => setPedidosNovos(prev => prev.map((x, i) => i === idx ? { ...x, membroId: e.target.value } : x))}
+                    className="flex-1 text-xs px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-lg focus:outline-none focus:border-teal-500 text-slate-900 dark:text-white cursor-pointer"
+                  >
+                    {membros.map(m => (
+                      <option key={m.id} value={m.id}>{m.nome}</option>
+                    ))}
+                  </select>
+                  <button
+                    type="button"
+                    onClick={() => setPedidosNovos(prev => prev.filter((_, i) => i !== idx))}
+                    className="p-2 text-gray-400 hover:text-rose-500 cursor-pointer"
+                    aria-label="Remover pedido"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+                <textarea
+                  aria-label="Descrição do pedido"
+                  rows={2}
+                  required
+                  value={p.texto}
+                  onChange={(e) => setPedidosNovos(prev => prev.map((x, i) => i === idx ? { ...x, texto: e.target.value } : x))}
+                  placeholder="Descrição do pedido de oração..."
+                  className="w-full text-xs p-3 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-lg focus:outline-none focus:border-teal-500 text-slate-900 dark:text-white leading-relaxed resize-none"
+                />
+              </div>
+            ))}
+
+            <button
+              id="btn-adicionar-pedido-reuniao"
+              type="button"
+              disabled={membros.length === 0}
+              onClick={() => setPedidosNovos(prev => [...prev, { membroId: membros[0]?.id || "", texto: "" }])}
+              className="w-full py-2.5 border border-dashed border-gray-300 dark:border-zinc-700 hover:border-teal-500 text-teal-700 dark:text-teal-400 rounded-xl flex items-center justify-center gap-1.5 font-extrabold uppercase tracking-wider text-[0.625rem] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <Plus className="w-4 h-4" /> Adicionar pedido
+            </button>
+            {membros.length === 0 && (
+              <p className="text-[0.625rem] text-gray-400">Cadastre membros na aba Membros para adicionar pedidos.</p>
+            )}
           </div>
 
           {/* SALVAR REUNIÃO */}
@@ -721,9 +817,25 @@ export default function Reunioes({ liderId }: ReunioesProps) {
 
               <div>
                 <span className="text-[0.5625rem] font-black text-gray-400 uppercase tracking-widest block mb-0.5">Pedidos de Intercessão</span>
-                <p className="font-medium p-3 bg-red-50/10 dark:bg-zinc-950 border border-rose-100/30 dark:border-zinc-850 rounded-xl italic leading-relaxed">
-                  {reuniaoDetalhada.oracoes || "Nenhum registrado"}
-                </p>
+                {(pedidosPorReuniao[reuniaoDetalhada.id] || []).length === 0 && !reuniaoDetalhada.oracoes ? (
+                  <p className="font-medium p-3 bg-red-50/10 dark:bg-zinc-950 border border-rose-100/30 dark:border-zinc-850 rounded-xl italic leading-relaxed">
+                    Nenhum registrado
+                  </p>
+                ) : (
+                  <div className="space-y-1.5">
+                    {reuniaoDetalhada.oracoes && (
+                      <p className="font-medium p-3 bg-red-50/10 dark:bg-zinc-950 border border-rose-100/30 dark:border-zinc-850 rounded-xl italic leading-relaxed">
+                        {reuniaoDetalhada.oracoes}
+                      </p>
+                    )}
+                    {(pedidosPorReuniao[reuniaoDetalhada.id] || []).map(p => (
+                      <div key={p.id} className="p-3 bg-red-50/10 dark:bg-zinc-950 border border-rose-100/30 dark:border-zinc-850 rounded-xl">
+                        <span className="block text-[0.5625rem] font-black uppercase text-teal-700 dark:text-teal-400">{p.membroNome}</span>
+                        <p className="font-medium italic leading-relaxed">"{p.texto}"</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <div>

@@ -60,6 +60,9 @@ CREATE TABLE IF NOT EXISTS oracao_pedidos (
   respondido boolean NOT NULL DEFAULT false,
   criado_em timestamptz NOT NULL DEFAULT now()
 );
+ALTER TABLE oracao_pedidos ADD COLUMN IF NOT EXISTS status text NOT NULL DEFAULT 'pendente';
+ALTER TABLE oracao_pedidos ADD COLUMN IF NOT EXISTS reuniao_id uuid REFERENCES reunioes(id) ON DELETE SET NULL;
+UPDATE oracao_pedidos SET status = 'resolvido' WHERE respondido AND status = 'pendente';
 CREATE INDEX IF NOT EXISTS oracao_pedidos_lider_idx ON oracao_pedidos(lider_id);
 
 CREATE TABLE IF NOT EXISTS treinandos (
