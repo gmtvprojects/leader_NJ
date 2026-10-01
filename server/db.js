@@ -29,7 +29,7 @@ export const TABELAS = {
     conflito: ['id'],
   },
   membros: {
-    colunas: ['id', 'lider_id', 'nome', 'contato1', 'contato2', 'aniversario', 'linguagem_amor', 'ministerio', 'faixa', 'data_entrada', 'contato_pais', 'notas', 'status', 'faltas', 'criado_em'],
+    colunas: ['id', 'lider_id', 'nome', 'contato1', 'contato2', 'aniversario', 'linguagem_amor', 'ministerio', 'faixa', 'data_entrada', 'contato_pais', 'notas', 'status', 'faltas', 'treinando', 'criado_em'],
     dono: 'lider_id',
     datas: ['aniversario', 'data_entrada'],
   },

@@ -29,6 +29,7 @@ CREATE TABLE IF NOT EXISTS membros (
   faltas integer NOT NULL DEFAULT 0,
   criado_em timestamptz NOT NULL DEFAULT now()
 );
+ALTER TABLE membros ADD COLUMN IF NOT EXISTS treinando boolean NOT NULL DEFAULT false;
 CREATE INDEX IF NOT EXISTS membros_lider_idx ON membros(lider_id);
 
 CREATE TABLE IF NOT EXISTS reunioes (

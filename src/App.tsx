@@ -4,7 +4,7 @@ import {
   Users, 
   BookOpen, 
   MapPin, 
-  Menu,
+  Settings,
   HeartHandshake,
   Library,
   Cake,
@@ -29,7 +29,7 @@ const NAV_PRINCIPAL = [
   { id: "membros", label: "Membros", Icon: Users },
   { id: "reunioes", label: "Reuniões", Icon: BookOpen },
   { id: "eventos", label: "Eventos", Icon: MapPin },
-  { id: "mais", label: "Mais", Icon: Menu },
+  { id: "mais", label: "Configurações", Icon: Settings },
 ];
 
 // Atalhos extras exibidos apenas no menu lateral (tablet / desktop)

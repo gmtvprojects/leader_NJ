@@ -80,6 +80,7 @@ const mapToTS = (db: any): Membro => {
     notas: meta.observacoes,
     status: db.status || 'Ativo',
     faltas: db.faltas || 0,
+    treinando: !!db.treinando,
     ga: meta.ga,
     origemTransicao: meta.origemTransicao,
     motivoAusencia: meta.motivoAusencia,
@@ -112,6 +113,7 @@ const mapToDB = (ts: Omit<Membro, 'id'> & { id?: string }, liderId: string) => {
     faixa: ts.faixa,
     data_entrada: ts.dataEntrada || null,
     contato_pais: ts.contatoPais,
+    treinando: !!ts.treinando,
     notas: serializedNotas,
     status: ts.status,
     faltas: ts.faltas
@@ -158,6 +160,7 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
   // Novos campos de Transição e GA
   const [formGa, setFormGa] = useState("GA Principal");
   const [formOrigemTransicao, setFormOrigemTransicao] = useState(false);
+  const [formTreinando, setFormTreinando] = useState(false);
   const [formMotivoAusencia, setFormMotivoAusencia] = useState("");
   const [formDetalheAusencia, setFormDetalheAusencia] = useState("");
   const [formUltimoContato, setFormUltimoContato] = useState("");
@@ -236,6 +239,7 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
     setFormStatus(origemTransicaoPadrao ? "Transição" : "Ativo");
     setFormGa(listaGas.length > 0 ? listaGas[0] : "GA Principal");
     setFormOrigemTransicao(origemTransicaoPadrao);
+    setFormTreinando(false);
     setFormMotivoAusencia("");
     setFormDetalheAusencia("");
     setFormUltimoContato("");
@@ -260,6 +264,7 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
     setFormStatus(m.status || "Ativo");
     setFormGa(m.ga || "GA Principal");
     setFormOrigemTransicao(!!m.origemTransicao);
+    setFormTreinando(!!m.treinando);
     setFormMotivoAusencia(m.motivoAusencia || "");
     setFormDetalheAusencia(m.detalheAusencia || "");
     setFormUltimoContato(m.ultimoContato || "");
@@ -335,6 +340,7 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
         faltas: formStatus === "Ausente" ? 2 : 0,
         ga: formGa.trim() || "GA Principal",
         origemTransicao: formOrigemTransicao,
+        treinando: formTreinando,
         motivoAusencia: formMotivoAusencia,
         detalheAusencia: formDetalheAusencia.trim(),
         ultimoContato: formUltimoContato,
@@ -650,6 +656,12 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
                             ) : (
                               <span className="text-teal-700 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/30 px-1.5 py-0.5 rounded-md font-bold text-[0.5313rem] border border-teal-100 dark:border-teal-900/30">
                                 📍 {m.ga}
+                              </span>
+                            )}
+
+                            {m.treinando && (
+                              <span className="text-indigo-700 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/30 px-1.5 py-0.5 rounded-md font-black text-[0.5rem] uppercase tracking-wider border border-indigo-200 dark:border-indigo-900/40">
+                                Treinando
                               </span>
                             )}
 
@@ -1254,6 +1266,18 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
                 </select>
               </div>
             </div>
+
+            {/* Treinando */}
+            <label htmlFor="form-treinando" className="flex items-center gap-2 cursor-pointer select-none">
+              <input
+                id="form-treinando"
+                type="checkbox"
+                checked={formTreinando}
+                onChange={(e) => setFormTreinando(e.target.checked)}
+                className="w-4 h-4 accent-teal-700 cursor-pointer"
+              />
+              <span className="text-xs font-bold text-slate-800 dark:text-zinc-200 font-sans">É treinando (em formação para liderança)</span>
+            </label>
 
             {/* Contato Pais / Guardião */}
             <div className="space-y-1">

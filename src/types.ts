@@ -23,6 +23,7 @@ export interface Membro {
   notas: string;
   status: 'Ativo' | 'Esporádico' | 'Ausente' | 'Transição';
   faltas: number;
+  treinando?: boolean; // Em formação para liderança (pode haver mais de um)
   // Transição Jovens 1 (até 17) -> Jovens 2 (18 a 30) & Acompanhamento
   ga?: string; // Nome do GA onde está ou "Sem GA / A Definir"
   origemTransicao?: boolean; // Jovem vindo do J1

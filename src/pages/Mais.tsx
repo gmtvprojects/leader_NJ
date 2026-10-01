@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { 
   TrendingUp, 
-  UserCheck, 
   Heart, 
-  BookOpen, 
   Settings, 
   ArrowLeft, 
   Plus, 
@@ -14,18 +12,10 @@ import {
   Upload, 
   ChevronRight,
   LogOut,
-  Loader2,
-  Cake
+  Loader2
 } from "lucide-react";
-import TrilhaFormacao from "../components/TrilhaFormacao";
 import { api } from "../lib/api";
 import { Membro, Reuniao } from "../types";
-
-interface Treinando {
-  id: string;
-  nome: string;
-  dataInicio: string; // YYYY-MM-DD
-}
 
 interface HistoricoTamanho {
   mes: string; // YYYY-MM
@@ -48,19 +38,6 @@ const mapToTSMembro = (db: any): Membro => ({
   faltas: db.faltas || 0,
 });
 
-const mapToTSTreinando = (db: any): Treinando => ({
-  id: db.id,
-  nome: db.nome || '',
-  dataInicio: db.data_inicio || ''
-});
-
-const mapToDBTreinando = (ts: Omit<Treinando, 'id'> & { id?: string }, liderId: string) => ({
-  id: ts.id,
-  lider_id: liderId,
-  nome: ts.nome,
-  data_inicio: ts.dataInicio
-});
-
 const mapToTSHist = (db: any): HistoricoTamanho => ({
   mes: db.mes || '',
   total: db.total || 0
@@ -72,7 +49,7 @@ interface MaisProps {
 }
 
 export default function Mais({ liderId, onSelectTab }: MaisProps) {
-  const [subView, setSubView] = useState<"menu" | "crescimento" | "treinandos" | "oracao" | "trilha" | "config">("menu");
+  const [subView, setSubView] = useState<"menu" | "crescimento" | "oracao" | "config">("menu");
   const [themeMode, setThemeMode] = useState<"light" | "dark">("light");
   const [grupoNome, setGrupoNome] = useState("GA Ebenezer");
   const [loading, setLoading] = useState<boolean>(true);
@@ -80,17 +57,11 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
   // Estados dos Módulos
   const [membros, setMembros] = useState<Membro[]>([]);
   const [reunioes, setReunioes] = useState<Reuniao[]>([]);
-  const [treinandos, setTreinandos] = useState<Treinando[]>([]);
   const [historicoTamanho, setHistoricoTamanho] = useState<HistoricoTamanho[]>([]);
   const [oracoesRespondidasIds, setOracoesRespondidasIds] = useState<string[]>([]);
 
   // Estados dos Formulários Locais
-  const [novoTreinandoNome, setNovoTreinandoNome] = useState("");
-  const [novoTreinandoData, setNovoTreinandoData] = useState("");
   const [buscaOracaoFiltro, setBuscaOracaoFiltro] = useState<"todos" | "pendentes" | "respondidos">("todos");
-
-  // Estatísticas do Manual (Trilha de Formação)
-  const [trilhaStatus, setTrilhaStatus] = useState<string>("Em andamento 1/13");
 
   const carregarDadosEstatisticas = async () => {
     setLoading(true);
@@ -130,14 +101,6 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
       }));
       setReunioes(formattedReunioes);
 
-      // 4. Carregar treinandos do servidor
-      const { data: treinandosData } = await api
-        .from('treinandos')
-        .select('*')
-        .eq('lider_id', liderId);
-
-      setTreinandos((treinandosData || []).map(mapToTSTreinando));
-
       // 5. Carregar histórico_tamanho do servidor
       const { data: histData } = await api
         .from('historico_tamanho')
@@ -166,16 +129,6 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
     const savedTheme = localStorage.getItem("ga_theme") || "light";
     setThemeMode(savedTheme as "light" | "dark");
 
-    // Trilha de formação status
-    const concluido = localStorage.getItem("ga_trilha_concluido") === "true";
-    if (concluido) {
-      setTrilhaStatus("Concluída ✓");
-    } else {
-      const passoSalvo = parseInt(localStorage.getItem("ga_trilha_passo") || "0") + 1;
-      setTrilhaStatus(`Em andamento ${passoSalvo}/13`);
-    }
-
-    setNovoTreinandoData(new Date().toISOString().split("T")[0]);
   }, [subView, liderId]);
 
   const toggleColorsTheme = () => {
@@ -227,78 +180,6 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
     } finally {
       setLoading(false);
     }
-  };
-
-  // --- MÓDULO TREINANDOS ---
-  const handleAdicionarTreinando = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!novoTreinandoNome.trim()) return;
-
-    setLoading(true);
-    try {
-      const { data, error } = await api
-        .from('treinandos')
-        .insert(mapToDBTreinando({ nome: novoTreinandoNome.trim(), dataInicio: novoTreinandoData }, liderId))
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      const formatado = mapToTSTreinando(data);
-      setTreinandos(prev => [...prev, formatado]);
-      setNovoTreinandoNome("");
-      alert('Treinando cadastrado!');
-    } catch (error: any) {
-      console.error('Erro ao salvar treinando:', error);
-      alert('Erro ao gravar o treinando.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const deletarTreinando = async (id: string) => {
-    if (confirm("Deseja interromper a formação deste treinando?")) {
-      setLoading(true);
-      try {
-        const { error } = await api
-          .from('treinandos')
-          .delete()
-          .eq('id', id);
-
-        if (error) throw error;
-
-        setTreinandos(prev => prev.filter(t => t.id !== id));
-        alert('Treinando interrompido.');
-      } catch (error: any) {
-        console.error('Erro ao excluir treinando:', error);
-        alert('Falha ao excluir o treinando.');
-      } finally {
-        setLoading(false);
-      }
-    }
-  };
-
-  const calcularProgressoTreinando = (dataInicioStr: string): { porcen: number; diasRestantes: number; atrasado: boolean } => {
-    const dInic = new Date(dataInicioStr + "T12:00:00");
-    const dFim = new Date(dInic);
-    dFim.setMonth(dFim.getMonth() + 6); // Prazo de 6 meses rígido
-
-    const hoje = new Date();
-    const totalMs = dFim.getTime() - dInic.getTime();
-    const decorridoMs = hoje.getTime() - dInic.getTime();
-
-    let porcen = 0;
-    if (decorridoMs >= totalMs) {
-      porcen = 100;
-    } else if (decorridoMs > 0) {
-      porcen = Math.round((decorridoMs / totalMs) * 100);
-    }
-
-    const diffTime = dFim.getTime() - hoje.getTime();
-    const diasRestantes = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    const atrasado = diasRestantes < 0;
-
-    return { porcen, diasRestantes: Math.abs(diasRestantes), atrasado };
   };
 
   // --- MÓDULO ORAÇÃO ---
@@ -438,14 +319,14 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
         </div>
       )}
 
-      {/* VISTA PRINCIPAL: GRID DE 5 CARDS DE RECURSOS */}
+      {/* VISTA PRINCIPAL: CARDS DE CONFIGURAÇÕES */}
       {subView === "menu" && (
         <div className="space-y-4 font-sans">
           <div>
             <h1 className="text-xl font-bold text-slate-950 dark:text-white tracking-tight leading-none flex items-center gap-1.5 font-sans justify-start text-left">
-              Painel de Liderança
+              Configurações
             </h1>
-            <p className="text-[0.625rem] uppercase font-black text-gray-400 mt-1 tracking-wider text-left">Apoio de crescimento, estatísticas e manutenção</p>
+            <p className="text-[0.625rem] uppercase font-black text-gray-400 mt-1 tracking-wider text-left">Crescimento do GA, perfil e manutenção</p>
           </div>
 
           <div className="grid grid-cols-1 gap-3.5 pt-1">
@@ -483,91 +364,6 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
 
               <div className="flex justify-between items-center text-[0.6875rem] text-gray-500 dark:text-zinc-400">
                 <span>Total de fichas salvas de liderança: <strong>{membros.length}</strong></span>
-                <ChevronRight className="w-4 h-4 text-gray-400" />
-              </div>
-            </div>
-
-            {/* 2. CARD TREINANDOS */}
-            <div
-              onClick={() => setSubView("treinandos")}
-              className="bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800/80 p-4 rounded-2xl flex flex-col hover:border-teal-500 transition shadow-sm cursor-pointer space-y-3 text-left"
-            >
-              <div className="flex justify-between items-start">
-                <div className="flex items-center gap-2">
-                  <div className="p-2 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 rounded-xl">
-                    <UserCheck className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <h3 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider font-sans leading-none">CADASTRAR TREINANDOS</h3>
-                    <p className="text-[0.5938rem] text-gray-400 font-medium uppercase mt-1">COMO SEU TREINANDO ESTA?</p>
-                  </div>
-                </div>
-
-                <span className="text-[0.5625rem] font-mono font-bold text-slate-900 dark:text-white bg-slate-100 dark:bg-zinc-800 px-2 py-1 rounded-lg">
-                  {treinandos.length} em treinamento
-                </span>
-              </div>
-
-              <div className="flex justify-between items-center text-[0.6875rem] text-gray-500 dark:text-zinc-400">
-                <span>PROGRESSO DO SE TREINANDO</span>
-                <ChevronRight className="w-4 h-4 text-gray-400" />
-              </div>
-            </div>
-
-            {/* 3. CARD ANIVERSARIANTES */}
-            <div
-              onClick={() => {
-                if (onSelectTab) {
-                  onSelectTab("aniversariantes");
-                }
-              }}
-              className="bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800/80 p-4 rounded-2xl flex flex-col hover:border-teal-500 transition shadow-sm cursor-pointer space-y-3 text-left"
-            >
-              <div className="flex justify-between items-start">
-                <div className="flex items-center gap-2">
-                  <div className="p-2 bg-pink-50 dark:bg-pink-950/30 text-pink-600 dark:text-pink-400 rounded-xl">
-                    <Cake className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <h3 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider font-sans leading-none">Aniversariantes</h3>
-                    <p className="text-[0.5938rem] text-gray-400 font-medium uppercase mt-1">Alertas e dicas de celebração</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex justify-between items-center text-[0.6875rem] text-gray-500 dark:text-zinc-400 font-sans">
-                <span>Datas especiais e linguagens de amor do GA</span>
-                <ChevronRight className="w-4 h-4 text-gray-400" />
-              </div>
-            </div>
-
-            {/* 4. CARD TRILHA DE FORMAÇÃO DE LÍDERES */}
-            <div
-              onClick={() => setSubView("trilha")}
-              className="bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800/80 p-4 rounded-2xl flex flex-col hover:border-teal-500 transition shadow-sm cursor-pointer space-y-3 text-left"
-            >
-              <div className="flex justify-between items-start">
-                <div className="flex items-center gap-2">
-                  <div className="p-2 bg-indigo-50 dark:bg-indigo-950/30 text-indigo-700 dark:text-indigo-400 rounded-xl">
-                    <BookOpen className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <h3 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider font-sans leading-none">Manual do Líder GA 2026</h3>
-                    <p className="text-[0.5938rem] text-gray-400 font-medium uppercase mt-1">Consultar o manual do líder (Importante: isso não substitui o seu manual recebido durante os treinamentos)</p>
-                  </div>
-                </div>
-
-                <span className={`text-[0.5625rem] font-black uppercase tracking-wider px-2 py-1 rounded-lg ${
-                  trilhaStatus.includes("Concluída")
-                    ? "bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400"
-                    : "bg-indigo-50 dark:bg-indigo-950/20 text-indigo-700 dark:text-indigo-400"
-                }`}>
-                  {trilhaStatus}
-                </span>
-              </div>
-
-              <div className="flex justify-between items-center text-[0.6875rem] text-gray-500 dark:text-zinc-400 font-sans">
-                <span>Leitura das 13 diretrizes e consolidação pastoral</span>
                 <ChevronRight className="w-4 h-4 text-gray-400" />
               </div>
             </div>
@@ -672,129 +468,6 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
         </div>
       )}
 
-      {/* SUBVIEW B: NOVOS LÍDERES EM FORMAÇÃO (TREINANDOS) */}
-      {subView === "treinandos" && (
-        <div className="w-full max-w-2xl mx-auto space-y-4 text-left animate-slideUp font-sans">
-          <header className="flex items-center gap-3">
-            <button
-              onClick={() => setSubView("menu")}
-              className="p-2 bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-805 text-slate-800 dark:text-white rounded-xl hover:bg-slate-50 cursor-pointer"
-            >
-              <ArrowLeft className="w-4 h-4" />
-            </button>
-            <div>
-              <span className="text-[0.5625rem] font-black uppercase text-gray-400 tracking-wider">Apoio a Formações</span>
-              <h1 className="text-sm font-bold text-slate-900 dark:text-white leading-none">Módulo de Treinandos</h1>
-            </div>
-          </header>
-
-          {/* LISTA DE TREINANDOS ATUAIS */}
-          <div className="bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 p-4 rounded-2xl space-y-4 shadow-sm">
-            <h3 className="text-xs font-black text-slate-955 dark:text-white uppercase tracking-wider flex items-center gap-1.5 leading-none">
-              <UserCheck className="w-4 h-4 text-[#0f766e]" /> Treinandos Convocados
-            </h3>
-
-            {treinandos.length === 0 ? (
-              <p className="italic text-gray-400 text-xs py-4 text-center pb-2">Nenhum líder em formação cadastrado via servidor.</p>
-            ) : (
-              <div className="space-y-3 font-sans">
-                {treinandos.map((trein) => {
-                  const { porcen, diasRestantes, atrasado } = calcularProgressoTreinando(trein.dataInicio);
-
-                  return (
-                    <div 
-                      key={trein.id} 
-                      className="p-3 bg-slate-50 dark:bg-zinc-950 border border-gray-200 dark:border-zinc-850 rounded-xl space-y-2"
-                    >
-                      <div className="flex justify-between items-start gap-1">
-                        <div>
-                          <h4 className="text-xs font-bold text-slate-905 dark:text-white leading-none">{trein.nome}</h4>
-                          <span className="text-[0.5625rem] text-gray-400 mt-1 block font-mono">Início: {new Date(trein.dataInicio + "T12:00:00").toLocaleDateString("pt-BR")}</span>
-                        </div>
-
-                        <div className="flex items-center gap-1.5 shrink-0">
-                          {atrasado ? (
-                            <span className="text-[0.5rem] font-extrabold uppercase bg-rose-50 dark:bg-rose-950/20 text-rose-600 px-1.5 py-0.5 rounded-md">Atrasado</span>
-                          ) : (
-                            <span className="text-[0.5rem] font-extrabold uppercase bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 px-1.5 py-0.5 rounded-md font-sans">No prazo</span>
-                          )}
-
-                          <button 
-                            onClick={() => deletarTreinando(trein.id)}
-                            className="p-1 hover:bg-rose-50 dark:hover:bg-rose-950/20 hover:text-rose-605 text-slate-400 rounded-lg transition cursor-pointer"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                      </div>
-
-                      {/* Tempo bar progresso */}
-                      <div className="space-y-1">
-                        <div className="flex justify-between items-center text-[0.5313rem] font-extrabold text-gray-400">
-                          <span>Tempo decorrido (Prazo total original 6m):</span>
-                          <span>{porcen}%</span>
-                        </div>
-                        <div className="w-full h-1.5 bg-gray-250 dark:bg-zinc-850 rounded-full overflow-hidden">
-                          <div 
-                            className={`h-full rounded-full ${atrasado ? "bg-rose-500" : "bg-teal-600"}`} 
-                            style={{ width: `${porcen}%` }}
-                          />
-                        </div>
-                        <div className="text-[0.5313rem] text-slate-500 font-mono">
-                          {atrasado 
-                            ? `Prazo extrapolado há ${diasRestantes} dias!` 
-                            : `Restam aproximadamente ${diasRestantes} dias para conclusão da formação legal.`
-                          }
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-
-          {/* FORMULÁRIO RÁPIDO DE CADASTRO */}
-          <form onSubmit={handleAdicionarTreinando} className="bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 p-4 rounded-2xl space-y-3.5 shadow-sm">
-            <h3 className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider leading-none">Cadastrar Novo Treinando</h3>
-            
-            <div className="space-y-3 font-sans">
-              <div className="space-y-1">
-                <label htmlFor="trein-nome" className="block text-[0.5rem] font-bold uppercase text-gray-400">Nome do Treinando *</label>
-                <input
-                  id="trein-nome"
-                  type="text"
-                  required
-                  value={novoTreinandoNome}
-                  onChange={(e) => setNovoTreinandoNome(e.target.value)}
-                  placeholder="Nome completo do futuro líder"
-                  className="w-full text-xs px-3.5 py-2.5 bg-slate-50 dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-lg focus:outline-none focus:border-[#0f766e] text-slate-900 dark:text-white font-medium"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label htmlFor="trein-data" className="block text-[0.5rem] font-bold uppercase text-gray-400">Data de Entrada / Nomeação *</label>
-                <input
-                  id="trein-data"
-                  type="date"
-                  required
-                  value={novoTreinandoData}
-                  onChange={(e) => setNovoTreinandoData(e.target.value)}
-                  className="w-full text-xs px-3.5 py-2.5 bg-slate-50 dark:bg-zinc-950 border border-gray-200 dark:border-zinc-805 rounded-lg focus:outline-none focus:border-[#0f766e] text-slate-900 dark:text-white font-medium"
-                />
-              </div>
-
-              <button
-                type="submit"
-                className="w-full h-10 bg-teal-700 hover:bg-teal-650 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition cursor-pointer flex items-center justify-center gap-1 shadow-sm font-sans"
-              >
-                <Plus className="w-4 h-4 font-bold" /> Registrar para Formação
-              </button>
-            </div>
-          </form>
-        </div>
-      )}
-
       {/* SUBVIEW C: CLAMORES DE CÉLULAS (ORAÇÕES EM REUNIÃO) */}
       {subView === "oracao" && (
         <div className="w-full max-w-2xl mx-auto space-y-4 text-left animate-slideUp font-sans">
@@ -878,28 +551,6 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
                   ))
               )}
             </div>
-          </div>
-        </div>
-      )}
-
-      {/* SUBVIEW D: TRILHA DE FORMAÇÃO MANUAL COMPLETO */}
-      {subView === "trilha" && (
-        <div className="w-full max-w-3xl mx-auto space-y-4 animate-slideUp">
-          <header className="flex items-center gap-3 text-left">
-            <button
-              onClick={() => setSubView("menu")}
-              className="p-2 bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-805 text-slate-800 dark:text-white rounded-xl hover:bg-slate-50 cursor-pointer"
-            >
-              <ArrowLeft className="w-4 h-4" />
-            </button>
-            <div>
-              <span className="text-[0.5625rem] font-black uppercase text-gray-400 tracking-wider">Manual de Capacitação</span>
-              <h1 className="text-sm font-bold text-slate-900 dark:text-white leading-none">Capacitação Oficial de Lideres</h1>
-            </div>
-          </header>
-
-          <div className="bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 rounded-2xl overflow-hidden p-1 shadow-sm">
-            <TrilhaFormacao onConcluir={() => setSubView("menu")} />
           </div>
         </div>
       )}
