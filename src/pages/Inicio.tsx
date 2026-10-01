@@ -421,11 +421,6 @@ export default function Inicio({ onSelectTab, liderId }: InicioProps) {
         )}
       </section>
 
-      {/* COMPANION INFOBAR */}
-      <footer className="text-center font-sans text-gray-400 text-[0.5313rem] font-black uppercase tracking-widest pt-1.5 opacity-40 select-none">
-        ✝ Pastoreio • Jovens 1 ➔ Jovens 2
-      </footer>
-
     </div>
   );
 }
