@@ -5,7 +5,8 @@ import {
   Trash2, 
   Check, 
   Calendar, 
-  Info, 
+  HelpCircle,
+  X,
   CheckSquare, 
   ArrowLeft,
   Loader2,
@@ -49,7 +50,8 @@ export interface EventoPWA_Local {
   titulo: string;
   data: string;
   local: string;
-  tipo: "saída" | "festa" | "reunião especial";
+  descricao: string;
+  precisaAprovacao: boolean;
   participantes: number;
   lideresConfirmados: number;
   checklistMarcados: number[]; // ID das regras marcadas
@@ -66,7 +68,8 @@ const mapToTS = (db: any): EventoPWA_Local => ({
   titulo: db.titulo || '',
   data: db.data || '',
   local: db.local || '',
-  tipo: db.tipo || 'saída',
+  descricao: db.descricao || '',
+  precisaAprovacao: !!db.precisa_aprovacao,
   participantes: db.participantes || 0,
   lideresConfirmados: db.lideres_confirmados || 0,
   checklistMarcados: db.checklist_marcados || [],
@@ -80,7 +83,8 @@ const mapToDB = (ts: Omit<EventoPWA_Local, 'id'> & { id?: string }, liderId: str
   titulo: ts.titulo,
   data: ts.data,
   local: ts.local,
-  tipo: ts.tipo,
+  descricao: ts.descricao,
+  precisa_aprovacao: ts.precisaAprovacao,
   participantes: ts.participantes,
   lideres_confirmados: ts.lideresConfirmados,
   checklist_marcados: ts.checklistMarcados,
@@ -98,10 +102,11 @@ export default function Eventos({ liderId }: EventosProps) {
   const [titulo, setTitulo] = useState("");
   const [data, setData] = useState("");
   const [local, setLocal] = useState("");
-  const [tipo, setTipo] = useState<"saída" | "festa" | "reunião especial">("saída");
+  const [descricao, setDescricao] = useState("");
+  const [precisaAprovacao, setPrecisaAprovacao] = useState(false);
+  const [mostrarAjudaAprovacao, setMostrarAjudaAprovacao] = useState(false);
   const [participantes, setParticipantes] = useState<number>(20);
   const [lideresConfirmados, setLideresConfirmados] = useState<number>(3);
-  const [comprovanteAprovacao, setComprovanteAprovacao] = useState("");
 
   const carregarDados = async () => {
     setLoading(true);
@@ -185,9 +190,19 @@ export default function Eventos({ liderId }: EventosProps) {
     }
   };
 
+  const abrirCadastro = () => {
+    setView("cadastro");
+    setTitulo("");
+    setDescricao("");
+    setLocal("");
+    setPrecisaAprovacao(false);
+    setParticipantes(20);
+    setLideresConfirmados(3);
+  };
+
   const handlesNovoEvento = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!titulo.trim() || !local.trim()) return;
+    if (!titulo.trim() || !descricao.trim() || !local.trim()) return;
 
     setLoading(true);
     try {
@@ -195,11 +210,12 @@ export default function Eventos({ liderId }: EventosProps) {
         titulo: titulo.trim(),
         data,
         local: local.trim(),
-        tipo,
+        descricao: descricao.trim(),
+        precisaAprovacao,
         participantes: Number(participantes) || 0,
         lideresConfirmados: Number(lideresConfirmados) || 0,
         checklistMarcados: [], // Começa vazio
-        comprovanteAprovacao: comprovanteAprovacao.trim(),
+        comprovanteAprovacao: "",
         status: "planejado"
       };
 
@@ -217,10 +233,10 @@ export default function Eventos({ liderId }: EventosProps) {
       // Resetar campos
       setTitulo("");
       setLocal("");
-      setTipo("saída");
+      setDescricao("");
+      setPrecisaAprovacao(false);
       setParticipantes(20);
       setLideresConfirmados(3);
-      setComprovanteAprovacao("");
       setView("lista");
       alert('Evento de Célula agendado com sucesso!');
     } catch (error: any) {
@@ -298,23 +314,16 @@ export default function Eventos({ liderId }: EventosProps) {
               </h1>
               <p className="text-[0.625rem] uppercase font-black text-gray-400 mt-1 tracking-wider">Formulação de Logística e Segurança</p>
             </div>
-            
-            <button
-              onClick={() => {
-                setView("cadastro");
-                setTitulo("");
-                setLocal("");
-                setTipo("saída");
-                setParticipantes(20);
-                setLideresConfirmados(3);
-                setComprovanteAprovacao("");
-              }}
-              className="p-3 bg-teal-700 hover:bg-teal-600 text-white rounded-2xl shadow-lg cursor-pointer transition active:scale-95"
-              aria-label="Planejar novo evento"
-            >
-              <Plus className="w-4 h-4" />
-            </button>
           </div>
+
+          <button
+            id="btn-adicionar-evento"
+            onClick={abrirCadastro}
+            className="fixed bottom-20 md:bottom-8 right-6 md:right-8 z-30 p-4 bg-teal-700 hover:bg-teal-600 text-white rounded-full shadow-lg hover:scale-105 active:scale-95 cursor-pointer transition-transform flex items-center justify-center"
+            aria-label="Planejar novo evento"
+          >
+            <Plus className="w-6 h-6" />
+          </button>
 
           <div className="text-[0.625rem] font-bold text-gray-400 uppercase tracking-widest leading-none/0">
             {eventos.length} Eventos Cadastrados
@@ -325,7 +334,7 @@ export default function Eventos({ liderId }: EventosProps) {
               <CheckSquare className="w-8 h-8 mx-auto opacity-35 text-slate-400" />
               <p className="text-xs font-semibold">Sem eventos agendados.</p>
               <button
-                onClick={() => setView("cadastro")}
+                onClick={abrirCadastro}
                 className="text-[0.625rem] font-bold uppercase text-teal-700 dark:text-teal-400 hover:underline"
               >
                 Cadastrar o primeiro agora
@@ -355,8 +364,6 @@ export default function Eventos({ liderId }: EventosProps) {
                         <div className="flex items-center gap-1 text-[0.5625rem] text-gray-400 font-mono">
                           <Calendar className="w-3.5 h-3.5 text-teal-600 shrink-0" />
                           <span>{new Date(evt.data + "T12:00:00").toLocaleDateString("pt-BR")}</span>
-                          <span className="h-2 w-2 rounded-full bg-gray-300 mx-1"></span>
-                          <span className="capitalize">{evt.tipo}</span>
                         </div>
                         <h3 className="text-xs font-bold text-slate-900 dark:text-white leading-tight font-sans">
                           {evt.titulo}
@@ -436,10 +443,17 @@ export default function Eventos({ liderId }: EventosProps) {
               </div>
             </div>
 
+            {eventoSelecionado.descricao && (
+              <div>
+                <span className="block text-[0.5313rem] font-bold text-gray-400 uppercase">Descrição</span>
+                <p className="font-medium text-slate-800 dark:text-zinc-200 leading-relaxed whitespace-pre-line">{eventoSelecionado.descricao}</p>
+              </div>
+            )}
+
             <div className="grid grid-cols-3 gap-2">
               <div className="bg-slate-50 dark:bg-zinc-950 p-2.5 rounded-xl border border-gray-100 dark:border-zinc-800">
-                <span className="block text-[0.5rem] font-semibold text-gray-400 uppercase">Tipo</span>
-                <span className="font-bold text-slate-800 dark:text-zinc-200 uppercase text-[0.625rem]">{eventoSelecionado.tipo}</span>
+                <span className="block text-[0.5rem] font-semibold text-gray-400 uppercase">Aprovação Pastoral</span>
+                <span className="font-bold text-slate-800 dark:text-zinc-200 uppercase text-[0.625rem]">{eventoSelecionado.precisaAprovacao ? "Necessária" : "Não necessária"}</span>
               </div>
               <div className="bg-slate-50 dark:bg-zinc-950 p-2.5 rounded-xl border border-gray-100 dark:border-zinc-800 text-center">
                 <span className="block text-[0.5rem] font-semibold text-gray-400 uppercase">Participantes</span>
@@ -545,6 +559,22 @@ export default function Eventos({ liderId }: EventosProps) {
               />
             </div>
 
+            {/* Descrição */}
+            <div className="space-y-1">
+              <label htmlFor="evt-descricao" className="block text-[0.5625rem] font-black text-gray-400 uppercase tracking-widest">
+                Descrição *
+              </label>
+              <textarea
+                id="evt-descricao"
+                rows={3}
+                required
+                value={descricao}
+                onChange={(e) => setDescricao(e.target.value)}
+                placeholder="Descreva o evento: objetivo, programação, o que será feito..."
+                className="w-full text-xs p-3 bg-slate-50 dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-xl focus:outline-none focus:border-teal-500 text-slate-900 dark:text-white leading-relaxed resize-none"
+              />
+            </div>
+
             {/* Local & Data */}
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
@@ -575,23 +605,6 @@ export default function Eventos({ liderId }: EventosProps) {
                   className="w-full text-xs px-3.5 py-2.5 bg-slate-50 dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-xl focus:outline-none text-slate-900 dark:text-white"
                 />
               </div>
-            </div>
-
-            {/* Tipo */}
-            <div className="space-y-1">
-              <label htmlFor="evt-tipo" className="block text-[0.5625rem] font-black text-gray-400 uppercase tracking-widest">
-                Tipo do Evento
-              </label>
-              <select
-                id="evt-tipo"
-                value={tipo}
-                onChange={(e) => setTipo(e.target.value as any)}
-                className="w-full text-xs px-3.5 py-2.5 bg-slate-50 dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-xl focus:outline-none focus:border-teal-500 text-slate-900 dark:text-white font-medium cursor-pointer"
-              >
-                <option value="saída">Saída</option>
-                <option value="festa">Festa</option>
-                <option value="reunião especial">Reunião Especial</option>
-              </select>
             </div>
 
             {/* Participantes & Líderes */}
@@ -627,25 +640,26 @@ export default function Eventos({ liderId }: EventosProps) {
               </div>
             </div>
 
-            {/* Comprovante Pastoral Descrição */}
-            <div className="space-y-1">
-              <label htmlFor="evt-comp" className="block text-[0.5625rem] font-black text-gray-400 uppercase tracking-widest">
-                Precisa de aprovação pastoral se sim ja fez?
-              </label>
-              <textarea
-                id="evt-comp"
-                rows={2}
-                value={comprovanteAprovacao}
-                onChange={(e) => setComprovanteAprovacao(e.target.value)}
-                placeholder="Insira os detalhes da aprovação pastoral aqui..."
-                className="w-full text-xs p-3 bg-slate-50 dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-xl focus:outline-none focus:border-teal-500 text-slate-900 dark:text-white leading-relaxed resize-none"
+            {/* Aprovação pastoral */}
+            <div className="flex items-center gap-2">
+              <input
+                id="evt-aprovacao"
+                type="checkbox"
+                checked={precisaAprovacao}
+                onChange={(e) => setPrecisaAprovacao(e.target.checked)}
+                className="w-4 h-4 accent-teal-700 cursor-pointer"
               />
-            </div>
-
-            {/* Checklist Info */}
-            <div className="text-[0.625rem] text-gray-400 leading-normal flex items-start gap-1 pb-1">
-              <Info className="w-3.5 h-3.5 text-teal-600 shrink-0 mt-0.5 animate-pulse" />
-              <span>O checklist completo com as <strong>22 regras oficiais de segurança</strong> será anexado automaticamente a esta atividade para marcação.</span>
+              <label htmlFor="evt-aprovacao" className="text-xs font-bold text-slate-800 dark:text-zinc-200 cursor-pointer select-none">
+                Precisa de aprovação pastoral
+              </label>
+              <button
+                type="button"
+                onClick={() => setMostrarAjudaAprovacao(true)}
+                className="p-0.5 text-gray-400 hover:text-teal-600 cursor-pointer"
+                aria-label="Quando é necessária aprovação pastoral?"
+              >
+                <HelpCircle className="w-4 h-4" />
+              </button>
             </div>
 
             {/* Enviar */}
@@ -659,6 +673,23 @@ export default function Eventos({ liderId }: EventosProps) {
 
           </div>
         </form>
+      )}
+
+      {/* MODAL: QUANDO PRECISA DE APROVAÇÃO PASTORAL */}
+      {mostrarAjudaAprovacao && (
+        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4" onClick={() => setMostrarAjudaAprovacao(false)}>
+          <div onClick={(e) => e.stopPropagation()} className="bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 rounded-3xl w-full max-w-sm p-5 space-y-4 animate-slideUp">
+            <div className="flex justify-between items-center pb-2 border-b border-gray-100 dark:border-zinc-800">
+              <span className="text-xs font-black uppercase text-teal-700 dark:text-teal-400 flex items-center gap-1 font-sans">
+                <HelpCircle className="w-4 h-4" /> Aprovação Pastoral
+              </span>
+              <button type="button" onClick={() => setMostrarAjudaAprovacao(false)} className="p-1 text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer" aria-label="Fechar">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="min-h-24 text-xs text-slate-700 dark:text-zinc-300 font-sans leading-relaxed" />
+          </div>
+        </div>
       )}
 
     </div>

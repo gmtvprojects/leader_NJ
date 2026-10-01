@@ -85,6 +85,8 @@ CREATE TABLE IF NOT EXISTS eventos (
   data date,
   local text,
   tipo text,
+  descricao text,
+  precisa_aprovacao boolean NOT NULL DEFAULT false,
   participantes integer NOT NULL DEFAULT 0,
   lideres_confirmados integer NOT NULL DEFAULT 0,
   checklist_marcados jsonb NOT NULL DEFAULT '[]',
@@ -92,6 +94,8 @@ CREATE TABLE IF NOT EXISTS eventos (
   status text NOT NULL DEFAULT 'planejado',
   criado_em timestamptz NOT NULL DEFAULT now()
 );
+ALTER TABLE eventos ADD COLUMN IF NOT EXISTS descricao text;
+ALTER TABLE eventos ADD COLUMN IF NOT EXISTS precisa_aprovacao boolean NOT NULL DEFAULT false;
 CREATE INDEX IF NOT EXISTS eventos_lider_idx ON eventos(lider_id);
 
 -- lider_id nulo = tema/recurso global, visível para todos os líderes.
