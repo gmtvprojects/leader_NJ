@@ -336,7 +336,7 @@ export default function Reunioes({ liderId }: ReunioesProps) {
                 {membros.length === 0 ? (
                   <p className="text-center text-[10px] text-gray-400 py-3">Adicione membros na aba Membros para chamá-los.</p>
                 ) : (
-                  <div className="grid grid-cols-1 gap-1.5">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1.5">
                     {membros.map(m => {
                        const isPresent = presentesIds.includes(m.id);
                        return (
@@ -519,7 +519,7 @@ export default function Reunioes({ liderId }: ReunioesProps) {
             Sem reuniões registradas neste semestre.
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="grid grid-cols-1 lg:grid-cols-2 items-start gap-3">
             {reunioes.map((r) => (
               <div
                 key={r.id}

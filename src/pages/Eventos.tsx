@@ -332,7 +332,7 @@ export default function Eventos({ liderId }: EventosProps) {
               </button>
             </div>
           ) : (
-            <div className="space-y-3">
+            <div className="grid grid-cols-1 lg:grid-cols-2 items-start gap-3">
               {eventos.map((evt) => {
                 const totalObrigatorios = REGRAS_EVENTO.filter(r => r.obrigatorio).length;
                 const marcadosObrigatorios = REGRAS_EVENTO

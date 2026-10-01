@@ -388,7 +388,7 @@ export default function Aniversariantes({ liderId, onVoltar }: AniversariantesPr
                 <h2 className="text-xs font-black uppercase tracking-wider text-amber-700 dark:text-amber-400 flex items-center gap-1.5">
                   <span>📅</span> ESTA SEMANA — Próximos 7 dias
                 </h2>
-                <div className="space-y-2.5">
+                <div className="grid grid-cols-1 lg:grid-cols-2 items-start gap-2.5">
                   {secEstaSemana.map(m => {
                     const isExpanded = expandedCardId === m.id;
                     const meta = obterLinguagemAmorMeta(m.linguagemAmor);
@@ -480,7 +480,7 @@ export default function Aniversariantes({ liderId, onVoltar }: AniversariantesPr
                 <h2 className="text-xs font-black uppercase tracking-wider text-blue-700 dark:text-blue-400 flex items-center gap-1.5">
                   <span>📆</span> ESTE MÊS — Restante do mês
                 </h2>
-                <div className="space-y-2.5">
+                <div className="grid grid-cols-1 lg:grid-cols-2 items-start gap-2.5">
                   {secEsteMes.map(m => {
                     const isExpanded = expandedCardId === m.id;
                     const meta = obterLinguagemAmorMeta(m.linguagemAmor);
@@ -572,7 +572,7 @@ export default function Aniversariantes({ liderId, onVoltar }: AniversariantesPr
                 <h2 className="text-xs font-black uppercase tracking-wider text-slate-500 dark:text-zinc-400 flex items-center gap-1.5">
                   <span>🗓</span> PRÓXIMOS — Além do mês atual
                 </h2>
-                <div className="space-y-2.5">
+                <div className="grid grid-cols-1 lg:grid-cols-2 items-start gap-2.5">
                   {secProximos.map(m => {
                     const isExpanded = expandedCardId === m.id;
                     const meta = obterLinguagemAmorMeta(m.linguagemAmor);

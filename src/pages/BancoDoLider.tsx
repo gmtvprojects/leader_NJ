@@ -1472,9 +1472,9 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
       </div>
 
       {/* LISTA DE RECURSOS */}
-      <div className="space-y-3.5 animate-fadeIn">
+      <div className="grid grid-cols-1 lg:grid-cols-2 items-start gap-3.5 animate-fadeIn">
         {filteredRecursos.length === 0 ? (
-          <div className="bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 py-12 px-6 rounded-3xl text-center space-y-4 shadow-sm animate-fadeIn">
+          <div className="lg:col-span-2 bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 py-12 px-6 rounded-3xl text-center space-y-4 shadow-sm animate-fadeIn">
             <span className="text-4xl block leading-none select-none">📭</span>
             <div>
               <p className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">
@@ -1766,7 +1766,7 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
           resetRecursoForm();
           setShowRecursoModal(true);
         }}
-        className="fixed bottom-20 right-6 z-30 p-4 bg-teal-600 hover:bg-teal-700 dark:bg-teal-500 dark:hover:bg-teal-600 text-white rounded-full shadow-lg transition-transform hover:scale-105 active:scale-95 flex items-center justify-center cursor-pointer"
+        className="fixed bottom-20 md:bottom-8 right-6 md:right-8 z-30 p-4 bg-teal-600 hover:bg-teal-700 dark:bg-teal-500 dark:hover:bg-teal-600 text-white rounded-full shadow-lg transition-transform hover:scale-105 active:scale-95 flex items-center justify-center cursor-pointer"
         aria-label="Cadastrar novo recurso de fé"
       >
         <Plus className="w-6 h-6" />

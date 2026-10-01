@@ -663,7 +663,7 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
               </p>
             </div>
           ) : (
-            <div className="space-y-3">
+            <div className="grid grid-cols-1 lg:grid-cols-2 items-start gap-3">
               {membrosFiltrados.map((m) => {
                 const isNiver = isAniversarianteProximo(m.aniversario);
                 const idade = calcularIdade(m.aniversario);

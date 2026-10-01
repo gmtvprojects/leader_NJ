@@ -349,9 +349,9 @@ export default function Oracao({ onVoltar, liderId }: OracaoProps) {
       </div>
 
       {/* LISTA EXPANDIDA DE PEDIDOS */}
-      <div className="space-y-3 font-sans">
+      <div className="grid grid-cols-1 lg:grid-cols-2 items-start gap-3 font-sans">
         {filtradas.length === 0 ? (
-          <div className="bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 py-12 rounded-2xl text-center space-y-1.5">
+          <div className="lg:col-span-2 bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 py-12 rounded-2xl text-center space-y-1.5">
             <Heart className="w-8 h-8 text-rose-500 fill-rose-500/10 mx-auto animate-pulse" />
             <p className="text-xs font-bold text-slate-900 dark:text-white">Nenhum pedido encontrado</p>
             <p className="text-[10px] text-gray-400 uppercase font-medium">Use do filtro acima ou crie um novo pedido no botão "+"</p>
