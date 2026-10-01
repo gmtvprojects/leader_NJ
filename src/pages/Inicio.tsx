@@ -234,7 +234,6 @@ export default function Inicio({ onSelectTab, liderId }: InicioProps) {
       {/* HEADER EDITÁVEL COM INLINE MODAL */}
       <header className="flex justify-between items-center bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 p-4 rounded-2xl shadow-xs">
         <div className="text-left">
-          <p className="text-[0.625rem] font-black uppercase text-teal-600 dark:text-teal-400 tracking-wider">Liderança Pastoral</p>
           <h1 className="text-xl font-bold text-slate-950 dark:text-white tracking-tight flex items-baseline gap-1.5 font-sans leading-none">
             {nomeGrupo} 
           </h1>
