@@ -7,11 +7,14 @@ CREATE TABLE IF NOT EXISTS usuarios (
   criado_em timestamptz NOT NULL DEFAULT now()
 );
 
+ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS papel text NOT NULL DEFAULT 'lider';
+
 CREATE TABLE IF NOT EXISTS profiles (
   id uuid PRIMARY KEY REFERENCES usuarios(id) ON DELETE CASCADE,
   nome_grupo text
 );
 
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS nome_lider text;
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS celular text;
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS data_nascimento date;
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS culto text;
@@ -131,6 +134,9 @@ CREATE TABLE IF NOT EXISTS eventos (
 ALTER TABLE eventos ADD COLUMN IF NOT EXISTS descricao text;
 ALTER TABLE eventos ADD COLUMN IF NOT EXISTS precisa_aprovacao boolean NOT NULL DEFAULT false;
 ALTER TABLE eventos ADD COLUMN IF NOT EXISTS lideres_nomes jsonb NOT NULL DEFAULT '[]';
+ALTER TABLE eventos ADD COLUMN IF NOT EXISTS aprovacao_status text NOT NULL DEFAULT 'pendente';
+ALTER TABLE eventos ADD COLUMN IF NOT EXISTS aprovacao_obs text;
+ALTER TABLE eventos ADD COLUMN IF NOT EXISTS aprovacao_em timestamptz;
 CREATE INDEX IF NOT EXISTS eventos_lider_idx ON eventos(lider_id);
 
 -- lider_id nulo = tema/recurso global, visível para todos os líderes.
@@ -169,4 +175,19 @@ CREATE TABLE IF NOT EXISTS arquivos (
   dados bytea NOT NULL,
   criado_em timestamptz NOT NULL DEFAULT now(),
   PRIMARY KEY (bucket, caminho)
+);
+
+-- Manual de liderança (conteúdo global, editado pelo pastor).
+CREATE TABLE IF NOT EXISTS manual_capitulos (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  ordem integer NOT NULL DEFAULT 0,
+  titulo text NOT NULL,
+  icone text,
+  acento text,
+  compromisso boolean NOT NULL DEFAULT false,
+  texto text,
+  pontos jsonb NOT NULL DEFAULT '[]',
+  ref text,
+  alerta text,
+  atualizado_em timestamptz NOT NULL DEFAULT now()
 );

@@ -15,6 +15,21 @@ export async function conectar(connectionString) {
   pool = new pg.Pool({ connectionString });
   const sql = fs.readFileSync(path.join(__dirname, 'schema.sql'), 'utf8');
   await pool.query(sql);
+  await semearManual();
+}
+
+// Importa o manual de liderança (13 capítulos) na primeira subida, se a tabela estiver vazia.
+async function semearManual() {
+  const { rows } = await pool.query('SELECT count(*)::int AS n FROM manual_capitulos');
+  if (rows[0].n > 0) return;
+  const capitulos = JSON.parse(fs.readFileSync(path.join(__dirname, 'manual-inicial.json'), 'utf8'));
+  for (const c of capitulos) {
+    await pool.query(
+      `INSERT INTO manual_capitulos (ordem, titulo, icone, acento, compromisso, texto, pontos, ref, alerta)
+       VALUES ($1, $2, $3, $4, $5, $6, $7::jsonb, $8, $9)`,
+      [c.cap, c.titulo, c.icone || null, c.acento || null, !!c.compromisso, c.texto || '', JSON.stringify(c.pontos || []), c.ref || null, c.alerta || null]
+    );
+  }
 }
 
 // Tabelas acessíveis pela API genérica /api/db.
@@ -24,7 +39,7 @@ export async function conectar(connectionString) {
 //  conflito: colunas usadas no ON CONFLICT do upsert
 export const TABELAS = {
   profiles: {
-    colunas: ['id', 'nome_grupo', 'celular', 'data_nascimento', 'culto', 'senib'],
+    colunas: ['id', 'nome_grupo', 'nome_lider', 'celular', 'data_nascimento', 'culto', 'senib'],
     dono: 'id',
     conflito: ['id'],
     datas: ['data_nascimento'],
@@ -71,7 +86,9 @@ export const TABELAS = {
     conflito: ['lider_id', 'mes'],
   },
   eventos: {
-    colunas: ['id', 'lider_id', 'titulo', 'data', 'local', 'tipo', 'descricao', 'precisa_aprovacao', 'participantes', 'lideres_confirmados', 'lideres_nomes', 'checklist_marcados', 'comprovante', 'status', 'criado_em'],
+    colunas: ['id', 'lider_id', 'titulo', 'data', 'local', 'tipo', 'descricao', 'precisa_aprovacao', 'participantes', 'lideres_confirmados', 'lideres_nomes', 'checklist_marcados', 'comprovante', 'status', 'aprovacao_status', 'aprovacao_obs', 'aprovacao_em', 'criado_em'],
+    // A decisão pastoral só pode ser gravada pelo pastor (rotas /api/pastor), nunca pelo líder.
+    somenteLeitura: ['aprovacao_status', 'aprovacao_obs', 'aprovacao_em'],
     dono: 'lider_id',
     datas: ['data'],
     json: ['checklist_marcados', 'lideres_nomes'],

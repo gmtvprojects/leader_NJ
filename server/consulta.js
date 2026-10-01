@@ -47,7 +47,7 @@ function normalizarValor(cfg, coluna, valor) {
 function extrairColunas(cfg, linha, ignorar = []) {
   const saida = {};
   for (const coluna of cfg.colunas) {
-    if (ignorar.includes(coluna)) continue;
+    if (ignorar.includes(coluna) || cfg.somenteLeitura?.includes(coluna)) continue;
     const valor = normalizarValor(cfg, coluna, linha?.[coluna]);
     if (valor !== undefined) saida[coluna] = valor;
   }

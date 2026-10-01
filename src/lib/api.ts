@@ -4,7 +4,8 @@
 
 type ApiError = { message: string; code?: string }
 type ApiResult<T = any> = { data: T | null; error: ApiError | null }
-type Session = { access_token: string; user: { id: string; email: string } }
+export type Papel = 'lider' | 'pastor'
+type Session = { access_token: string; user: { id: string; email: string; papel?: Papel } }
 type AuthChangeCallback = (event: string, session: Session | null) => void
 
 const SESSION_KEY = 'ga_pwa_session'
@@ -188,7 +189,32 @@ async function autenticarCom(rota: 'login' | 'signup', email: string, password?:
   return { data: res.data, error: null }
 }
 
+function chamar<T = any>(path: string, method = 'GET', body?: unknown) {
+  return request<T>(path, {
+    method,
+    headers: body !== undefined ? { 'Content-Type': 'application/json' } : {},
+    body: body !== undefined ? JSON.stringify(body) : undefined
+  })
+}
+
 export const api = {
+  // Manual de liderança (leitura para qualquer usuário autenticado)
+  manual: {
+    listar: () => chamar<any[]>('/api/manual')
+  },
+
+  // Rotas exclusivas do perfil Pastor
+  pastor: {
+    dados: () => chamar<any>('/api/pastor/dados'),
+    cadastrarLider: (dados: { nome_lider: string; email: string; senha: string; nome_grupo?: string; celular?: string }) =>
+      chamar<any>('/api/pastor/lideres', 'POST', dados),
+    decidirEvento: (id: string, decisao: 'aprovado' | 'reprovado' | 'pendente', obs?: string) =>
+      chamar<any>(`/api/pastor/eventos/${id}/aprovacao`, 'POST', { decisao, obs }),
+    salvarCapitulo: (capitulo: any, id?: string) =>
+      id ? chamar<any>(`/api/pastor/manual/${id}`, 'PUT', capitulo) : chamar<any>('/api/pastor/manual', 'POST', capitulo),
+    excluirCapitulo: (id: string) => chamar<any>(`/api/pastor/manual/${id}`, 'DELETE')
+  },
+
   auth: {
     async getSession(): Promise<{ data: { session: Session | null }; error: ApiError | null }> {
       const local = getStoredSession()
@@ -198,6 +224,12 @@ export const api = {
       if (res.error && res.error.code !== 'REDE') {
         setStoredSession(null)
         return { data: { session: null }, error: null }
+      }
+      // Atualiza o papel (líder/pastor) com o que o servidor informa, caso tenha mudado.
+      const papelAtual = res.data?.user?.papel as Papel | undefined
+      if (papelAtual && local.user.papel !== papelAtual) {
+        local.user = { ...local.user, papel: papelAtual }
+        setStoredSession(local)
       }
       // Sem rede, mantém a sessão salva: as telas mostram seus próprios erros de carregamento.
       return { data: { session: local }, error: null }

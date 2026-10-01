@@ -8,6 +8,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { pool, conectar } from './db.js';
 import { executarConsulta } from './consulta.js';
+import { exigirPastor, rotasPastor } from './pastor.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const raiz = path.resolve(__dirname, '..');
@@ -27,7 +28,7 @@ app.set('trust proxy', 1);
 // ---------- Autenticação ----------
 
 const criarSessao = (usuario) => {
-  const user = { id: usuario.id, email: usuario.email };
+  const user = { id: usuario.id, email: usuario.email, papel: usuario.papel || 'lider' };
   const access_token = jwt.sign({ sub: user.id, email: user.email }, JWT_SECRET, { expiresIn: '30d' });
   return { user, session: { access_token, user } };
 };
@@ -72,7 +73,7 @@ app.post('/api/auth/signup', limiteAuth, jsonBody, async (req, res) => {
   try {
     const hash = await bcrypt.hash(senha, 10);
     const { rows } = await pool.query(
-      'INSERT INTO usuarios (email, senha_hash) VALUES ($1, $2) ON CONFLICT (email) DO NOTHING RETURNING id, email',
+      'INSERT INTO usuarios (email, senha_hash) VALUES ($1, $2) ON CONFLICT (email) DO NOTHING RETURNING id, email, papel',
       [email, hash]
     );
     if (rows.length === 0) {
@@ -88,7 +89,7 @@ app.post('/api/auth/signup', limiteAuth, jsonBody, async (req, res) => {
 app.post('/api/auth/login', limiteAuth, jsonBody, async (req, res) => {
   const { email, senha } = lerCredenciais(req);
   try {
-    const { rows } = await pool.query('SELECT id, email, senha_hash FROM usuarios WHERE email = $1', [email]);
+    const { rows } = await pool.query('SELECT id, email, senha_hash, papel FROM usuarios WHERE email = $1', [email]);
     const ok = rows[0] && (await bcrypt.compare(senha, rows[0].senha_hash));
     if (!ok) {
       return res.status(401).json({ error: { message: 'E-mail ou senha incorretos.' } });
@@ -101,12 +102,23 @@ app.post('/api/auth/login', limiteAuth, jsonBody, async (req, res) => {
 });
 
 app.get('/api/auth/session', autenticar, async (req, res) => {
-  const { rows } = await pool.query('SELECT id, email FROM usuarios WHERE id = $1', [req.userId]);
+  const { rows } = await pool.query('SELECT id, email, papel FROM usuarios WHERE id = $1', [req.userId]);
   if (rows.length === 0) {
     return res.status(401).json({ data: null, error: { message: 'Sessão inválida ou expirada.', code: 'NAO_AUTENTICADO' } });
   }
   res.json({ data: { user: rows[0] }, error: null });
 });
+
+// ---------- Manual de liderança (leitura para qualquer usuário autenticado) ----------
+
+app.get('/api/manual', autenticar, async (_req, res) => {
+  const { rows } = await pool.query('SELECT * FROM manual_capitulos ORDER BY ordem, titulo');
+  res.json({ data: rows, error: null });
+});
+
+// ---------- Perfil Pastor ----------
+
+app.use('/api/pastor', autenticar, exigirPastor, rotasPastor());
 
 // ---------- Banco de dados ----------
 

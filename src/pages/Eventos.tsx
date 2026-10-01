@@ -67,6 +67,8 @@ export interface EventoPWA_Local {
   local: string;
   descricao: string;
   precisaAprovacao: boolean;
+  aprovacaoStatus?: "pendente" | "aprovado" | "reprovado";
+  aprovacaoObs?: string;
   participantes: number;
   lideresConfirmados: number;
   lideresNomes: string[];
@@ -86,6 +88,8 @@ const mapToTS = (db: any): EventoPWA_Local => ({
   local: db.local || '',
   descricao: db.descricao || '',
   precisaAprovacao: !!db.precisa_aprovacao,
+  aprovacaoStatus: db.aprovacao_status || 'pendente',
+  aprovacaoObs: db.aprovacao_obs || '',
   participantes: db.participantes || 0,
   lideresConfirmados: db.lideres_confirmados || 0,
   lideresNomes: db.lideres_nomes || [],
@@ -398,6 +402,17 @@ export default function Eventos({ liderId }: EventosProps) {
                         <p className="text-[0.625rem] text-gray-500 dark:text-zinc-400 flex items-center gap-1">
                           <MapPin className="w-3 h-3 text-gray-400" /> {evt.local}
                         </p>
+                        {evt.precisaAprovacao && (
+                          <span className={`inline-block text-[0.5rem] font-black uppercase px-1.5 py-0.5 rounded-md border ${
+                            evt.aprovacaoStatus === "aprovado"
+                              ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                              : evt.aprovacaoStatus === "reprovado"
+                              ? "bg-rose-50 text-rose-700 border-rose-200"
+                              : "bg-amber-50 text-amber-700 border-amber-200"
+                          }`}>
+                            Aprovação pastoral: {evt.aprovacaoStatus === "aprovado" ? "aprovada" : evt.aprovacaoStatus === "reprovado" ? "reprovada" : "pendente"}
+                          </span>
+                        )}
                       </div>
                     </div>
 
@@ -454,6 +469,22 @@ export default function Eventos({ liderId }: EventosProps) {
               <Trash2 className="w-4 h-4" />
             </button>
           </header>
+
+          {eventoSelecionado.precisaAprovacao && (
+            <div className={`p-3 rounded-2xl border text-xs font-sans space-y-0.5 ${
+              eventoSelecionado.aprovacaoStatus === "aprovado"
+                ? "bg-emerald-50 border-emerald-200 text-emerald-800"
+                : eventoSelecionado.aprovacaoStatus === "reprovado"
+                ? "bg-rose-50 border-rose-200 text-rose-800"
+                : "bg-amber-50 border-amber-200 text-amber-800"
+            }`}>
+              <span className="block font-black uppercase text-[0.5625rem] tracking-wider">Aprovação pastoral</span>
+              <span className="block font-bold">
+                {eventoSelecionado.aprovacaoStatus === "aprovado" ? "Aprovada pelo pastor" : eventoSelecionado.aprovacaoStatus === "reprovado" ? "Reprovada pelo pastor" : "Aguardando análise do pastor"}
+              </span>
+              {eventoSelecionado.aprovacaoObs && <span className="block italic">“{eventoSelecionado.aprovacaoObs}”</span>}
+            </div>
+          )}
 
           {/* DADOS LOGÍSTICOS GERAIS */}
           <div className="bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 p-4 space-y-3.5 text-xs font-sans">

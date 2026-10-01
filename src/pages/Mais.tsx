@@ -71,6 +71,7 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
   const [subView, setSubView] = useState<"menu" | "crescimento" | "oracao" | "lanche" | "config">("menu");
   const [themeMode, setThemeMode] = useState<"light" | "dark">("light");
   const [grupoNome, setGrupoNome] = useState("GA Ebenezer");
+  const [perfilNome, setPerfilNome] = useState("");
   const [perfilCelular, setPerfilCelular] = useState("");
   const [perfilNascimento, setPerfilNascimento] = useState("");
   const [perfilCulto, setPerfilCulto] = useState("");
@@ -96,12 +97,13 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
       // 1. Carregar nome do grupo perfil
       const { data: profileData, error: profileError } = await api
         .from('profiles')
-        .select('nome_grupo, celular, data_nascimento, culto, senib')
+        .select('nome_grupo, nome_lider, celular, data_nascimento, culto, senib')
         .eq('id', liderId)
         .maybeSingle();
 
       if (!profileError && profileData) {
         setGrupoNome(profileData.nome_grupo || "GA Ebenezer");
+        setPerfilNome(profileData.nome_lider || "");
         setPerfilCelular(profileData.celular || "");
         setPerfilNascimento(profileData.data_nascimento ? String(profileData.data_nascimento).substring(0, 10) : "");
         setPerfilCulto(profileData.culto || "");
@@ -190,6 +192,7 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
       const { error } = await api.from('profiles').upsert({
         id: liderId,
         nome_grupo: grupoNome.trim(),
+        nome_lider: perfilNome.trim() || null,
         celular: perfilCelular.trim(),
         data_nascimento: perfilNascimento || null,
         culto: perfilCulto || null,
@@ -903,6 +906,18 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
             <h3 className="text-xs font-black text-slate-950 dark:text-white uppercase tracking-wider leading-none flex items-center gap-1 font-sans">
               <Settings className="w-4 h-4 text-teal-600" /> Dados do Líder e do GA
             </h3>
+
+            <div className="space-y-1">
+              <label htmlFor="cfg-nome-lider" className="block text-[0.5rem] font-bold uppercase text-gray-400">Nome do Líder</label>
+              <input
+                id="cfg-nome-lider"
+                type="text"
+                value={perfilNome}
+                onChange={(e) => setPerfilNome(e.target.value)}
+                placeholder="Seu nome completo"
+                className="w-full text-xs px-3.5 py-2.5 bg-slate-50 dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-lg focus:outline-none focus:border-[#0f766e] text-slate-900 dark:text-white font-medium"
+              />
+            </div>
 
             <div className="space-y-1">
               <label htmlFor="cfg-nome" className="block text-[0.5rem] font-bold uppercase text-gray-400">Nome Oficial do Grupo de Amigos</label>
