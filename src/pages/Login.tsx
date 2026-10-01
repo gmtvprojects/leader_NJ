@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { supabase } from '../lib/supabase'
+import { api } from '../lib/api'
 import { Lock, Mail, Eye, EyeOff, Loader2 } from 'lucide-react'
 
 export default function Login() {
@@ -21,24 +21,17 @@ export default function Login() {
 
     try {
       if (isLogin) {
-        const { error } = await supabase.auth.signInWithPassword({ email, password })
+        const { error } = await api.auth.signInWithPassword({ email, password })
         if (error) throw error
       } else {
-        const { error, data } = await supabase.auth.signUp({ email, password })
+        const { error } = await api.auth.signUp({ email, password })
         if (error) throw error
-        if (data?.user?.identities?.length === 0) {
-          setErrorMsg('Este e-mail já está cadastrado.')
-          setLoading(false)
-          return
-        }
-        alert('Conta criada com sucesso! Você pode acessar o sistema.')
-        setIsLogin(true)
       }
     } catch (err: any) {
       console.error(err)
       const msg = err?.message || ''
       if (msg.includes('fetch') || msg.includes('network') || msg.includes('Failed to fetch')) {
-        setErrorMsg('Servidor remoto inacessível (projeto pausado ou offline). Você pode usar o botão abaixo para entrar no Modo Local.')
+        setErrorMsg('Não foi possível conectar ao servidor. Verifique sua internet e tente novamente.')
       } else {
         setErrorMsg(err.message || 'Ocorreu um erro ao processar sua solicitação.')
       }
@@ -47,20 +40,6 @@ export default function Login() {
     }
   }
 
-  const handleEntrarModoLocal = async () => {
-    setLoading(true)
-    setErrorMsg('')
-    try {
-      await supabase.auth.signInWithPassword({
-        email: email.trim() || 'lider@igreja.com',
-        password: password || '123456'
-      })
-    } catch (err: any) {
-      console.error('Erro ao acessar localmente:', err)
-    } finally {
-      setLoading(false)
-    }
-  }
 
   return (
     <div className="min-h-screen bg-neutral-50 dark:bg-zinc-950 flex flex-col items-center justify-center p-4 transition-colors duration-200">
@@ -185,23 +164,6 @@ export default function Login() {
             )}
           </button>
 
-          {/* Divisor */}
-          <div className="relative flex items-center justify-center pt-1">
-            <div className="border-t border-neutral-200 dark:border-zinc-800 w-full"></div>
-            <span className="bg-white dark:bg-zinc-900 px-2 text-[0.625rem] uppercase font-bold text-zinc-400 absolute">
-              ou
-            </span>
-          </div>
-
-          {/* Botão de acesso local / PWA offline */}
-          <button
-            type="button"
-            onClick={handleEntrarModoLocal}
-            disabled={loading}
-            className="w-full py-2.5 px-3 bg-neutral-100 hover:bg-neutral-200 dark:bg-zinc-800 dark:hover:bg-zinc-750 text-slate-700 dark:text-zinc-200 font-bold text-[0.6875rem] rounded-xl transition border border-neutral-200 dark:border-zinc-700 flex items-center justify-center gap-2 cursor-pointer"
-          >
-            <span>Entrar como Líder de GA (Modo Local)</span>
-          </button>
         </form>
       </div>
     </div>

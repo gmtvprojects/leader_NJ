@@ -23,7 +23,7 @@ import {
   Compass,
   AlertTriangle
 } from "lucide-react";
-import { supabase } from "../lib/supabase";
+import { api } from "../lib/api";
 import { Membro } from "../types";
 import { 
   extrairMetadadosMembro, 
@@ -164,11 +164,11 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
   const [formUltimoContato, setFormUltimoContato] = useState("");
   const [formResponsavelContato, setFormResponsavelContato] = useState("");
 
-  const carregarDadosSupabase = async () => {
+  const carregarDados = async () => {
     setLoading(true);
     try {
-      // Carregar membros do Supabase
-      const { data: membrosData, error: membrosError } = await supabase
+      // Carregar membros do servidor
+      const { data: membrosData, error: membrosError } = await api
         .from('membros')
         .select('*')
         .eq('lider_id', liderId);
@@ -179,7 +179,7 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
       setMembros(mappedMembros);
 
       // Carregar reuniões para histórico de presenças
-      const { data: reunioesData, error: reunioesError } = await supabase
+      const { data: reunioesData, error: reunioesError } = await api
         .from('reunioes')
         .select('*, reuniao_presencas(membro_id)')
         .eq('lider_id', liderId);
@@ -194,14 +194,14 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
         setReunioes(mappedReunioes);
       }
     } catch (error: any) {
-      console.error('Erro ao carregar dados do Supabase:', error);
+      console.error('Erro ao carregar dados do servidor:', error);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    carregarDadosSupabase();
+    carregarDados();
 
     if (filtroInicial === "ausentes") {
       setFiltroStatus("Ausente");
@@ -294,7 +294,7 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
       };
 
       const payload = mapToDB(atualizado, liderId);
-      const { error } = await supabase
+      const { error } = await api
         .from('membros')
         .update(payload)
         .eq('id', membroParaContato.id);
@@ -343,7 +343,7 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
       };
 
       if (view === "cadastro") {
-        const { data, error } = await supabase
+        const { data, error } = await api
           .from('membros')
           .insert(mapToDB(dadosMembro, liderId))
           .select();
@@ -357,7 +357,7 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
         }
         setView("detalhe");
       } else {
-        const { data, error } = await supabase
+        const { data, error } = await api
           .from('membros')
           .update(mapToDB({ ...dadosMembro, id: formId }, liderId))
           .eq('id', formId)
@@ -385,7 +385,7 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
     if (confirm("Tem certeza que deseja apagar a ficha deste jovem?")) {
       setLoading(true);
       try {
-        const { error } = await supabase
+        const { error } = await api
           .from('membros')
           .delete()
           .eq('id', id);

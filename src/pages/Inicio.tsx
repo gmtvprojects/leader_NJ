@@ -16,7 +16,7 @@ import {
   Compass,
   PhoneCall
 } from "lucide-react";
-import { supabase } from "../lib/supabase";
+import { api } from "../lib/api";
 import { Membro, Reuniao } from "../types";
 import { extrairMetadadosMembro, calcularIdade } from "../utils/membroUtils";
 
@@ -63,7 +63,7 @@ export default function Inicio({ onSelectTab, liderId }: InicioProps) {
     setLoading(true);
     try {
       // 1. Carregar nome do grupo do perfil
-      const { data: profileVal, error: pError } = await supabase
+      const { data: profileVal, error: pError } = await api
         .from('profiles')
         .select('nome_grupo')
         .eq('id', liderId)
@@ -74,7 +74,7 @@ export default function Inicio({ onSelectTab, liderId }: InicioProps) {
       }
 
       // 2. Carregar membros do lider
-      const { data: mData, error: mError } = await supabase
+      const { data: mData, error: mError } = await api
         .from('membros')
         .select('*')
         .eq('lider_id', liderId);
@@ -83,7 +83,7 @@ export default function Inicio({ onSelectTab, liderId }: InicioProps) {
       setMembros((mData || []).map(mapToTSMembro));
 
       // 3. Carregar reuniões do lider
-      const { data: rData, error: rError } = await supabase
+      const { data: rData, error: rError } = await api
         .from('reunioes')
         .select('*, reuniao_presencas(membro_id)')
         .eq('lider_id', liderId)
@@ -117,7 +117,7 @@ export default function Inicio({ onSelectTab, liderId }: InicioProps) {
 
     setLoading(true);
     try {
-      const { error } = await supabase
+      const { error } = await api
         .from('profiles')
         .upsert({ id: liderId, nome_grupo: novoNomeGrupo.trim() });
 

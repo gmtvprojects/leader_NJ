@@ -10,7 +10,7 @@ import {
   Cake
 } from "lucide-react";
 
-import { supabase } from "./lib/supabase";
+import { api } from "./lib/api";
 import Login from "./pages/Login";
 
 import Inicio from "./pages/Inicio";
@@ -60,8 +60,8 @@ export default function App() {
       document.documentElement.classList.remove("dark");
     }
 
-    // Inicializar e escutar a sessão do Supabase com tratamento resiliente
-    supabase.auth.getSession()
+    // Inicializar e escutar a sessão
+    api.auth.getSession()
       .then(({ data }) => {
         setSession(data?.session || null);
         setLoadingLocal(false);
@@ -71,7 +71,7 @@ export default function App() {
         setLoadingLocal(false);
       });
 
-    const { data } = supabase.auth.onAuthStateChange((_e, currentSession) => {
+    const { data } = api.auth.onAuthStateChange((_e, currentSession) => {
       setSession(currentSession);
     });
 

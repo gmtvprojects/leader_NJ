@@ -11,7 +11,7 @@ import {
   ChevronDown,
   Loader2
 } from "lucide-react";
-import { supabase } from "../lib/supabase";
+import { api } from "../lib/api";
 import { Membro } from "../types";
 
 export interface PedidoOracao {
@@ -79,8 +79,8 @@ export default function Oracao({ onVoltar, liderId }: OracaoProps) {
   const carregarDados = async () => {
     setLoading(true);
     try {
-      // 1. Carregar membros do Supabase
-      const { data: membrosData, error: membrosError } = await supabase
+      // 1. Carregar membros do servidor
+      const { data: membrosData, error: membrosError } = await api
         .from('membros')
         .select('*')
         .eq('lider_id', liderId);
@@ -93,8 +93,8 @@ export default function Oracao({ onVoltar, liderId }: OracaoProps) {
         setMembroId(formattedMembros[0].id);
       }
 
-      // 2. Carregar pedidos de oração de Supabase
-      const { data: oracaoData, error: oracaoError } = await supabase
+      // 2. Carregar pedidos de oração do servidor
+      const { data: oracaoData, error: oracaoError } = await api
         .from('oracao_pedidos')
         .select('*')
         .eq('lider_id', liderId)
@@ -134,7 +134,7 @@ export default function Oracao({ onVoltar, liderId }: OracaoProps) {
         respondido: false
       };
 
-      const { data: insertData, error } = await supabase
+      const { data: insertData, error } = await api
         .from('oracao_pedidos')
         .insert(mapToDB(nova, liderId))
         .select()
@@ -163,7 +163,7 @@ export default function Oracao({ onVoltar, liderId }: OracaoProps) {
 
     setLoading(true);
     try {
-      const { data: updatedData, error } = await supabase
+      const { data: updatedData, error } = await api
         .from('oracao_pedidos')
         .update({ respondido: !selecionado.respondido })
         .eq('id', id)
@@ -186,7 +186,7 @@ export default function Oracao({ onVoltar, liderId }: OracaoProps) {
     if (confirm("Deseja deletar este pedido de oração permanentemente?")) {
       setLoading(true);
       try {
-        const { error } = await supabase
+        const { error } = await api
           .from('oracao_pedidos')
           .delete()
           .eq('id', id);

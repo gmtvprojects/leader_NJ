@@ -11,7 +11,7 @@ import {
   Loader2,
   CheckCircle
 } from "lucide-react";
-import { supabase } from "../lib/supabase";
+import { api } from "../lib/api";
 
 export interface Regra {
   id: number;
@@ -106,7 +106,7 @@ export default function Eventos({ liderId }: EventosProps) {
   const carregarDados = async () => {
     setLoading(true);
     try {
-      const { data: eventosData, error } = await supabase
+      const { data: eventosData, error } = await api
         .from('eventos')
         .select('*')
         .eq('lider_id', liderId)
@@ -154,7 +154,7 @@ export default function Eventos({ liderId }: EventosProps) {
 
     // 1. Salva no banco PRIMEIRO
     try {
-      const { data: updatedData, error } = await supabase
+      const { data: updatedData, error } = await api
         .from('eventos')
         .update({
           checklist_marcados: novosMarcados
@@ -203,7 +203,7 @@ export default function Eventos({ liderId }: EventosProps) {
         status: "planejado"
       };
 
-      const { data: insertData, error } = await supabase
+      const { data: insertData, error } = await api
         .from('eventos')
         .insert(mapToDB(dadosNovo, liderId))
         .select()
@@ -234,7 +234,7 @@ export default function Eventos({ liderId }: EventosProps) {
 
   const salvarComprovanteDirect = async (eventoId: string, val: string) => {
     try {
-      const { data: updatedData, error } = await supabase
+      const { data: updatedData, error } = await api
         .from('eventos')
         .update({ comprovante: val })
         .eq('id', eventoId)
@@ -256,7 +256,7 @@ export default function Eventos({ liderId }: EventosProps) {
     if (confirm("Tem certeza de que deseja excluir este evento e seu respectivo checklist?")) {
       setLoading(true);
       try {
-        const { error } = await supabase
+        const { error } = await api
           .from('eventos')
           .delete()
           .eq('id', id);

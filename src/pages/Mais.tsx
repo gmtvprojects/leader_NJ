@@ -18,7 +18,7 @@ import {
   Cake
 } from "lucide-react";
 import TrilhaFormacao from "../components/TrilhaFormacao";
-import { supabase } from "../lib/supabase";
+import { api } from "../lib/api";
 import { Membro, Reuniao } from "../types";
 
 interface Treinando {
@@ -96,7 +96,7 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
     setLoading(true);
     try {
       // 1. Carregar nome do grupo perfil
-      const { data: profileData, error: profileError } = await supabase
+      const { data: profileData, error: profileError } = await api
         .from('profiles')
         .select('nome_grupo')
         .eq('id', liderId)
@@ -106,16 +106,16 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
         setGrupoNome(profileData.nome_grupo || "GA Ebenezer");
       }
 
-      // 2. Carregar membros do Supabase
-      const { data: membrosData } = await supabase
+      // 2. Carregar membros do servidor
+      const { data: membrosData } = await api
         .from('membros')
         .select('*')
         .eq('lider_id', liderId);
       
       setMembros((membrosData || []).map(mapToTSMembro));
 
-      // 3. Carregar reuniões do Supabase
-      const { data: reunioesData } = await supabase
+      // 3. Carregar reuniões do servidor
+      const { data: reunioesData } = await api
         .from('reunioes')
         .select('*')
         .eq('lider_id', liderId);
@@ -130,16 +130,16 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
       }));
       setReunioes(formattedReunioes);
 
-      // 4. Carregar treinandos do Supabase
-      const { data: treinandosData } = await supabase
+      // 4. Carregar treinandos do servidor
+      const { data: treinandosData } = await api
         .from('treinandos')
         .select('*')
         .eq('lider_id', liderId);
 
       setTreinandos((treinandosData || []).map(mapToTSTreinando));
 
-      // 5. Carregar histórico_tamanho do Supabase
-      const { data: histData } = await supabase
+      // 5. Carregar histórico_tamanho do servidor
+      const { data: histData } = await api
         .from('historico_tamanho')
         .select('*')
         .eq('lider_id', liderId)
@@ -148,7 +148,7 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
       setHistoricoTamanho((histData || []).map(mapToTS_Local));
 
     } catch (error: any) {
-      console.error('Erro ao buscar dados secundários no Supabase:', error);
+      console.error('Erro ao buscar dados secundários do servidor:', error);
     } finally {
       setLoading(false);
     }
@@ -194,7 +194,7 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
     const val = e.target.value;
     setGrupoNome(val);
     try {
-      await supabase.from('profiles').upsert({ id: liderId, nome_grupo: val });
+      await api.from('profiles').upsert({ id: liderId, nome_grupo: val });
     } catch (error) {
       console.error('Erro ao salvar nome do grupo:', error);
     }
@@ -209,7 +209,7 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
     setLoading(true);
     try {
       // Upsert no historico_tamanho table
-      const { error } = await supabase
+      const { error } = await api
         .from('historico_tamanho')
         .upsert({
           lider_id: liderId,
@@ -236,7 +236,7 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
 
     setLoading(true);
     try {
-      const { data, error } = await supabase
+      const { data, error } = await api
         .from('treinandos')
         .insert(mapToDBTreinando({ nome: novoTreinandoNome.trim(), dataInicio: novoTreinandoData }, liderId))
         .select()
@@ -260,7 +260,7 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
     if (confirm("Deseja interromper a formação deste treinando?")) {
       setLoading(true);
       try {
-        const { error } = await supabase
+        const { error } = await api
           .from('treinandos')
           .delete()
           .eq('id', id);
@@ -328,7 +328,7 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
   };
 
   const handleSair = async () => {
-    const { error } = await supabase.auth.signOut()
+    const { error } = await api.auth.signOut()
     if (error) {
       console.error('Erro ao sair:', error)
       alert('Erro ao sair. Tente novamente.')

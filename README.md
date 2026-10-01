@@ -1,20 +1,25 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# Leader NJ — App do Líder de GA
 
-# Run and deploy your AI Studio app
+Aplicação web responsiva (celular, tablet e desktop) para líderes de GA acompanharem
+membros, reuniões, eventos, pedidos de oração e recursos.
 
-This contains everything you need to run your app locally.
+## Estrutura
 
-View your app in AI Studio: https://ai.studio/apps/d146a4fc-9f11-499a-bfc7-24330a934337
+- `src/` — front-end em React + TypeScript + Tailwind (Vite).
+- `server/` — backend em Express com Postgres: login (`/api/auth`), dados (`/api/db`) e arquivos (`/api/storage`).
+- `server/schema.sql` — tabelas do banco, criadas automaticamente quando o servidor sobe.
 
-## Run Locally
+## Rodar localmente
 
-**Prerequisites:**  Node.js
+Pré-requisito: Node.js 20+.
 
+1. `npm install`
+2. `npm run dev` — abre em http://localhost:3000 (API e front no mesmo servidor, com recarga automática).
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+Sem `DATABASE_URL` definida, o servidor sobe um Postgres local próprio, com os dados na pasta `.pgdata/`.
+Para usar outro banco, copie `.env.example` para `.env` e preencha.
+
+## Produção (Railway)
+
+- Build: `npm run build` · Start: `npm start`
+- Variáveis do serviço: `DATABASE_URL` (referência ao Postgres do projeto) e `JWT_SECRET`.

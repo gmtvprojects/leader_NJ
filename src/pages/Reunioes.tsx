@@ -14,7 +14,7 @@ import {
   FileText,
   Loader2
 } from "lucide-react";
-import { supabase } from "../lib/supabase";
+import { api } from "../lib/api";
 import { Membro, Reuniao } from "../types";
 import { extrairMetadadosMembro } from "../utils/membroUtils";
 
@@ -85,8 +85,8 @@ export default function Reunioes({ liderId }: ReunioesProps) {
   const carregarDados = async () => {
     setLoading(true);
     try {
-      // 1. Carregar membros do Supabase
-      const { data: membrosData, error: membrosError } = await supabase
+      // 1. Carregar membros do servidor
+      const { data: membrosData, error: membrosError } = await api
         .from('membros')
         .select('*')
         .eq('lider_id', liderId);
@@ -95,7 +95,7 @@ export default function Reunioes({ liderId }: ReunioesProps) {
       setMembros((membrosData || []).map(mapToTSMembro));
 
       // 2. Carregar reuniões com JOIN de presenças
-      const { data: reunioesData, error: reunioesError } = await supabase
+      const { data: reunioesData, error: reunioesError } = await api
         .from('reunioes')
         .select('*, reuniao_presencas(membro_id)')
         .eq('lider_id', liderId)
@@ -137,7 +137,7 @@ export default function Reunioes({ liderId }: ReunioesProps) {
     setLoading(true);
     try {
       // 1. Criar reunião
-      const { data: novaReuniaoData, error: reuniaoError } = await supabase
+      const { data: novaReuniaoData, error: reuniaoError } = await api
         .from('reunioes')
         .insert({
           lider_id: liderId,
@@ -160,7 +160,7 @@ export default function Reunioes({ liderId }: ReunioesProps) {
           membro_id: mId
         }));
 
-        const { error: presencasError } = await supabase
+        const { error: presencasError } = await api
           .from('reuniao_presencas')
           .insert(presencasParaInserir);
 
@@ -179,7 +179,7 @@ export default function Reunioes({ liderId }: ReunioesProps) {
           if (novasFaltas >= 2) novoStatus = "Ausente";
         }
 
-        return supabase
+        return api
           .from('membros')
           .update({
             faltas: novasFaltas,
@@ -220,7 +220,7 @@ export default function Reunioes({ liderId }: ReunioesProps) {
     if (confirm("Deseja mesmo remover esta reunião do histórico?")) {
       setLoading(true);
       try {
-        const { error } = await supabase
+        const { error } = await api
           .from('reunioes')
           .delete()
           .eq('id', id);

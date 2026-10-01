@@ -22,7 +22,7 @@ import {
 } from "lucide-react";
 import * as mammoth from "mammoth";
 import BibleReader from "../components/BibleReader";
-import { supabase } from "../lib/supabase";
+import { api } from "../lib/api";
 import * as pdfjsLib from 'pdfjs-dist';
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = 
@@ -313,7 +313,7 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
   const abrirDocumento = async () => {
     if (!recursoAtivo?.arquivo_path) return;
     try {
-      const { data, error } = await supabase.storage
+      const { data, error } = await api.storage
         .from('meditacoes')
         .createSignedUrl(recursoAtivo.arquivo_path, 3600);
       if (error) throw error;
@@ -332,8 +332,8 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
     setPdfPaginas([]);
     
     try {
-      // Baixar o arquivo do Supabase Storage
-      const { data: blob, error } = await supabase.storage
+      // Baixar o arquivo do servidor
+      const { data: blob, error } = await api.storage
         .from('meditacoes')
         .download(arquivePath);
       
@@ -398,7 +398,7 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
     setLoading(true);
     try {
       // 1. Carregar temas do Líder ou Globais (lider_id IS NULL)
-      const { data: dbTemas, error: errorTemas } = await supabase
+      const { data: dbTemas, error: errorTemas } = await api
         .from('banco_temas')
         .select('*')
         .or(`lider_id.eq.${liderId},lider_id.is.null`);
@@ -413,7 +413,7 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
       setTemas(listTemas);
 
       // 2. Carregar recursos do Líder ou Globais
-      const { data: dbRecursos, error: errorRecursos } = await supabase
+      const { data: dbRecursos, error: errorRecursos } = await api
         .from('banco_recursos')
         .select('*')
         .or(`lider_id.eq.${liderId},lider_id.is.null`)
@@ -924,7 +924,7 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
   };
 
   // ==========================================
-  // SALVAR / CRIAR RECURSO (CRUD COM SUPABASE & STORAGE)
+  // SALVAR / CRIAR RECURSO (BANCO + ARQUIVOS)
   // ==========================================
   const handleSalvarRecurso = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -950,13 +950,13 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
     setLoading(true);
     try {
       if (recursoModalMode === "editar" && editingRecursoId) {
-        // Upload do arquivo para o Supabase Storage se um arquivo novo foi selecionado
+        // Upload do arquivo para o servidor se um arquivo novo foi selecionado
         if (recursoFormTipo === "meditacao" && selectedFileObject) {
           const fileExt = recursoFormTipoArquivo || "pdf";
           const storagePath = `${editingRecursoId}.${fileExt}`;
 
           // Salvar elemento no bucket de "meditacoes"
-          const { error: uploadError } = await supabase.storage
+          const { error: uploadError } = await api.storage
             .from("meditacoes")
             .upload(storagePath, selectedFileObject, {
               cacheControl: "3600",
@@ -965,7 +965,7 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
 
           if (uploadError) {
             console.warn("Criando bucket meditacoes ou tentando upload...", uploadError);
-            throw new Error(`Erro ao enviar arquivo para o Supabase Storage: ${uploadError.message}`);
+            throw new Error(`Erro ao enviar arquivo para o servidor: ${uploadError.message}`);
           }
         }
 
@@ -985,7 +985,7 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
           criado_em: new Date().toISOString()
         };
 
-        const { error: updateError } = await supabase
+        const { error: updateError } = await api
           .from("banco_recursos")
           .update(dbRow)
           .eq("id", editingRecursoId);
@@ -1008,7 +1008,7 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
           criado_em: new Date().toISOString()
         };
 
-        const { data: insertedRecurso, error: insertError } = await supabase
+        const { data: insertedRecurso, error: insertError } = await api
           .from("banco_recursos")
           .insert(dbRowSemId)
           .select()
@@ -1017,12 +1017,12 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
         if (insertError) throw insertError;
         if (!insertedRecurso) throw new Error("Falha ao registrar novo recurso.");
 
-        // Se for meditação e tiver arquivo, efetuamos o upload usando o ID gerado pelo Supabase
+        // Se for meditação e tiver arquivo, efetuamos o upload usando o ID gerado pelo banco
         if (recursoFormTipo === "meditacao" && selectedFileObject) {
           const fileExt = recursoFormTipoArquivo || "pdf";
           const storagePath = `${insertedRecurso.id}.${fileExt}`;
 
-          const { error: uploadError } = await supabase.storage
+          const { error: uploadError } = await api.storage
             .from("meditacoes")
             .upload(storagePath, selectedFileObject, {
               cacheControl: "3600",
@@ -1032,8 +1032,8 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
           if (uploadError) {
             console.warn("Erro no upload do arquivo após salvar banco de recursos:", uploadError);
             // Deletar o registro inserido se houver pane no storage
-            await supabase.from("banco_recursos").delete().eq("id", insertedRecurso.id);
-            throw new Error(`Erro ao enviar arquivo para o Supabase Storage: ${uploadError.message}`);
+            await api.from("banco_recursos").delete().eq("id", insertedRecurso.id);
+            throw new Error(`Erro ao enviar arquivo para o servidor: ${uploadError.message}`);
           }
         }
       }
@@ -1052,7 +1052,7 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
   };
 
   // ==========================================
-  // SALVAR / CRIAR TEMA (CRUD COM SUPABASE)
+  // SALVAR / CRIAR TEMA (BANCO)
   // ==========================================
   const handleSalvarTema = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -1061,7 +1061,7 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
     setLoading(true);
     try {
       if (temaModalMode === "editar" && editingTemaId) {
-        const { error: updateError } = await supabase
+        const { error: updateError } = await api
           .from("banco_temas")
           .update({
             titulo: temaFormTitulo.trim(),
@@ -1072,7 +1072,7 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
 
         if (updateError) throw updateError;
       } else {
-        const { data, error: insertError } = await supabase
+        const { data, error: insertError } = await api
           .from("banco_temas")
           .insert({
             titulo: temaFormTitulo.trim(),
@@ -1135,7 +1135,7 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
     if (confirm("Deseja mesmo excluir permanentemente este recurso pastoral?")) {
       setLoading(true);
       try {
-        const { error: deleteError } = await supabase
+        const { error: deleteError } = await api
           .from("banco_recursos")
           .delete()
           .eq("id", recursoId);
@@ -1146,7 +1146,7 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
         const rec = recursos.find(r => r.id === recursoId);
         if (rec?.tipo === "meditacao") {
           const fileName = `${recursoId}.${rec.tipoArquivo || "pdf"}`;
-          await supabase.storage.from("meditacoes").remove([fileName]);
+          await api.storage.from("meditacoes").remove([fileName]);
         }
 
         alert("Item expurgado com sucesso!");
@@ -1180,7 +1180,7 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
     if (confirm(`Atenção: Excluir o tema "${t.titulo}" do seu controle? Seus recursos continuarão existindo, mas perderão essa associação.`)) {
       setLoading(true);
       try {
-        const { error: deleteError } = await supabase
+        const { error: deleteError } = await api
           .from("banco_temas")
           .delete()
           .eq("id", temaId);
@@ -1191,7 +1191,7 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
         const recursosModificados = recursos.filter(r => r.temas.includes(temaId));
         for (const r of recursosModificados) {
           const novasTags = r.temas.filter(tid => tid !== temaId);
-          await supabase
+          await api
             .from("banco_recursos")
             .update({ temas: novasTags })
             .eq("id", r.id);
@@ -1214,7 +1214,7 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
     }
   };
 
-  // DOWNLOAD / VISUALIZAÇÃO COM SUPABASE STORAGE URL
+  // DOWNLOAD / VISUALIZAÇÃO COM URL ASSINADA
   const handleVisualizarMeditacao = async (recurso: Recurso) => {
     setActiveMeditacao(recurso);
     setMedDetailTab("visualizar");
@@ -1228,13 +1228,13 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
       const fileName = `${recurso.id}.${recurso.tipoArquivo || "pdf"}`;
       
       // Tentar obter url assinada pública para download imediato
-      const { data, error } = await supabase.storage
+      const { data, error } = await api.storage
         .from("meditacoes")
         .createSignedUrl(fileName, 300);
 
       let downloadUrl = "";
       if (error || !data?.signedUrl) {
-        const { data: fallbackObj } = supabase.storage
+        const { data: fallbackObj } = api.storage
           .from("meditacoes")
           .getPublicUrl(fileName);
         downloadUrl = fallbackObj?.publicUrl || "";
@@ -1257,7 +1257,7 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
 
     } catch (err: any) {
       console.error("Erro ao baixar documento:", err);
-      alert("Não foi possível encontrar o arquivo base no Supabase Storage.");
+      alert("Não foi possível encontrar o arquivo base no servidor.");
     } finally {
       setLoading(false);
     }

@@ -11,7 +11,7 @@ import {
   Calendar,
   Loader2
 } from "lucide-react";
-import { supabase } from "../lib/supabase";
+import { api } from "../lib/api";
 
 interface MembroAniversariante {
   id: string;
@@ -57,7 +57,7 @@ export default function Aniversariantes({ liderId, onVoltar }: AniversariantesPr
   const carregarAniversariantes = async () => {
     setLoading(true);
     try {
-      const { data, error } = await supabase
+      const { data, error } = await api
         .from("membros")
         .select("id, nome, aniversario, linguagem_amor, contato1, contato2")
         .eq("lider_id", liderId);
