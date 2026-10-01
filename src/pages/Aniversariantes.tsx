@@ -36,6 +36,8 @@ export default function Aniversariantes({ liderId, onVoltar }: AniversariantesPr
   const [loading, setLoading] = useState<boolean>(true);
   const [celebrados, setCelebrados] = useState<{ [key: string]: boolean }>({});
   const [expandedCardId, setExpandedCardId] = useState<string | null>(null);
+  const [aba, setAba] = useState<"proximos" | "calendario">("proximos");
+  const [mesesAbertos, setMesesAbertos] = useState<number[]>([new Date().getMonth()]);
 
   // Obter formato YYYY-MM-DD para hoje
   const obterDataHojeStr = () => {
@@ -229,12 +231,13 @@ export default function Aniversariantes({ liderId, onVoltar }: AniversariantesPr
   const secEsteMes = membros.filter(m => m.diffDays >= 8 && m.proximoNiver.getMonth() === hojeMes);
   const secProximos = membros.filter(m => m.diffDays > 7 && m.proximoNiver.getMonth() !== hojeMes);
 
-  const obterNomeMesAtual = () => {
-    const meses = [
-      "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
-      "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
-    ];
-    return `${meses[hojeMes]} ${hoje.getFullYear()}`;
+  const NOMES_MESES = [
+    "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+    "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+  ];
+
+  const alternarMes = (mes: number) => {
+    setMesesAbertos(prev => prev.includes(mes) ? prev.filter(x => x !== mes) : [...prev, mes]);
   };
 
   return (
@@ -256,14 +259,111 @@ export default function Aniversariantes({ liderId, onVoltar }: AniversariantesPr
           </div>
           <p className="text-[0.625rem] italic text-[#0f766e]">Firme na Palavra e no Amor</p>
         </div>
-        <span className="text-[0.625rem] font-black uppercase tracking-wider bg-teal-50 dark:bg-teal-950/40 text-[#0f766e] dark:text-teal-300 px-3 py-1.5 rounded-xl border border-teal-200/40">
-          {obterNomeMesAtual()}
-        </span>
       </header>
+
+      {/* ABAS */}
+      <div className="px-4 pt-4">
+        <div className="inline-flex bg-white dark:bg-zinc-900 border border-gray-150 dark:border-zinc-800 rounded-xl p-1 gap-1">
+          {([["proximos", "Próximos"], ["calendario", "Calendário"]] as const).map(([id, label]) => (
+            <button
+              key={id}
+              type="button"
+              onClick={() => setAba(id)}
+              className={`px-4 py-1.5 rounded-lg text-[0.6563rem] font-extrabold uppercase tracking-wider transition cursor-pointer ${
+                aba === id
+                  ? "bg-teal-700 text-white shadow-sm"
+                  : "text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800"
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
 
       <div className="flex-1 p-4 space-y-6">
 
-        {loading ? (
+        {aba === "calendario" ? (
+          /* CALENDÁRIO: TODOS OS MESES DO ANO */
+          <div className="grid grid-cols-1 lg:grid-cols-2 items-start gap-3">
+            {NOMES_MESES.map((nomeMes, mes) => {
+              const doMes = membros
+                .filter(m => m.mesNiver === mes)
+                .sort((x, y) => x.diaNiver - y.diaNiver);
+              const aberto = mesesAbertos.includes(mes);
+              const ehMesAtual = mes === hojeMes;
+
+              return (
+                <div
+                  key={mes}
+                  className={`bg-white dark:bg-zinc-900 border rounded-2xl overflow-hidden ${
+                    ehMesAtual ? "border-teal-300 dark:border-teal-800" : "border-gray-150 dark:border-zinc-800"
+                  }`}
+                >
+                  <button
+                    type="button"
+                    onClick={() => alternarMes(mes)}
+                    className="w-full flex items-center justify-between gap-3 px-4 py-3 text-left cursor-pointer"
+                    aria-expanded={aberto}
+                  >
+                    <span className="flex items-center gap-2">
+                      <span className="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white">{nomeMes}</span>
+                      {ehMesAtual && (
+                        <span className="text-[0.5rem] font-black uppercase tracking-wider bg-teal-50 dark:bg-teal-950/40 text-teal-700 dark:text-teal-300 px-1.5 py-0.5 rounded">Atual</span>
+                      )}
+                    </span>
+                    <span className="flex items-center gap-2">
+                      <span className={`text-[0.5625rem] font-black uppercase tracking-wider px-2 py-1 rounded-lg ${
+                        doMes.length > 0
+                          ? "bg-teal-50 dark:bg-teal-950/40 text-teal-800 dark:text-teal-300"
+                          : "bg-gray-100 dark:bg-zinc-800 text-gray-400"
+                      }`}>
+                        {doMes.length} {doMes.length === 1 ? "aniversariante" : "aniversariantes"}
+                      </span>
+                      {aberto ? <ChevronUp className="w-4 h-4 text-gray-400" /> : <ChevronDown className="w-4 h-4 text-gray-400" />}
+                    </span>
+                  </button>
+
+                  {aberto && (
+                    <div className="border-t border-gray-100 dark:border-zinc-800/80 px-4 py-2 animate-fadeIn">
+                      {doMes.length === 0 ? (
+                        <p className="py-3 text-[0.6875rem] text-gray-400 italic">Nenhum aniversariante neste mês.</p>
+                      ) : (
+                        doMes.map(m => {
+                          const linkWa = obterLinkWhatsapp(obterContatoPrincipal(m));
+                          return (
+                            <div key={m.id} className="flex items-center justify-between gap-3 py-2.5 border-b last:border-b-0 border-gray-100 dark:border-zinc-800/60">
+                              <div className="flex items-center gap-3 min-w-0">
+                                <div className="w-9 h-9 bg-teal-600 text-white rounded-full flex flex-col items-center justify-center font-black text-xs shrink-0 leading-none">
+                                  {m.diaNiver}
+                                </div>
+                                <div className="min-w-0">
+                                  <h4 className="font-bold text-xs text-slate-900 dark:text-white truncate">{m.nome}</h4>
+                                  <p className="text-[0.625rem] text-gray-400 uppercase font-semibold mt-0.5">{formatarDataLocal(m.mesNiver, m.diaNiver)}</p>
+                                </div>
+                              </div>
+                              {linkWa && (
+                                <a
+                                  href={linkWa}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="w-8 h-8 rounded-full bg-[#25d366]/10 text-[#25d366] flex items-center justify-center hover:bg-[#25d366]/20 transition shrink-0"
+                                  aria-label="Enviar mensagem no WhatsApp"
+                                >
+                                  <MessageCircle className="w-4 h-4" />
+                                </a>
+                              )}
+                            </div>
+                          );
+                        })
+                      )}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        ) : loading ? (
           /* SKELETON LOADERS */
           <div className="space-y-4">
             <div className="h-6 w-32 bg-gray-200 dark:bg-zinc-800 rounded-lg animate-pulse" />
