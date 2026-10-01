@@ -133,6 +133,10 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
   const [busca, setBusca] = useState("");
   const [filtroStatus, setFiltroStatus] = useState("Todos");
   const [filtroGa, setFiltroGa] = useState("Todos");
+  const [pedidosMembro, setPedidosMembro] = useState<any[]>([]);
+  const [acompanhamento, setAcompanhamento] = useState("");
+  const [salvandoAcompanhamento, setSalvandoAcompanhamento] = useState(false);
+  const [ordenacao, setOrdenacao] = useState<"padrao" | "velho" | "novo" | "admissao">("padrao");
   const [abaFicha, setAbaFicha] = useState<"presenca" | "ausencias">("presenca");
 
   // Modal rápido para registrar motivo de ausência ou contato pastoral
@@ -430,6 +434,49 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
     return diffDays >= 0 && diffDays <= 7;
   };
 
+  // Ao abrir a ficha: carrega os pedidos de oração em aberto e o acompanhamento pastoral
+  useEffect(() => {
+    if (!membroSelecionado) {
+      setPedidosMembro([]);
+      return;
+    }
+    setAcompanhamento(membroSelecionado.notas || "");
+    let cancelado = false;
+    api
+      .from('oracao_pedidos')
+      .select('*')
+      .eq('lider_id', liderId)
+      .eq('membro_id', membroSelecionado.id)
+      .eq('status', 'pendente')
+      .order('criado_em', { ascending: false })
+      .then(({ data }: any) => {
+        if (!cancelado) setPedidosMembro(data || []);
+      });
+    return () => { cancelado = true; };
+  }, [membroSelecionado?.id, liderId]);
+
+  const salvarAcompanhamento = async () => {
+    if (!membroSelecionado) return;
+    setSalvandoAcompanhamento(true);
+    try {
+      const atualizado: Membro = { ...membroSelecionado, notas: acompanhamento.trim() };
+      const { error } = await api
+        .from('membros')
+        .update(mapToDB(atualizado, liderId))
+        .eq('id', membroSelecionado.id);
+      if (error) throw error;
+
+      setMembros(prev => prev.map(m => m.id === atualizado.id ? atualizado : m));
+      setMembroSelecionado(atualizado);
+      setAcompanhamento(atualizado.notas);
+    } catch (err) {
+      console.error("Erro ao salvar acompanhamento:", err);
+      alert("Não foi possível salvar o acompanhamento pastoral.");
+    } finally {
+      setSalvandoAcompanhamento(false);
+    }
+  };
+
   // Registro do membro em cada reunião (da mais recente para a mais antiga)
   const obterRegistroReunioes = (membroId: string) => {
     return [...reunioes]
@@ -453,7 +500,7 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
   const jovensAusentes = membros.filter(m => m.status === "Ausente" || m.faltas >= 2);
 
   // Filtragem dos membros
-  const membrosFiltrados = membros.filter(m => {
+  const membrosFiltradosBase = membros.filter(m => {
     const buscaLower = busca.toLowerCase();
     const correspondeBusca = 
       m.nome.toLowerCase().includes(buscaLower) || 
@@ -481,6 +528,20 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
       return !m.ga || m.ga === "Sem GA / A Definir" || m.ga === "Aguardando GA";
     }
     return m.status.toLowerCase() === filtroStatus.toLowerCase();
+  });
+
+  // Ordenação escolhida (sem data fica sempre por último)
+  const membrosFiltrados = [...membrosFiltradosBase].sort((a, b) => {
+    const tempo = (d?: string) => (d ? new Date(d + "T12:00:00").getTime() : NaN);
+    const campo = ordenacao === "admissao" ? "dataEntrada" : "aniversario";
+    if (ordenacao === "padrao") return 0;
+    const ta = tempo(a[campo]);
+    const tb = tempo(b[campo]);
+    if (isNaN(ta) && isNaN(tb)) return 0;
+    if (isNaN(ta)) return 1;
+    if (isNaN(tb)) return -1;
+    // Mais velho = nascimento mais antigo; Mais novo e Admissão = data mais recente primeiro
+    return ordenacao === "velho" ? ta - tb : tb - ta;
   });
 
   return (
@@ -534,6 +595,19 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
             </div>
 
           </div>
+
+          <select
+            id="ordenacao-membros"
+            aria-label="Ordenar membros"
+            value={ordenacao}
+            onChange={(e) => setOrdenacao(e.target.value as any)}
+            className="w-full sm:w-64 text-xs px-3 py-2.5 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-2xl focus:outline-none focus:border-teal-500 text-slate-900 dark:text-white cursor-pointer"
+          >
+            <option value="padrao">Ordenar por...</option>
+            <option value="velho">Mais velho</option>
+            <option value="novo">Mais novo</option>
+            <option value="admissao">Data de admissão</option>
+          </select>
 
           {/* QUANTIDADE DE REGISTROS */}
           <div className="text-[0.625rem] font-semibold text-gray-400 uppercase tracking-widest leading-none flex justify-between items-center">
@@ -593,23 +667,29 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
                             <h4 className="text-xs font-bold text-slate-900 dark:text-white truncate font-sans">
                               {m.nome}
                             </h4>
-                            {idade !== null && (
-                              <span className="text-[0.5625rem] font-bold text-gray-500 dark:text-zinc-400 bg-gray-100 dark:bg-zinc-800 px-1.5 py-0.2 rounded-md shrink-0">
-                                {idade} anos
-                              </span>
-                            )}
                           </div>
 
                           {/* TAG DE TRANSIÇÃO E GA */}
                           <div className="flex items-center gap-1.5 flex-wrap text-[0.5938rem]">
                             {/* Tag do GA */}
-                            {isSemGa ? (
+                            {isSemGa && (
                               <span className="text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30 px-1.5 py-0.5 rounded-md font-black uppercase text-[0.5313rem] border border-amber-200 dark:border-amber-900/40">
                                 ⚠️ Sem G.A
                               </span>
-                            ) : (
+                            )}
+                            {m.aniversario && (
+                              <span className="text-rose-700 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/30 px-1.5 py-0.5 rounded-md font-bold text-[0.5313rem] border border-rose-100 dark:border-rose-900/30">
+                                🎂 {new Date(m.aniversario + "T12:00:00").toLocaleDateString("pt-BR")}
+                              </span>
+                            )}
+                            {idade !== null && (
+                              <span className="text-gray-600 dark:text-zinc-300 bg-gray-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-md font-bold text-[0.5313rem]">
+                                {idade} anos
+                              </span>
+                            )}
+                            {m.dataEntrada && (
                               <span className="text-teal-700 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/30 px-1.5 py-0.5 rounded-md font-bold text-[0.5313rem] border border-teal-100 dark:border-teal-900/30">
-                                📍 {m.ga}
+                                Admissão {new Date(m.dataEntrada + "T12:00:00").toLocaleDateString("pt-BR")}
                               </span>
                             )}
 
@@ -642,6 +722,28 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
                         }`}>
                           {m.status}
                         </span>
+                        {m.contato1 && (
+                          <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
+                            <a
+                              href={`tel:${m.contato1.replace(/\D/g, "")}`}
+                              className="p-1.5 bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 text-slate-700 dark:text-zinc-200 rounded-lg transition"
+                              title="Ligar"
+                              aria-label="Ligar"
+                            >
+                              <Phone className="w-3 h-3" />
+                            </a>
+                            <a
+                              href={gerarLinkWhatsApp(m, isAusente ? 'falta' : isTransicao ? 'acolhimento' : 'contato')}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="p-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition"
+                              title="Enviar WhatsApp"
+                              aria-label="Enviar WhatsApp"
+                            >
+                              <MessageCircle className="w-3 h-3" />
+                            </a>
+                          </div>
+                        )}
                       </div>
                     </div>
 
@@ -668,33 +770,6 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
                         )}
                       </div>
                     )}
-
-                    {/* BOTÕES RÁPIDOS DE CONTATO PASTORAL */}
-                    <div className="flex items-center justify-end pt-1 border-t border-gray-100 dark:border-zinc-800/80 text-[0.625rem]">
-                      <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
-                        {m.contato1 && (
-                          <>
-                            <a
-                              href={`tel:${m.contato1.replace(/\D/g, "")}`}
-                              className="p-1.5 bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 text-slate-700 dark:text-zinc-200 rounded-lg transition"
-                              title="Ligar"
-                            >
-                              <Phone className="w-3 h-3" />
-                            </a>
-                            <a
-                              href={gerarLinkWhatsApp(m, isAusente ? 'falta' : isTransicao ? 'acolhimento' : 'contato')}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="p-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition"
-                              title="Enviar WhatsApp"
-                              aria-label="Enviar WhatsApp"
-                            >
-                              <MessageCircle className="w-3 h-3" />
-                            </a>
-                          </>
-                        )}
-                      </div>
-                    </div>
 
                   </div>
                 );
@@ -747,9 +822,6 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
                       </span>
                     )}
                   </div>
-                  <p className="text-[0.625rem] text-gray-500 dark:text-zinc-400 mt-1 font-mono">
-                    G.A: <span className="font-bold text-slate-800 dark:text-zinc-200">{membroSelecionado.ga || "Sem G.A"}</span>
-                  </p>
                 </div>
               </div>
               <div className="flex gap-1.5">
@@ -919,14 +991,50 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
               </p>
             </div>
 
-            {/* NOTAS PASTORAIS LIVRES */}
-            <div className="space-y-1 bg-yellow-50/20 dark:bg-amber-950/5 border border-yellow-100 dark:border-amber-900/30 p-2.5 rounded-2xl">
-              <span className="block text-[0.5625rem] font-black text-amber-800 dark:text-amber-400 uppercase tracking-wide flex items-center gap-1">
-                <AlertCircle className="w-3 h-3 text-amber-500 fill-amber-500" /> Notas Pastorais & Pedidos de Oração
+            {/* PEDIDOS DE ORAÇÃO EM ABERTO */}
+            <div className="space-y-2 bg-rose-50/30 dark:bg-rose-950/5 border border-rose-100 dark:border-rose-900/30 p-3 rounded-2xl">
+              <span className="block text-[0.5625rem] font-black text-rose-700 dark:text-rose-400 uppercase tracking-wide flex items-center gap-1">
+                <Heart className="w-3 h-3 text-rose-500 fill-rose-500" /> Pedidos de Oração
               </span>
-              <p className="text-[0.6875rem] leading-relaxed text-slate-700 dark:text-zinc-300 italic whitespace-pre-line">
-                {membroSelecionado.notas || "Nenhuma nota pastoral cadastrada. Você pode editar para adicionar lembretes."}
-              </p>
+              {pedidosMembro.length === 0 ? (
+                <p className="text-[0.6875rem] text-gray-400 italic">Nenhum pedido de oração em aberto.</p>
+              ) : (
+                <div className="space-y-1.5">
+                  {pedidosMembro.map(o => (
+                    <div key={o.id} className="p-2.5 bg-white dark:bg-zinc-900 border border-rose-100/70 dark:border-zinc-800 rounded-xl">
+                      <span className="block text-[0.5625rem] font-mono text-gray-400 mb-0.5">
+                        {o.criado_em ? new Date(String(o.criado_em).substring(0, 10) + "T12:00:00").toLocaleDateString("pt-BR") : ""}
+                      </span>
+                      <p className="text-[0.6875rem] leading-relaxed text-slate-700 dark:text-zinc-300 italic">"{o.texto}"</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* ACOMPANHAMENTO PASTORAL (TEXTO LIVRE) */}
+            <div className="space-y-2 bg-yellow-50/20 dark:bg-amber-950/5 border border-yellow-100 dark:border-amber-900/30 p-3 rounded-2xl">
+              <label htmlFor="acompanhamento-pastoral" className="block text-[0.5625rem] font-black text-amber-800 dark:text-amber-400 uppercase tracking-wide flex items-center gap-1">
+                <AlertCircle className="w-3 h-3 text-amber-500 fill-amber-500" /> Acompanhamento Pastoral
+              </label>
+              <textarea
+                id="acompanhamento-pastoral"
+                rows={4}
+                value={acompanhamento}
+                onChange={(e) => setAcompanhamento(e.target.value)}
+                placeholder="Registre aqui o acompanhamento pastoral deste membro..."
+                className="w-full text-xs p-3 bg-white dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-xl focus:outline-none focus:border-teal-500 text-slate-900 dark:text-white leading-relaxed resize-none"
+              />
+              {acompanhamento !== (membroSelecionado.notas || "") && (
+                <button
+                  type="button"
+                  onClick={salvarAcompanhamento}
+                  disabled={salvandoAcompanhamento}
+                  className="w-full h-9 bg-teal-700 hover:bg-teal-600 text-white font-bold text-[0.625rem] uppercase tracking-wider rounded-xl cursor-pointer disabled:opacity-50"
+                >
+                  {salvandoAcompanhamento ? "Salvando..." : "Salvar Acompanhamento"}
+                </button>
+              )}
             </div>
 
             {/* BOTÕES DE AÇÕES DIRETAS (LIGAR / WHATSAPP PASTORAL) */}
@@ -986,7 +1094,7 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
                 {view === "cadastro" ? "Nova Ficha de Jovem" : "Ajustar Cadastro"}
               </h2>
               <h1 className="text-base font-bold text-slate-900 dark:text-white">
-                {view === "cadastro" ? "Registrar Jovem no App" : "Editar Ficha"}
+                {view === "cadastro" ? "Registrar Membro" : "Editar Ficha"}
               </h1>
             </div>
           </header>
@@ -994,34 +1102,6 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
           {/* CAMPOS DO FORMULARIO CARD */}
           <div className="bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 rounded-3xl p-5 space-y-4 text-xs font-sans">
             
-            {/* TOGGLE ESPECIAL: TRANSIÇÃO JOVENS 1 -> JOVENS 2 */}
-            <div className="p-3.5 bg-gradient-to-br from-teal-50 to-emerald-50 dark:from-teal-950/40 dark:to-zinc-900 border border-teal-200 dark:border-teal-900/50 rounded-2xl space-y-2">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={formOrigemTransicao}
-                  onChange={(e) => {
-                    const checked = e.target.checked;
-                    setFormOrigemTransicao(checked);
-                    if (checked) {
-                      setFormFaixa("J1");
-                      if (formStatus === "Ativo") setFormStatus("Transição");
-                    } else {
-                      setFormFaixa("J2");
-                      if (formStatus === "Transição") setFormStatus("Ativo");
-                    }
-                  }}
-                  className="w-4 h-4 text-teal-600 rounded border-gray-300 focus:ring-teal-500 cursor-pointer"
-                />
-                <span className="font-bold text-teal-900 dark:text-teal-200 text-xs flex items-center gap-1">
-                  <Sparkles className="w-3.5 h-3.5 text-teal-600" /> Jovem vindo do Jovens 1 (até 17 anos) para o Jovens 2 (18 a 30)
-                </span>
-              </label>
-              <p className="text-[0.625rem] text-teal-700 dark:text-teal-400 pl-6 leading-tight">
-                Marque para acompanhar a integração, frequência nas primeiras semanas e alocação no G.A.
-              </p>
-            </div>
-
             {/* Nome Completo */}
             <div className="space-y-1">
               <label htmlFor="form-nome" className="block text-[0.625rem] font-black text-gray-400 uppercase tracking-widest font-sans">
@@ -1244,6 +1324,34 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
                   <option value="MIX">MIX (Liderança / Geral)</option>
                 </select>
               </div>
+            </div>
+
+            {/* JOVEM EM TRANSIÇÃO DO J1 */}
+            <div className="p-3.5 bg-gradient-to-br from-teal-50 to-emerald-50 dark:from-teal-950/40 dark:to-zinc-900 border border-teal-200 dark:border-teal-900/50 rounded-2xl space-y-2">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={formOrigemTransicao}
+                  onChange={(e) => {
+                    const checked = e.target.checked;
+                    setFormOrigemTransicao(checked);
+                    if (checked) {
+                      setFormFaixa("J1");
+                      if (formStatus === "Ativo") setFormStatus("Transição");
+                    } else {
+                      setFormFaixa("J2");
+                      if (formStatus === "Transição") setFormStatus("Ativo");
+                    }
+                  }}
+                  className="w-4 h-4 text-teal-600 rounded border-gray-300 focus:ring-teal-500 cursor-pointer"
+                />
+                <span className="font-bold text-teal-900 dark:text-teal-200 text-xs flex items-center gap-1">
+                  <Sparkles className="w-3.5 h-3.5 text-teal-600" /> Jovem em transição do J1
+                </span>
+              </label>
+              <p className="text-[0.625rem] text-teal-700 dark:text-teal-400 pl-6 leading-tight">
+                Marque para acompanhar a integração, frequência nas primeiras semanas e alocação no G.A.
+              </p>
             </div>
 
             {/* Treinando */}
