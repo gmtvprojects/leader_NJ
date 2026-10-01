@@ -211,7 +211,6 @@ export default function App() {
       {/* MENU LATERAL (TABLET / DESKTOP) */}
       <aside className="hidden md:flex fixed inset-y-0 left-0 w-20 lg:w-60 flex-col bg-white dark:bg-zinc-900 border-r border-gray-100 dark:border-zinc-800/80 z-40 py-5 px-3">
         <div className="px-2 pb-5 hidden lg:block">
-          <p className="text-[0.625rem] font-sans font-bold uppercase tracking-widest text-teal-700 dark:text-teal-400">Liderança Pastoral</p>
           <p className="text-sm font-sans font-bold text-slate-900 dark:text-white mt-0.5">Painel do Líder</p>
         </div>
 
