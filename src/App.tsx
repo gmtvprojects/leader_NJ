@@ -96,7 +96,7 @@ function MenuInferiorMobile({ activeTab, onSelect }: { activeTab: string; onSele
             key={id}
             data-ativo={activeTab === id}
             onClick={() => onSelect(id)}
-            className={`snap-center shrink-0 w-[22vw] max-w-24 flex flex-col items-center justify-center h-full py-1 text-center cursor-pointer transition-all ${
+            className={`snap-center shrink-0 min-w-16 px-3 flex flex-col items-center justify-center h-full py-1 text-center cursor-pointer transition-all ${
               activeTab === id
                 ? "text-teal-700 dark:text-teal-400 scale-[1.05]"
                 : "text-gray-400 hover:text-gray-600 dark:text-zinc-500"
