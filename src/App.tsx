@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { 
   House, 
   Users, 
@@ -7,7 +7,9 @@ import {
   Menu,
   HeartHandshake,
   Library,
-  Cake
+  Cake,
+  ChevronLeft,
+  ChevronRight
 } from "lucide-react";
 
 import { api } from "./lib/api";
@@ -37,12 +39,98 @@ const NAV_SECUNDARIA = [
   { id: "aniversariantes", label: "Aniversariantes", Icon: Cake },
 ];
 
+// Menu inferior (mobile): carrossel com todas as opções; "Mais" fica por último
+const NAV_MOBILE = [
+  ...NAV_PRINCIPAL.filter((n) => n.id !== "mais"),
+  ...NAV_SECUNDARIA,
+  NAV_PRINCIPAL.find((n) => n.id === "mais")!,
+];
+
 const ABAS_VALIDAS = [...NAV_PRINCIPAL, ...NAV_SECUNDARIA].map((n) => n.id);
 
 // Lê a aba ativa a partir do hash da URL (ex.: #/membros)
 function abaDoHash(): string {
   const id = window.location.hash.replace(/^#\/?/, "");
   return ABAS_VALIDAS.includes(id) ? id : "inicio";
+}
+
+function MenuInferiorMobile({ activeTab, onSelect }: { activeTab: string; onSelect: (id: string) => void }) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [podeEsquerda, setPodeEsquerda] = useState(false);
+  const [podeDireita, setPodeDireita] = useState(false);
+
+  const atualizarSetas = () => {
+    const el = scrollRef.current;
+    if (!el) return;
+    setPodeEsquerda(el.scrollLeft > 4);
+    setPodeDireita(el.scrollLeft + el.clientWidth < el.scrollWidth - 4);
+  };
+
+  useEffect(() => {
+    atualizarSetas();
+    window.addEventListener("resize", atualizarSetas);
+    return () => window.removeEventListener("resize", atualizarSetas);
+  }, []);
+
+  // Mantém a aba ativa visível no carrossel
+  useEffect(() => {
+    const ativo = scrollRef.current?.querySelector<HTMLElement>('[data-ativo="true"]');
+    ativo?.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" });
+  }, [activeTab]);
+
+  const rolar = (direcao: -1 | 1) => {
+    const el = scrollRef.current;
+    if (!el) return;
+    el.scrollBy({ left: direcao * el.clientWidth * 0.6, behavior: "smooth" });
+  };
+
+  return (
+    <footer className="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md border-t border-gray-100 dark:border-zinc-800/80 h-16 z-40 shadow-[0_-2px_10px_rgba(0,0,0,0.02)]">
+      <div
+        ref={scrollRef}
+        onScroll={atualizarSetas}
+        className="no-scrollbar h-full flex items-center overflow-x-auto snap-x snap-proximity scroll-smooth px-6"
+      >
+        {NAV_MOBILE.map(({ id, label, Icon }) => (
+          <button
+            key={id}
+            data-ativo={activeTab === id}
+            onClick={() => onSelect(id)}
+            className={`snap-center shrink-0 w-[22vw] max-w-24 flex flex-col items-center justify-center h-full py-1 text-center cursor-pointer transition-all ${
+              activeTab === id
+                ? "text-teal-700 dark:text-teal-400 scale-[1.05]"
+                : "text-gray-400 hover:text-gray-600 dark:text-zinc-500"
+            }`}
+            aria-label={`Aba ${label}`}
+          >
+            <Icon className="w-5 h-5" />
+            <span className="text-[0.625rem] font-sans font-bold mt-1.5 uppercase tracking-wide whitespace-nowrap">{label}</span>
+          </button>
+        ))}
+      </div>
+
+      {podeEsquerda && (
+        <button
+          type="button"
+          onClick={() => rolar(-1)}
+          className="absolute left-0 top-0 h-full w-6 flex items-center justify-center bg-gradient-to-r from-white dark:from-zinc-900 to-transparent text-teal-700 dark:text-teal-400 cursor-pointer"
+          aria-label="Ver opções anteriores"
+        >
+          <ChevronLeft className="w-4 h-4" />
+        </button>
+      )}
+      {podeDireita && (
+        <button
+          type="button"
+          onClick={() => rolar(1)}
+          className="absolute right-0 top-0 h-full w-6 flex items-center justify-center bg-gradient-to-l from-white dark:from-zinc-900 to-transparent text-teal-700 dark:text-teal-400 cursor-pointer"
+          aria-label="Ver mais opções"
+        >
+          <ChevronRight className="w-4 h-4" />
+        </button>
+      )}
+    </footer>
+  );
 }
 
 export default function App() {
@@ -185,24 +273,8 @@ export default function App() {
           )}
         </main>
 
-        {/* RODAPÉ E ABAS DE NAVEGAÇÃO FIXO (MOBILE) */}
-        <footer className="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md border-t border-gray-100 dark:border-zinc-800/80 flex justify-around items-center h-16 z-40 px-2 shadow-[0_-2px_10px_rgba(0,0,0,0.02)]">
-          {NAV_PRINCIPAL.map(({ id, label, Icon }) => (
-            <button
-              key={id}
-              onClick={() => handleSelectTab(id)}
-              className={`flex flex-col items-center justify-center flex-1 h-full py-1 text-center cursor-pointer transition-all ${
-                activeTab === id
-                  ? "text-teal-700 dark:text-teal-400 scale-[1.05]"
-                  : "text-gray-400 hover:text-gray-600 dark:text-zinc-500"
-              }`}
-              aria-label={`Aba ${label}`}
-            >
-              <Icon className="w-5 h-5" />
-              <span className="text-[0.625rem] font-sans font-bold mt-1.5 uppercase tracking-wide">{label}</span>
-            </button>
-          ))}
-        </footer>
+        {/* MENU INFERIOR EM CARROSSEL (MOBILE) */}
+        <MenuInferiorMobile activeTab={activeTab} onSelect={handleSelectTab} />
 
       </div>
     </div>
