@@ -24,12 +24,13 @@ export async function conectar(connectionString) {
 //  conflito: colunas usadas no ON CONFLICT do upsert
 export const TABELAS = {
   profiles: {
-    colunas: ['id', 'nome_grupo'],
+    colunas: ['id', 'nome_grupo', 'celular', 'data_nascimento', 'culto', 'senib'],
     dono: 'id',
     conflito: ['id'],
+    datas: ['data_nascimento'],
   },
   membros: {
-    colunas: ['id', 'lider_id', 'nome', 'contato1', 'contato2', 'aniversario', 'linguagem_amor', 'ministerio', 'faixa', 'data_entrada', 'contato_pais', 'notas', 'status', 'faltas', 'treinando', 'criado_em'],
+    colunas: ['id', 'lider_id', 'nome', 'contato1', 'contato2', 'aniversario', 'linguagem_amor', 'ministerio', 'faixa', 'data_entrada', 'contato_pais', 'notas', 'status', 'faltas', 'treinando', 'batizado', 'um_com_deus', 'culto', 'senib', 'criado_em'],
     dono: 'lider_id',
     datas: ['aniversario', 'data_entrada'],
   },

@@ -12,6 +12,11 @@ CREATE TABLE IF NOT EXISTS profiles (
   nome_grupo text
 );
 
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS celular text;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS data_nascimento date;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS culto text;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS senib text;
+
 CREATE TABLE IF NOT EXISTS membros (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   lider_id uuid NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
@@ -30,6 +35,10 @@ CREATE TABLE IF NOT EXISTS membros (
   criado_em timestamptz NOT NULL DEFAULT now()
 );
 ALTER TABLE membros ADD COLUMN IF NOT EXISTS treinando boolean NOT NULL DEFAULT false;
+ALTER TABLE membros ADD COLUMN IF NOT EXISTS batizado boolean NOT NULL DEFAULT false;
+ALTER TABLE membros ADD COLUMN IF NOT EXISTS um_com_deus boolean NOT NULL DEFAULT false;
+ALTER TABLE membros ADD COLUMN IF NOT EXISTS culto text;
+ALTER TABLE membros ADD COLUMN IF NOT EXISTS senib text;
 CREATE INDEX IF NOT EXISTS membros_lider_idx ON membros(lider_id);
 
 CREATE TABLE IF NOT EXISTS reunioes (

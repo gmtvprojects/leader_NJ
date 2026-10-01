@@ -137,3 +137,6 @@ export function gerarLinkWhatsApp(membro: Membro, tipo: 'acolhimento' | 'falta' 
 
   return `https://wa.me/55${foneLimpo}?text=${encodeURIComponent(mensagem)}`;
 }
+
+// Horários de culto / SENIB disponíveis (1º ao 4º horário)
+export const HORARIOS = ["1º horário", "2º horário", "3º horário", "4º horário"];

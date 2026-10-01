@@ -58,6 +58,7 @@ export default function Inicio({ onSelectTab, liderId }: InicioProps) {
   
   const [membros, setMembros] = useState<Membro[]>([]);
   const [reunioes, setReunioes] = useState<Reuniao[]>([]);
+  const [eventos, setEventos] = useState<{ id: string; titulo: string; data: string; local: string }[]>([]);
 
   const carregarDadosHome = async () => {
     setLoading(true);
@@ -101,6 +102,19 @@ export default function Inicio({ onSelectTab, liderId }: InicioProps) {
       }));
 
       setReunioes(formattedReunioes);
+
+      // 4. Carregar eventos do lider
+      const { data: eData } = await api
+        .from('eventos')
+        .select('*')
+        .eq('lider_id', liderId);
+
+      setEventos((eData || []).map((e: any) => ({
+        id: e.id,
+        titulo: e.titulo || '',
+        data: e.data ? String(e.data).substring(0, 10) : '',
+        local: e.local || ''
+      })));
     } catch (err: any) {
       console.error('Erro ao sincronizar dashboard do Líder:', err);
     } finally {
@@ -186,6 +200,13 @@ export default function Inicio({ onSelectTab, liderId }: InicioProps) {
   };
 
   const aniversariantes = obterAniversariantesProximos();
+
+  // Próximos eventos (hoje em diante, do mais próximo ao mais distante)
+  const hojeStr = new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().substring(0, 10);
+  const proximosEventos = eventos
+    .filter(e => e.data && e.data >= hojeStr)
+    .sort((a, b) => a.data.localeCompare(b.data))
+    .slice(0, 5);
 
   const formatarAniversario = (dataStr: string) => {
     if (!dataStr) return "";
@@ -297,72 +318,6 @@ export default function Inicio({ onSelectTab, liderId }: InicioProps) {
         </button>
       </section>
 
-      {/* CARD PRINCIPAL EM DESTAQUE: TRANSIÇÃO JOVENS 1 ➔ JOVENS 2 */}
-      <div className="bg-gradient-to-br from-teal-900 via-teal-800 to-emerald-900 text-white rounded-3xl p-4 shadow-sm border border-teal-700/50 space-y-3">
-        <div className="flex items-start justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="p-2 bg-white/10 rounded-2xl backdrop-blur-xs text-teal-200">
-              <Sparkles className="w-5 h-5 text-teal-200" />
-            </div>
-            <div>
-              <span className="text-[0.5625rem] font-black uppercase tracking-widest text-teal-300">Integração Prioritária</span>
-              <h2 className="text-sm font-bold leading-tight text-white">Transição Jovens 1 ➔ Jovens 2</h2>
-            </div>
-          </div>
-          <span className="text-[0.625rem] font-black bg-emerald-500/20 text-emerald-200 px-2 py-0.5 rounded-full border border-emerald-400/30">
-            {jovensTransicao.length} Jovens
-          </span>
-        </div>
-
-        <p className="text-[0.6875rem] text-teal-100 leading-relaxed">
-          Acompanhamento para acolher os jovens de até 17 anos que estão entrando no Jovens 2 (18 a 30 anos). Garanta que cada um tenha um G.A e esteja firme na igreja.
-        </p>
-
-        {/* MÉTRICAS ESPECÍFICAS DE TRANSIÇÃO */}
-        <div className="grid grid-cols-2 gap-2 text-xs">
-          <div className="bg-white/10 rounded-xl p-2.5">
-            <span className="text-[0.5313rem] uppercase font-black text-teal-200 block">Alocação de G.A:</span>
-            <div className="flex items-baseline gap-1 mt-0.5">
-              <span className="text-base font-bold text-white">
-                {jovensTransicao.length - transicaoSemGa.length}
-              </span>
-              <span className="text-[0.5625rem] text-teal-200">/ {jovensTransicao.length} com G.A</span>
-            </div>
-            {transicaoSemGa.length > 0 && (
-              <span className="text-[0.5313rem] text-amber-300 font-bold block mt-1">
-                ⚠️ {transicaoSemGa.length} jovem(ns) sem G.A definido
-              </span>
-            )}
-          </div>
-
-          <div className="bg-white/10 rounded-xl p-2.5">
-            <span className="text-[0.5313rem] uppercase font-black text-teal-200 block">Presença & Faltas:</span>
-            <div className="flex items-baseline gap-1 mt-0.5">
-              <span className="text-base font-bold text-white">
-                {jovensTransicao.length - transicaoAusentes.length}
-              </span>
-              <span className="text-[0.5625rem] text-teal-200">frequentes</span>
-            </div>
-            {transicaoAusentes.length > 0 ? (
-              <span className="text-[0.5313rem] text-rose-300 font-bold block mt-1">
-                🚨 {transicaoAusentes.length} ausente(s) requerem contato
-              </span>
-            ) : (
-              <span className="text-[0.5313rem] text-emerald-300 font-bold block mt-1">
-                ✅ Todos presentes recentemente
-              </span>
-            )}
-          </div>
-        </div>
-
-        <button
-          onClick={() => onSelectTab("membros", { filtro: "transicao" })}
-          className="w-full py-2.5 bg-white hover:bg-teal-50 text-teal-950 rounded-xl font-bold text-xs uppercase tracking-wider transition flex items-center justify-center gap-1.5 cursor-pointer"
-        >
-          Acompanhar Lista de Transição <ChevronRight className="w-4 h-4" />
-        </button>
-      </div>
-
       {/* CARD DE ALERTA — AUSENTES EM 2+ SEMANAS COM MOTIVOS VISÍVEIS */}
       {totalAusentesCriticos > 0 && (
         <button
@@ -422,90 +377,49 @@ export default function Inicio({ onSelectTab, liderId }: InicioProps) {
         </button>
       )}
 
-      {/* GRID DE ACESSO RÁPIDO */}
+      {/* PRÓXIMOS EVENTOS */}
       <section className="space-y-2.5 font-sans">
-        <h2 className="text-[0.6875rem] font-black uppercase text-gray-400 dark:text-zinc-500 tracking-widest text-left">Navegação Expressa</h2>
-        <div className="grid grid-cols-2 gap-3">
-          
-          <button
-            onClick={() => onSelectTab("membros", { filtro: "transicao" })}
-            className="bg-white dark:bg-zinc-900 border border-teal-200 dark:border-teal-900/50 p-3.5 rounded-2xl flex flex-col items-start text-left space-y-2 hover:border-teal-500 transition cursor-pointer"
-          >
-            <div className="p-1.5 bg-teal-50 dark:bg-teal-950/30 text-teal-700 dark:text-teal-400 rounded-xl">
-              <Sparkles className="w-4 h-4" />
-            </div>
-            <div>
-              <h4 className="text-xs font-bold text-slate-900 dark:text-white font-sans">Transição J1 ➔ J2</h4>
-              <p className="text-[0.5938rem] text-gray-500 dark:text-zinc-400 font-sans">Acolhimento de 17 a 18 anos</p>
-            </div>
-          </button>
-
-          <button
-            onClick={() => onSelectTab("membros")}
-            className="bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 p-3.5 rounded-2xl flex flex-col items-start text-left space-y-2 hover:border-teal-500 transition cursor-pointer"
-          >
-            <div className="p-1.5 bg-indigo-50 dark:bg-indigo-950/30 text-indigo-700 dark:text-indigo-400 rounded-xl">
-              <Users className="w-4 h-4" />
-            </div>
-            <div>
-              <h4 className="text-xs font-bold text-slate-900 dark:text-white font-sans">Jovens & G.A</h4>
-              <p className="text-[0.5938rem] text-gray-500 dark:text-zinc-400 font-sans">Presença e fichas pastorais</p>
-            </div>
-          </button>
-
-          <button
-            onClick={() => onSelectTab("reunioes")}
-            className="bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 p-3.5 rounded-2xl flex flex-col items-start text-left space-y-2 hover:border-teal-500 transition cursor-pointer"
-          >
-            <div className="p-1.5 bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400 rounded-xl">
-              <BookOpen className="w-4 h-4" />
-            </div>
-            <div>
-              <h4 className="text-xs font-bold text-slate-900 dark:text-white font-sans">Chamada do G.A</h4>
-              <p className="text-[0.5938rem] text-gray-500 dark:text-zinc-400 font-sans">Presenças dos sábados</p>
-            </div>
-          </button>
-
+        <div className="flex items-center justify-between">
+          <h2 className="text-[0.6875rem] font-black uppercase text-gray-400 dark:text-zinc-500 tracking-widest text-left">Próximos Eventos</h2>
           <button
             onClick={() => onSelectTab("eventos")}
-            className="bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 p-3.5 rounded-2xl flex flex-col items-start text-left space-y-2 hover:border-teal-500 transition cursor-pointer"
+            className="text-[0.5625rem] font-extrabold uppercase text-teal-700 dark:text-teal-400 hover:underline cursor-pointer"
           >
-            <div className="p-1.5 bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 rounded-xl">
-              <MapPin className="w-4 h-4" />
-            </div>
-            <div>
-              <h4 className="text-xs font-bold text-slate-950 dark:text-white font-sans">Eventos & Cultos</h4>
-              <p className="text-[0.5938rem] text-gray-500 dark:text-zinc-400 font-sans">Checklist e segurança</p>
-            </div>
+            Ver todos
           </button>
-
-          <button
-            onClick={() => onSelectTab("oracao")}
-            className="bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 p-3.5 rounded-2xl flex flex-col items-start text-left space-y-2 hover:border-teal-500 transition cursor-pointer"
-          >
-            <div className="p-1.5 bg-rose-50 dark:bg-rose-950/30 text-[#0f766e] dark:text-teal-400 rounded-xl font-bold">
-              <Heart className="w-4 h-4 fill-current" />
-            </div>
-            <div>
-              <h4 className="text-xs font-bold text-slate-900 dark:text-white font-sans">Oração Pastoral</h4>
-              <p className="text-[0.5938rem] text-gray-500 dark:text-zinc-400 font-sans">Intercessão pelos jovens</p>
-            </div>
-          </button>
-
-          <button
-            onClick={() => onSelectTab("bancodolider")}
-            className="bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 p-3.5 rounded-2xl flex flex-col items-start text-left space-y-2 hover:border-teal-500 transition cursor-pointer"
-          >
-            <div className="p-1.5 bg-amber-50 dark:bg-zinc-800 text-amber-600 dark:text-amber-400 rounded-xl">
-              <BookOpen className="w-4 h-4" />
-            </div>
-            <div>
-              <h4 className="text-xs font-bold text-slate-900 dark:text-white font-sans leading-none">Banco do Líder</h4>
-              <p className="text-[0.5938rem] text-gray-500 dark:text-zinc-400 font-sans mt-0.5">Roteiros e dinâmicas</p>
-            </div>
-          </button>
-
         </div>
+
+        {proximosEventos.length === 0 ? (
+          <div className="bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 rounded-2xl py-8 text-center text-xs text-gray-400">
+            Nenhum evento agendado.
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-2.5">
+            {proximosEventos.map(ev => {
+              const d = new Date(ev.data + "T12:00:00");
+              return (
+                <button
+                  key={ev.id}
+                  onClick={() => onSelectTab("eventos")}
+                  className="bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 p-3 rounded-2xl flex items-center gap-3 text-left hover:border-teal-500 transition cursor-pointer"
+                >
+                  <div className="w-12 h-12 rounded-xl bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 flex flex-col items-center justify-center shrink-0 leading-none">
+                    <span className="text-base font-black">{d.getDate()}</span>
+                    <span className="text-[0.5rem] font-black uppercase mt-0.5">{d.toLocaleDateString("pt-BR", { month: "short" }).replace(".", "")}</span>
+                  </div>
+                  <div className="min-w-0">
+                    <h4 className="text-xs font-bold text-slate-900 dark:text-white font-sans truncate">{ev.titulo}</h4>
+                    {ev.local && (
+                      <p className="text-[0.625rem] text-gray-500 dark:text-zinc-400 flex items-center gap-1 mt-0.5 truncate">
+                        <MapPin className="w-3 h-3 shrink-0" /> {ev.local}
+                      </p>
+                    )}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        )}
       </section>
 
       {/* COMPANION INFOBAR */}

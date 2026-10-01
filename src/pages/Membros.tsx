@@ -29,7 +29,8 @@ import {
   serializarMetadadosMembro, 
   calcularIdade, 
   gerarLinkWhatsApp,
-  MOTIVOS_AUSENCIA_PADRAO 
+  MOTIVOS_AUSENCIA_PADRAO,
+  HORARIOS
 } from "../utils/membroUtils";
 
 // CORES DE AVATAR ALEATÓRIAS BASEADO NA INICIAL
@@ -81,6 +82,10 @@ const mapToTS = (db: any): Membro => {
     status: db.status || 'Ativo',
     faltas: db.faltas || 0,
     treinando: !!db.treinando,
+    batizado: !!db.batizado,
+    umComDeus: !!db.um_com_deus,
+    culto: db.culto || '',
+    senib: db.senib || '',
     ga: meta.ga,
     origemTransicao: meta.origemTransicao,
     motivoAusencia: meta.motivoAusencia,
@@ -114,6 +119,10 @@ const mapToDB = (ts: Omit<Membro, 'id'> & { id?: string }, liderId: string) => {
     data_entrada: ts.dataEntrada || null,
     contato_pais: ts.contatoPais,
     treinando: !!ts.treinando,
+    batizado: !!ts.batizado,
+    um_com_deus: !!ts.umComDeus,
+    culto: ts.culto || null,
+    senib: ts.senib || null,
     notas: serializedNotas,
     status: ts.status,
     faltas: ts.faltas
@@ -166,6 +175,10 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
   const [formGa, setFormGa] = useState("GA Principal");
   const [formOrigemTransicao, setFormOrigemTransicao] = useState(false);
   const [formTreinando, setFormTreinando] = useState(false);
+  const [formBatizado, setFormBatizado] = useState(false);
+  const [formUmComDeus, setFormUmComDeus] = useState(false);
+  const [formCulto, setFormCulto] = useState("");
+  const [formSenib, setFormSenib] = useState("");
   const [formMotivoAusencia, setFormMotivoAusencia] = useState("");
   const [formDetalheAusencia, setFormDetalheAusencia] = useState("");
   const [formUltimoContato, setFormUltimoContato] = useState("");
@@ -246,6 +259,10 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
     setFormGa(listaGas.length > 0 ? listaGas[0] : "GA Principal");
     setFormOrigemTransicao(origemTransicaoPadrao);
     setFormTreinando(false);
+    setFormBatizado(false);
+    setFormUmComDeus(false);
+    setFormCulto("");
+    setFormSenib("");
     setFormMotivoAusencia("");
     setFormDetalheAusencia("");
     setFormUltimoContato("");
@@ -271,6 +288,10 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
     setFormGa(m.ga || "GA Principal");
     setFormOrigemTransicao(!!m.origemTransicao);
     setFormTreinando(!!m.treinando);
+    setFormBatizado(!!m.batizado);
+    setFormUmComDeus(!!m.umComDeus);
+    setFormCulto(m.culto || "");
+    setFormSenib(m.senib || "");
     setFormMotivoAusencia(m.motivoAusencia || "");
     setFormDetalheAusencia(m.detalheAusencia || "");
     setFormUltimoContato(m.ultimoContato || "");
@@ -347,6 +368,10 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
         ga: formGa.trim() || "GA Principal",
         origemTransicao: formOrigemTransicao,
         treinando: formTreinando,
+        batizado: formBatizado,
+        umComDeus: formUmComDeus,
+        culto: formCulto,
+        senib: formSenib,
         motivoAusencia: formMotivoAusencia,
         detalheAusencia: formDetalheAusencia.trim(),
         ultimoContato: formUltimoContato,
@@ -983,6 +1008,26 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
               </div>
             </div>
 
+            {/* VIDA NA IGREJA */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pb-3 border-b border-gray-100 dark:border-zinc-800/80">
+              <div>
+                <span className="block text-[0.5625rem] font-black text-gray-400 uppercase tracking-wide">Batizado</span>
+                <span className="font-bold text-slate-800 dark:text-zinc-200">{membroSelecionado.batizado ? "Sim" : "Não"}</span>
+              </div>
+              <div>
+                <span className="block text-[0.5625rem] font-black text-gray-400 uppercase tracking-wide">Um com Deus</span>
+                <span className="font-bold text-slate-800 dark:text-zinc-200">{membroSelecionado.umComDeus ? "Sim" : "Não"}</span>
+              </div>
+              <div>
+                <span className="block text-[0.5625rem] font-black text-gray-400 uppercase tracking-wide">Culto</span>
+                <span className="font-bold text-slate-800 dark:text-zinc-200">{membroSelecionado.culto || "Não informado"}</span>
+              </div>
+              <div>
+                <span className="block text-[0.5625rem] font-black text-gray-400 uppercase tracking-wide">SENIB</span>
+                <span className="font-bold text-slate-800 dark:text-zinc-200">{membroSelecionado.senib || "Não informado"}</span>
+              </div>
+            </div>
+
             {/* CONTATO DOS PAIS / RESPONSÁVEIS */}
             <div className="pb-3 border-b border-gray-100 dark:border-zinc-800/80">
               <span className="block text-[0.5625rem] font-black text-gray-400 uppercase tracking-wide">Contato dos Pais ou Responsáveis</span>
@@ -1365,6 +1410,59 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
               />
               <span className="text-xs font-bold text-slate-800 dark:text-zinc-200 font-sans">É treinando (em formação para liderança)</span>
             </label>
+
+            {/* Vida na igreja: Batizado, Um com Deus, Culto e SENIB */}
+            <div className="space-y-3 p-3.5 bg-slate-50/60 dark:bg-zinc-950/40 border border-gray-100 dark:border-zinc-800 rounded-2xl">
+              <div className="grid grid-cols-2 gap-3">
+                <label htmlFor="form-batizado" className="flex items-center gap-2 cursor-pointer select-none">
+                  <input
+                    id="form-batizado"
+                    type="checkbox"
+                    checked={formBatizado}
+                    onChange={(e) => setFormBatizado(e.target.checked)}
+                    className="w-4 h-4 accent-teal-700 cursor-pointer"
+                  />
+                  <span className="text-xs font-bold text-slate-800 dark:text-zinc-200 font-sans">Batizado</span>
+                </label>
+                <label htmlFor="form-umcomdeus" className="flex items-center gap-2 cursor-pointer select-none">
+                  <input
+                    id="form-umcomdeus"
+                    type="checkbox"
+                    checked={formUmComDeus}
+                    onChange={(e) => setFormUmComDeus(e.target.checked)}
+                    className="w-4 h-4 accent-teal-700 cursor-pointer"
+                  />
+                  <span className="text-xs font-bold text-slate-800 dark:text-zinc-200 font-sans">Um com Deus</span>
+                </label>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <label htmlFor="form-culto" className="block text-[0.625rem] font-black text-gray-400 uppercase tracking-widest font-sans">Culto</label>
+                  <select
+                    id="form-culto"
+                    value={formCulto}
+                    onChange={(e) => setFormCulto(e.target.value)}
+                    className="w-full text-xs px-3 py-2.5 bg-white dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-xl focus:outline-none focus:border-teal-500 text-slate-900 dark:text-white cursor-pointer"
+                  >
+                    <option value="">Não informado</option>
+                    {HORARIOS.map(h => <option key={h} value={h}>{h}</option>)}
+                  </select>
+                </div>
+                <div className="space-y-1">
+                  <label htmlFor="form-senib" className="block text-[0.625rem] font-black text-gray-400 uppercase tracking-widest font-sans">SENIB</label>
+                  <select
+                    id="form-senib"
+                    value={formSenib}
+                    onChange={(e) => setFormSenib(e.target.value)}
+                    className="w-full text-xs px-3 py-2.5 bg-white dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-xl focus:outline-none focus:border-teal-500 text-slate-900 dark:text-white cursor-pointer"
+                  >
+                    <option value="">Não informado</option>
+                    {HORARIOS.map(h => <option key={h} value={h}>{h}</option>)}
+                  </select>
+                </div>
+              </div>
+            </div>
 
             {/* Contato Pais / Guardião */}
             <div className="space-y-1">

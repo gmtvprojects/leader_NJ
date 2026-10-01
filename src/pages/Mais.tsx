@@ -19,6 +19,7 @@ import {
   Pencil
 } from "lucide-react";
 import { api } from "../lib/api";
+import { HORARIOS } from "../utils/membroUtils";
 import { Membro, Reuniao } from "../types";
 
 interface EquipeLanche {
@@ -70,6 +71,11 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
   const [subView, setSubView] = useState<"menu" | "crescimento" | "oracao" | "lanche" | "config">("menu");
   const [themeMode, setThemeMode] = useState<"light" | "dark">("light");
   const [grupoNome, setGrupoNome] = useState("GA Ebenezer");
+  const [perfilCelular, setPerfilCelular] = useState("");
+  const [perfilNascimento, setPerfilNascimento] = useState("");
+  const [perfilCulto, setPerfilCulto] = useState("");
+  const [perfilSenib, setPerfilSenib] = useState("");
+  const [perfilSalvo, setPerfilSalvo] = useState(false);
   const [loading, setLoading] = useState<boolean>(true);
 
   // Estados dos Módulos
@@ -90,12 +96,16 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
       // 1. Carregar nome do grupo perfil
       const { data: profileData, error: profileError } = await api
         .from('profiles')
-        .select('nome_grupo')
+        .select('nome_grupo, celular, data_nascimento, culto, senib')
         .eq('id', liderId)
         .maybeSingle();
 
       if (!profileError && profileData) {
         setGrupoNome(profileData.nome_grupo || "GA Ebenezer");
+        setPerfilCelular(profileData.celular || "");
+        setPerfilNascimento(profileData.data_nascimento ? String(profileData.data_nascimento).substring(0, 10) : "");
+        setPerfilCulto(profileData.culto || "");
+        setPerfilSenib(profileData.senib || "");
       }
 
       // 2. Carregar membros do servidor
@@ -173,13 +183,26 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
     }
   };
 
-  const handleSalvarGrupoNome = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = e.target.value;
-    setGrupoNome(val);
+  const handleSalvarPerfil = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
     try {
-      await api.from('profiles').upsert({ id: liderId, nome_grupo: val });
+      const { error } = await api.from('profiles').upsert({
+        id: liderId,
+        nome_grupo: grupoNome.trim(),
+        celular: perfilCelular.trim(),
+        data_nascimento: perfilNascimento || null,
+        culto: perfilCulto || null,
+        senib: perfilSenib || null
+      });
+      if (error) throw error;
+      setPerfilSalvo(true);
+      setTimeout(() => setPerfilSalvo(false), 3000);
     } catch (error) {
-      console.error('Erro ao salvar nome do grupo:', error);
+      console.error('Erro ao salvar perfil:', error);
+      alert('Não foi possível salvar o perfil.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -501,6 +524,30 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
               </div>
             </div>
 
+            {/* TEMA ESCURO (SWITCH) */}
+            <div className="bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800/80 p-4 rounded-2xl flex items-center justify-between gap-3 shadow-sm text-left">
+              <div className="flex items-center gap-2">
+                <div className="p-2 bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-300 rounded-xl">
+                  {themeMode === "dark" ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4 text-amber-500" />}
+                </div>
+                <h3 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider font-sans leading-none">Tema Escuro</h3>
+              </div>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={themeMode === "dark"}
+                aria-label="Alternar tema escuro"
+                onClick={toggleColorsTheme}
+                className={`relative w-11 h-6 rounded-full transition-colors cursor-pointer shrink-0 ${
+                  themeMode === "dark" ? "bg-teal-700" : "bg-gray-300 dark:bg-zinc-700"
+                }`}
+              >
+                <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${
+                  themeMode === "dark" ? "translate-x-5" : ""
+                }`} />
+              </button>
+            </div>
+
             {/* SIGN OUT BUTTON */}
             <button
               onClick={handleSair}
@@ -667,7 +714,7 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
 
       {/* SUBVIEW: EQUIPES DE LANCHE */}
       {subView === "lanche" && (
-        <div className="w-full max-w-2xl mx-auto space-y-4 text-left animate-slideUp font-sans">
+        <div className="w-full max-w-2xl mx-auto space-y-4 text-left font-sans">
           <header className="flex items-center gap-3">
             <button
               onClick={() => (formEquipe ? setFormEquipe(null) : setSubView("menu"))}
@@ -851,10 +898,10 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
             </div>
           </header>
 
-          {/* AJUSTE DE GERAL */}
-          <div className="bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 p-4 rounded-2xl space-y-4 shadow-sm">
+          {/* PERFIL DO LÍDER */}
+          <form onSubmit={handleSalvarPerfil} className="bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 p-4 rounded-2xl space-y-4 shadow-sm">
             <h3 className="text-xs font-black text-slate-950 dark:text-white uppercase tracking-wider leading-none flex items-center gap-1 font-sans">
-              <Settings className="w-4 h-4 text-teal-600" /> Identificação do GA
+              <Settings className="w-4 h-4 text-teal-600" /> Dados do Líder e do GA
             </h3>
 
             <div className="space-y-1">
@@ -863,41 +910,74 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
                 id="cfg-nome"
                 type="text"
                 value={grupoNome}
-                onChange={handleSalvarGrupoNome}
+                onChange={(e) => setGrupoNome(e.target.value)}
                 placeholder="Ex. GA Ebenezer, GA Maranata..."
                 className="w-full text-xs px-3.5 py-2.5 bg-slate-50 dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-lg focus:outline-none focus:border-[#0f766e] text-slate-900 dark:text-white font-medium"
               />
             </div>
 
-            <div className="space-y-1 mt-2.5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <label htmlFor="cfg-celular" className="block text-[0.5rem] font-bold uppercase text-gray-400">Celular do Líder</label>
+                <input
+                  id="cfg-celular"
+                  type="tel"
+                  value={perfilCelular}
+                  onChange={(e) => setPerfilCelular(e.target.value)}
+                  placeholder="Ex. 11999998888"
+                  className="w-full text-xs px-3.5 py-2.5 bg-slate-50 dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-lg focus:outline-none focus:border-[#0f766e] text-slate-900 dark:text-white font-medium"
+                />
+              </div>
+              <div className="space-y-1">
+                <label htmlFor="cfg-nascimento" className="block text-[0.5rem] font-bold uppercase text-gray-400">Data de Nascimento</label>
+                <input
+                  id="cfg-nascimento"
+                  type="date"
+                  value={perfilNascimento}
+                  onChange={(e) => setPerfilNascimento(e.target.value)}
+                  className="w-full text-xs px-3.5 py-2.5 bg-slate-50 dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-lg focus:outline-none focus:border-[#0f766e] text-slate-900 dark:text-white font-medium"
+                />
+              </div>
+              <div className="space-y-1">
+                <label htmlFor="cfg-culto" className="block text-[0.5rem] font-bold uppercase text-gray-400">Culto</label>
+                <select
+                  id="cfg-culto"
+                  value={perfilCulto}
+                  onChange={(e) => setPerfilCulto(e.target.value)}
+                  className="w-full text-xs px-3.5 py-2.5 bg-slate-50 dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-lg focus:outline-none focus:border-[#0f766e] text-slate-900 dark:text-white font-medium cursor-pointer"
+                >
+                  <option value="">Não informado</option>
+                  {HORARIOS.map(h => <option key={h} value={h}>{h}</option>)}
+                </select>
+              </div>
+              <div className="space-y-1">
+                <label htmlFor="cfg-senib" className="block text-[0.5rem] font-bold uppercase text-gray-400">SENIB</label>
+                <select
+                  id="cfg-senib"
+                  value={perfilSenib}
+                  onChange={(e) => setPerfilSenib(e.target.value)}
+                  className="w-full text-xs px-3.5 py-2.5 bg-slate-50 dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-lg focus:outline-none focus:border-[#0f766e] text-slate-900 dark:text-white font-medium cursor-pointer"
+                >
+                  <option value="">Não informado</option>
+                  {HORARIOS.map(h => <option key={h} value={h}>{h}</option>)}
+                </select>
+              </div>
+            </div>
+
+            <div className="space-y-1">
               <span className="block text-[0.5rem] font-bold uppercase text-gray-400">Igreja Vinculada</span>
               <div className="text-xs px-3 py-2 bg-gray-50 dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-lg text-slate-500 dark:text-zinc-400 font-medium select-none font-sans">
                 Igreja: Firme na Palavra e no Amor
               </div>
             </div>
 
-            <div className="flex justify-between items-center pt-2.5 border-t border-gray-100 dark:border-zinc-800/80">
-              <div>
-                <span className="block text-xs font-bold text-slate-900 dark:text-white">Tema Escuro Confortável</span>
-                <span className="block text-[0.5rem] text-gray-400 uppercase mt-0.5 font-bold font-mono">ga_theme localstorage</span>
-              </div>
-              <button
-                type="button"
-                onClick={toggleColorsTheme}
-                className="py-2.5 px-4 bg-slate-50 dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 text-teal-700 dark:text-teal-400 rounded-xl shadow-sm transition hover:scale-103 cursor-pointer"
-              >
-                {themeMode === "light" ? (
-                  <div className="flex items-center gap-1.5 text-[0.625rem] font-black uppercase tracking-wider">
-                    <Moon className="w-4 h-4 text-slate-600 dark:text-zinc-400" /> Ativar Escuro
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-1.5 text-[0.625rem] font-black uppercase tracking-wider">
-                    <Sun className="w-4 h-4 text-amber-500" /> Ativar Claro
-                  </div>
-                )}
-              </button>
-            </div>
-          </div>
+            <button
+              type="submit"
+              className="w-full h-10 bg-teal-700 hover:bg-teal-600 text-white font-bold text-xs uppercase tracking-wider rounded-xl cursor-pointer flex items-center justify-center gap-1"
+            >
+              <Check className="w-4 h-4" /> {perfilSalvo ? "Perfil salvo!" : "Salvar Perfil"}
+            </button>
+          </form>
         </div>
       )}
 

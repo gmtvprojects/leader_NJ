@@ -24,6 +24,10 @@ export interface Membro {
   status: 'Ativo' | 'Esporádico' | 'Ausente' | 'Transição';
   faltas: number;
   treinando?: boolean; // Em formação para liderança (pode haver mais de um)
+  batizado?: boolean;
+  umComDeus?: boolean;
+  culto?: string; // "1º horário" ... "4º horário" ou vazio
+  senib?: string;
   // Transição Jovens 1 (até 17) -> Jovens 2 (18 a 30) & Acompanhamento
   ga?: string; // Nome do GA onde está ou "Sem GA / A Definir"
   origemTransicao?: boolean; // Jovem vindo do J1

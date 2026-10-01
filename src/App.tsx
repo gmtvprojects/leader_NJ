@@ -34,7 +34,7 @@ const NAV_PRINCIPAL = [
 
 // Atalhos extras exibidos apenas no menu lateral (tablet / desktop)
 const NAV_SECUNDARIA = [
-  { id: "oracao", label: "Oração", Icon: HeartHandshake },
+  { id: "oracao", label: "Pedidos de Oração", Icon: HeartHandshake },
   { id: "bancodolider", label: "Banco do Líder", Icon: Library },
   { id: "aniversariantes", label: "Aniversariantes", Icon: Cake },
 ];
