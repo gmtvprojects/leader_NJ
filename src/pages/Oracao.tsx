@@ -338,20 +338,21 @@ export default function Oracao({ onVoltar, liderId }: OracaoProps) {
                 </button>
               )}
               <div className="text-left">
-                <span className="text-[0.625rem] uppercase font-black tracking-widest text-[#0f766e] dark:text-teal-400">Intercessão Individual</span>
-                <h1 className="text-lg font-bold text-slate-950 dark:text-white tracking-tight leading-none mt-0.5 flex items-center gap-1.5 font-sans">
+                <h1 className="text-lg font-bold text-slate-950 dark:text-white tracking-tight leading-none flex items-center gap-1.5 font-sans">
                   Pedidos de Oração
                 </h1>
               </div>
             </div>
+          </header>
 
+          <div>
             <button
               onClick={() => { setBuscaRegistro(""); setView("registro"); }}
               className="px-3 py-2 bg-white dark:bg-zinc-900 border border-teal-700 text-teal-700 dark:text-teal-400 dark:border-teal-500 hover:bg-teal-50 dark:hover:bg-teal-950/30 rounded-xl transition cursor-pointer flex items-center gap-1.5 font-bold text-[0.625rem] uppercase tracking-wider"
             >
               <ClipboardList className="w-4 h-4" /> Registro de Pedidos
             </button>
-          </header>
+          </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 items-start gap-3 font-sans pb-24">
             {oracoes.length === 0 ? (
