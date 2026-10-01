@@ -58,10 +58,10 @@ export const TABELAS = {
     conflito: ['lider_id', 'mes'],
   },
   eventos: {
-    colunas: ['id', 'lider_id', 'titulo', 'data', 'local', 'tipo', 'descricao', 'precisa_aprovacao', 'participantes', 'lideres_confirmados', 'checklist_marcados', 'comprovante', 'status', 'criado_em'],
+    colunas: ['id', 'lider_id', 'titulo', 'data', 'local', 'tipo', 'descricao', 'precisa_aprovacao', 'participantes', 'lideres_confirmados', 'lideres_nomes', 'checklist_marcados', 'comprovante', 'status', 'criado_em'],
     dono: 'lider_id',
     datas: ['data'],
-    json: ['checklist_marcados'],
+    json: ['checklist_marcados', 'lideres_nomes'],
   },
   banco_temas: {
     colunas: ['id', 'lider_id', 'titulo', 'emoji', 'cor', 'compartilhado'],
