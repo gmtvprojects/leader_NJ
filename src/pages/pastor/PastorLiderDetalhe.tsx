@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { ArrowLeft, ChevronRight, Phone, MessageCircle, MapPin, Users as UsersIcon } from "lucide-react";
+import { ArrowLeft, ChevronRight, Phone, MessageCircle, MapPin, Users as UsersIcon, Trash2, X, Loader2 } from "lucide-react";
 import { DadosPastor, LiderP, formatarData, idadeDe, iniciais } from "./pastorUtils";
-import { cardClasse, abasContainer, abaAtiva, abaInativa } from "./PastorUi";
+import { cardClasse, abasContainer, abaAtiva, abaInativa, campoClasse } from "./PastorUi";
 import FichaMembro from "./FichaMembro";
 
 const limpar = (f: string) => f.replace(/\D/g, "");
@@ -13,8 +13,20 @@ const wa = (f: string) => {
 type Aba = "membros" | "reunioes" | "eventos";
 
 // Página do líder: lista de membros, registro de reuniões e eventos
-export default function PastorLiderDetalhe({ dados, lider, onVoltar }: { dados: DadosPastor; lider: LiderP; onVoltar: () => void }) {
+export default function PastorLiderDetalhe({ dados, lider, onVoltar, onExcluir }: { dados: DadosPastor; lider: LiderP; onVoltar: () => void; onExcluir: () => Promise<string | null> }) {
   const [aba, setAba] = useState<Aba>("membros");
+  const [excluindo, setExcluindo] = useState(false);
+  const [confirmacao, setConfirmacao] = useState("");
+  const [processando, setProcessando] = useState(false);
+  const [erroExcluir, setErroExcluir] = useState("");
+
+  const confirmarExclusao = async () => {
+    setProcessando(true);
+    setErroExcluir("");
+    const erro = await onExcluir();
+    setProcessando(false);
+    if (erro) setErroExcluir(erro);
+  };
   const [membroId, setMembroId] = useState<string | null>(null);
 
   const membros = dados.membros.filter((m) => m.liderId === lider.id).sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR"));
@@ -62,6 +74,17 @@ export default function PastorLiderDetalhe({ dados, lider, onVoltar }: { dados: 
             <h2 className="text-base font-bold text-slate-900 dark:text-white truncate">{lider.nomeGrupo || lider.nome}</h2>
             <p className="text-[0.6875rem] text-teal-700 dark:text-teal-400 font-bold truncate">Líder: {lider.nome}{lider.codigo ? ` · Código ${lider.codigo}` : ""}</p>
           </div>
+        </div>
+        <div className="flex items-center gap-1.5 shrink-0 ml-auto">
+          <button
+            type="button"
+            onClick={() => { setExcluindo(true); setConfirmacao(""); setErroExcluir(""); }}
+            className="p-2 bg-white dark:bg-zinc-900 border border-rose-200 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/20 rounded-lg cursor-pointer"
+            aria-label="Excluir líder"
+            title="Excluir líder e conta"
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
         </div>
         {lider.celular && (
           <div className="flex items-center gap-1.5 shrink-0">
@@ -169,6 +192,35 @@ export default function PastorLiderDetalhe({ dados, lider, onVoltar }: { dados: 
             ))}
           </div>
         )
+      )}
+
+      {excluindo && (
+        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4" onClick={() => !processando && setExcluindo(false)}>
+          <div onClick={(e) => e.stopPropagation()} className="bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 rounded-3xl w-full max-w-sm p-5 space-y-4">
+            <div className="flex justify-between items-center pb-2 border-b border-gray-100 dark:border-zinc-800">
+              <span className="text-xs font-black uppercase text-rose-600 flex items-center gap-1"><Trash2 className="w-4 h-4" /> Excluir líder</span>
+              <button onClick={() => setExcluindo(false)} disabled={processando} className="p-1 text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer" aria-label="Fechar">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <p className="text-xs leading-relaxed text-slate-700 dark:text-zinc-300">
+              Isto exclui a conta de <strong>{lider.nomeGrupo || lider.nome}</strong> e apaga, <strong>de forma permanente</strong>, os {membros.length} membros, as {reunioes.length} reuniões,
+              os eventos, os pedidos de oração e todos os demais dados desse líder. Não dá para desfazer.
+            </p>
+            <div className="space-y-1">
+              <label htmlFor="confirma-exclusao" className="block text-[0.625rem] font-black text-gray-400 uppercase tracking-widest">Digite EXCLUIR para confirmar</label>
+              <input id="confirma-exclusao" value={confirmacao} onChange={(e) => setConfirmacao(e.target.value)} autoComplete="off" className={campoClasse} />
+            </div>
+            {erroExcluir && <p className="text-xs font-semibold text-rose-600">{erroExcluir}</p>}
+            <button
+              onClick={confirmarExclusao}
+              disabled={processando || confirmacao.trim().toUpperCase() !== "EXCLUIR"}
+              className="w-full h-10 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs uppercase tracking-wider rounded-xl cursor-pointer flex items-center justify-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {processando && <Loader2 className="w-4 h-4 animate-spin" />} Excluir líder e conta
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );

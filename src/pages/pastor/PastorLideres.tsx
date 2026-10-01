@@ -49,7 +49,21 @@ export default function PastorLideres() {
   const liderSelecionado = lideres.find((l) => l.id === liderSelecionadoId) || null;
 
   if (liderSelecionado) {
-    return <PastorLiderDetalhe dados={dados} lider={liderSelecionado} onVoltar={() => setLiderSelecionadoId(null)} />;
+    return (
+      <PastorLiderDetalhe
+        dados={dados}
+        lider={liderSelecionado}
+        onVoltar={() => setLiderSelecionadoId(null)}
+        onExcluir={async () => {
+          const { error } = await api.pastor.excluirLider(liderSelecionado.id);
+          if (error) return error.message;
+          setMensagem(`Líder ${liderSelecionado.nomeGrupo || liderSelecionado.nome} excluído, junto com a conta e todos os dados dele.`);
+          setLiderSelecionadoId(null);
+          await recarregar();
+          return null;
+        }}
+      />
+    );
   }
 
   return (

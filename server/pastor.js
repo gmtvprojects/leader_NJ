@@ -123,6 +123,19 @@ export function rotasPastor() {
     }
   });
 
+  // Exclui o líder e a conta dele. Todos os dados do líder (membros, reuniões, eventos, pedidos...) são
+  // apagados em cascata pelo banco. Só contas com papel 'lider' podem ser excluídas por aqui.
+  router.delete('/lideres/:id', async (req, res) => {
+    try {
+      const { rows } = await pool.query("DELETE FROM usuarios WHERE id = $1 AND papel = 'lider' RETURNING id", [req.params.id]);
+      if (rows.length === 0) return erro(res, 404, 'Líder não encontrado.');
+      res.json({ data: { id: rows[0].id }, error: null });
+    } catch (err) {
+      console.error('Erro ao excluir líder:', err);
+      erro(res, 500, 'Não foi possível excluir o líder.');
+    }
+  });
+
   // Aprovar ou reprovar a autorização pastoral de um evento.
   router.post('/eventos/:id/aprovacao', jsonBody, async (req, res) => {
     const decisao = req.body?.decisao;
