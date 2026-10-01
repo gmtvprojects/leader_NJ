@@ -12,6 +12,7 @@ import {
   CheckCircle, 
   X,
   FileText,
+  Pencil,
   Loader2
 } from "lucide-react";
 import { api } from "../lib/api";
@@ -69,6 +70,8 @@ export default function Reunioes({ liderId }: ReunioesProps) {
   const [presentesIds, setPresentesIds] = useState<string[]>([]);
   
   // Controle de Interface
+  const [mostrarForm, setMostrarForm] = useState(false);
+  const [editandoId, setEditandoId] = useState<string | null>(null);
   const [isFazerChamada, setIsFazerChamada] = useState(false);
   const [mostrarChecklistSeguranca, setMostrarChecklistSeguranca] = useState(false);
   const [mensagemSucesso, setMensagemSucesso] = useState("");
@@ -136,6 +139,39 @@ export default function Reunioes({ liderId }: ReunioesProps) {
 
     setLoading(true);
     try {
+      if (editandoId) {
+        // Edição: atualiza a ata e substitui a lista de presenças (faltas dos membros não são recalculadas)
+        const { error: updError } = await api
+          .from('reunioes')
+          .update({
+            data: dataReuniao,
+            tema: tema.trim(),
+            lanche: lanche.trim(),
+            oracoes: oracoes.trim()
+          })
+          .eq('id', editandoId);
+        if (updError) throw updError;
+
+        const { error: delError } = await api
+          .from('reuniao_presencas')
+          .delete()
+          .eq('reuniao_id', editandoId);
+        if (delError) throw delError;
+
+        if (presentesIds.length > 0) {
+          const { error: insError } = await api
+            .from('reuniao_presencas')
+            .insert(presentesIds.map(mId => ({ reuniao_id: editandoId, membro_id: mId })));
+          if (insError) throw insError;
+        }
+
+        fecharForm();
+        await carregarDados();
+        setMensagemSucesso("Reunião atualizada!");
+        setTimeout(() => setMensagemSucesso(""), 4000);
+        return;
+      }
+
       // 1. Criar reunião
       const { data: novaReuniaoData, error: reuniaoError } = await api
         .from('reunioes')
@@ -190,12 +226,8 @@ export default function Reunioes({ liderId }: ReunioesProps) {
 
       await Promise.all(promises);
 
-      // Limpar formulário de hoje
-      setTema("");
-      setLanche("");
-      setOracoes("");
-      setPresentesIds([]);
-      setIsFazerChamada(false);
+      // Limpar e fechar formulário
+      fecharForm();
 
       // Recarregar dados para atualizar histórico e painel
       await carregarDados();
@@ -212,6 +244,35 @@ export default function Reunioes({ liderId }: ReunioesProps) {
     } finally {
       setLoading(false);
     }
+  };
+
+  const fecharForm = () => {
+    setMostrarForm(false);
+    setEditandoId(null);
+    setTema("");
+    setLanche("");
+    setOracoes("");
+    setPresentesIds([]);
+    setIsFazerChamada(false);
+    setDataReuniao(getSabado());
+  };
+
+  const abrirNovaReuniao = () => {
+    fecharForm();
+    setMostrarForm(true);
+  };
+
+  const abrirEdicao = (r: Reuniao, e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    setReuniaoDetalhada(null);
+    setEditandoId(r.id);
+    setDataReuniao(r.data);
+    setTema(r.tema);
+    setLanche(r.lanche || "");
+    setOracoes(r.oracoes || "");
+    setPresentesIds(r.presentes || []);
+    setIsFazerChamada(false);
+    setMostrarForm(true);
   };
 
   // Excluir reunião do histórico
@@ -271,9 +332,9 @@ export default function Reunioes({ liderId }: ReunioesProps) {
       {/* HEADER */}
       <div>
         <h1 className="text-xl font-bold text-slate-950 dark:text-white tracking-tight leading-none flex items-center gap-1.5 font-sans">
-          <BookOpen className="w-5 h-5 text-teal-700 dark:text-teal-400" /> Presença e Roteiros
+          <BookOpen className="w-5 h-5 text-teal-700 dark:text-teal-400" /> Histórico de Reuniões
         </h1>
-        <p className="text-[0.625rem] uppercase font-black text-gray-400 mt-1 tracking-wider">Ata de reuniões e relatórios</p>
+        <p className="text-[0.625rem] uppercase font-black text-gray-400 mt-1 tracking-wider">Atas, presenças e roteiros</p>
       </div>
 
       {mensagemSucesso && (
@@ -283,19 +344,85 @@ export default function Reunioes({ liderId }: ReunioesProps) {
         </div>
       )}
 
-      {/* TELA PRINCIPAL: REUNIÃO DO SÁBADO */}
-      <section className="bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 rounded-3xl p-4.5 space-y-4">
+      {/* HISTÓRICO DE REUNIÕES */}
+      <section className="space-y-2.5 pb-24">
+        {reunioes.length === 0 ? (
+          <div className="text-center py-10 bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 rounded-2xl text-gray-400 font-sans">
+            Nenhuma reunião registrada. Use o botão + para criar a primeira.
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-2 items-start gap-3">
+            {reunioes.map((r) => (
+              <div
+                key={r.id}
+                onClick={() => setReuniaoDetalhada(r)}
+                className="bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800/85 p-3.5 rounded-2xl flex items-center justify-between hover:border-teal-500 cursor-pointer transition shadow-sm"
+              >
+                <div className="space-y-1 pr-4 min-w-0">
+                  <div className="flex items-center gap-1 text-[0.625rem] text-gray-400 font-mono">
+                    <Calendar className="w-3.5 h-3.5 text-teal-600 shrink-0" />
+                    <span>{new Date(r.data + "T12:00:00").toLocaleDateString("pt-BR")}</span>
+                    <span className="bg-teal-50 dark:bg-teal-950/25 px-1.5 py-0.5 rounded text-teal-700 dark:text-teal-400 font-bold shrink-0 ml-1.5 uppercase text-[0.5rem] font-sans">
+                      {r.presentes ? r.presentes.length : 0} PRESENTES
+                    </span>
+                  </div>
+                  <h3 className="text-xs font-bold text-slate-900 dark:text-white line-clamp-1 italic font-sans leading-relaxed">
+                    "{r.tema}"
+                  </h3>
+                </div>
+
+                <div className="flex items-center gap-1 shrink-0">
+                  <button
+                    onClick={(e) => abrirEdicao(r, e)}
+                    className="p-2.5 text-gray-400 hover:text-teal-600 border border-transparent hover:border-teal-100 rounded-xl transition cursor-pointer"
+                    aria-label="Editar reunião"
+                  >
+                    <Pencil className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    onClick={(e) => handleExcluirReuniao(r.id, e)}
+                    className="p-2.5 text-gray-400 hover:text-rose-500 border border-transparent hover:border-rose-100 hover:bg-rose-50/10 rounded-xl transition cursor-pointer"
+                    aria-label="Excluir reunião"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
+
+      {/* BOTÃO FLUTUANTE: NOVA REUNIÃO */}
+      <button
+        id="btn-nova-reuniao"
+        onClick={abrirNovaReuniao}
+        className="fixed bottom-20 md:bottom-8 right-6 md:right-8 z-30 p-4 bg-teal-700 hover:bg-teal-600 text-white rounded-full shadow-lg hover:scale-105 active:scale-95 cursor-pointer transition-transform flex items-center justify-center"
+        aria-label="Nova Reunião"
+      >
+        <Plus className="w-6 h-6" />
+      </button>
+
+      {/* FORMULÁRIO (NOVA REUNIÃO / EDIÇÃO) */}
+      {mostrarForm && (
+      <div className="fixed inset-0 z-40 bg-black/50 overflow-y-auto p-4" onClick={fecharForm}>
+      <section onClick={(e) => e.stopPropagation()} className="bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 rounded-3xl p-4.5 space-y-4 w-full max-w-3xl mx-auto my-4">
         <div className="flex justify-between items-center pb-2 border-b border-gray-100 dark:border-zinc-800/40">
           <span className="text-xs font-black uppercase text-teal-750 dark:text-teal-450 tracking-wider flex items-center gap-1">
-            <Clock className="w-4 h-4 text-teal-600" /> Reunião do Sábado
+            <Clock className="w-4 h-4 text-teal-600" /> {editandoId ? "Editar Reunião" : "Nova Reunião"}
           </span>
-          <input
-            id="data-reuniao-input"
-            type="date"
-            value={dataReuniao}
-            onChange={(e) => setDataReuniao(e.target.value)}
-            className="text-[0.6563rem] font-bold px-2 py-1 bg-slate-50 dark:bg-zinc-950 border border-gray-100 dark:border-zinc-805 rounded-lg text-slate-900 dark:text-white outline-none cursor-pointer"
-          />
+          <div className="flex items-center gap-2">
+            <input
+              id="data-reuniao-input"
+              type="date"
+              value={dataReuniao}
+              onChange={(e) => setDataReuniao(e.target.value)}
+              className="text-[0.6563rem] font-bold px-2 py-1 bg-slate-50 dark:bg-zinc-950 border border-gray-100 dark:border-zinc-805 rounded-lg text-slate-900 dark:text-white outline-none cursor-pointer"
+            />
+            <button type="button" onClick={fecharForm} className="p-1 text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer" aria-label="Fechar">
+              <X className="w-4 h-4" />
+            </button>
+          </div>
         </div>
 
         <form onSubmit={handleSalvarReuniao} className="space-y-4 text-xs font-sans">
@@ -304,7 +431,7 @@ export default function Reunioes({ liderId }: ReunioesProps) {
           <div className="space-y-1.5 text-left">
             <div className="flex justify-between items-center">
               <span className="text-[0.625rem] font-black uppercase text-gray-400 dark:text-zinc-500 tracking-widest font-sans">
-                QUEM FOI PARA O G.A?
+                PRESENÇA
               </span>
               <span className="text-[0.5938rem] font-bold text-teal-700 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/30 px-2 py-0.5 rounded-full font-sans">
                 {presentesIds.length} presentes
@@ -318,7 +445,7 @@ export default function Reunioes({ liderId }: ReunioesProps) {
                 onClick={() => setIsFazerChamada(true)}
                 className="w-full py-3 border border-dashed border-gray-200 dark:border-zinc-800 hover:border-teal-500 bg-slate-50/40 dark:bg-zinc-900 text-slate-800 dark:text-slate-300 rounded-xl transition flex items-center justify-center gap-1.5 cursor-pointer text-center font-extrabold uppercase tracking-wider text-[0.625rem]"
               >
-                <Users className="w-4 h-4 text-teal-600" /> PRESENÇA DO SABADO
+                <Users className="w-4 h-4 text-teal-600" /> REALIZAR CHAMADA
               </button>
             ) : (
               <div className="bg-slate-50 dark:bg-[#161618] border border-gray-100 dark:border-zinc-800 p-3.5 rounded-2xl space-y-3 max-h-56 overflow-y-auto animate-fadeIn">
@@ -380,7 +507,7 @@ export default function Reunioes({ liderId }: ReunioesProps) {
           {/* Tema / Roteiro da Reunião (Textarea) */}
           <div className="space-y-1">
             <label htmlFor="tema-reuniao" className="block text-[0.625rem] font-black text-gray-400 dark:text-zinc-500 uppercase tracking-widest font-sans">
-              TEVE ALGUM TEMA IMPORTANTE OU DINÂMICA? *
+              ROTEIRO *
             </label>
             <textarea
               id="tema-reuniao"
@@ -396,7 +523,7 @@ export default function Reunioes({ liderId }: ReunioesProps) {
           {/* Quem Trouxe o lanche (Input) */}
           <div className="space-y-1">
             <label htmlFor="lanche-reuniao" className="block text-[0.625rem] font-black text-gray-400 dark:text-zinc-500 uppercase tracking-widest font-sans flex items-center gap-1">
-              <Coffee className="w-3.5 h-3.5 text-amber-500" /> QUAL EQUIPE DE LANCHE?
+              <Coffee className="w-3.5 h-3.5 text-amber-500" /> LANCHE
             </label>
             <input
               id="lanche-reuniao"
@@ -411,7 +538,7 @@ export default function Reunioes({ liderId }: ReunioesProps) {
           {/* Pedidos de oração do dia */}
           <div className="space-y-1">
             <label htmlFor="oracao-reuniao" className="block text-[0.625rem] font-black text-gray-400 dark:text-zinc-500 uppercase tracking-widest font-sans flex items-center gap-1">
-               <Heart className="w-3.5 h-3.5 text-rose-500" /> PEDIDOS DE ORAÇÃO DO G.A
+               <Heart className="w-3.5 h-3.5 text-rose-500" /> PEDIDOS DE ORAÇÃO
             </label>
             <textarea
               id="oracao-reuniao"
@@ -429,11 +556,13 @@ export default function Reunioes({ liderId }: ReunioesProps) {
             type="submit"
             className="w-full h-11 bg-teal-700 hover:bg-teal-600 font-bold text-xs uppercase tracking-widest rounded-xl text-white transition shadow-md flex items-center justify-center gap-1 cursor-pointer"
           >
-            <CheckCircle className="w-4 h-4 text-white" /> Concluir e Salvar Reunião
+            <CheckCircle className="w-4 h-4 text-white" /> {editandoId ? "Salvar Alterações" : "Concluir e Salvar Reunião"}
           </button>
 
         </form>
       </section>
+      </div>
+      )}
 
       {/* CHECKLIST "NADA ACONTECEU" (SEGURANÇA APÓS SALVAR) */}
       {mostrarChecklistSeguranca && (
@@ -510,48 +639,6 @@ export default function Reunioes({ liderId }: ReunioesProps) {
         </section>
       )}
 
-      {/* HISTÓRICO DE REUNIÕES PASSADAS */}
-      <section className="space-y-2.5 pb-6">
-        <h2 className="text-[0.6875rem] font-black uppercase text-gray-400 dark:text-zinc-500 tracking-widest font-sans">Histórico de Atas</h2>
-        
-        {reunioes.length === 0 ? (
-          <div className="text-center py-10 bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 rounded-2xl text-gray-400 font-sans">
-            Sem reuniões registradas neste semestre.
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 items-start gap-3">
-            {reunioes.map((r) => (
-              <div
-                key={r.id}
-                onClick={() => setReuniaoDetalhada(r)}
-                className="bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800/85 p-3.5 rounded-2xl flex items-center justify-between hover:border-teal-500 cursor-pointer transition shadow-sm"
-              >
-                <div className="space-y-1 pr-4 max-w-[240px]">
-                  <div className="flex items-center gap-1 text-[0.625rem] text-gray-400 font-mono">
-                    <Calendar className="w-3.5 h-3.5 text-teal-600 shrink-0" />
-                    <span>{new Date(r.data + "T12:00:00").toLocaleDateString("pt-BR")}</span>
-                    <span className="bg-teal-50 dark:bg-teal-950/25 px-1.5 py-0.5 rounded text-teal-700 dark:text-teal-400 font-bold shrink-0 ml-1.5 uppercase text-[0.5rem] font-sans">
-                      {r.presentes ? r.presentes.length : 0} PRESENTES
-                    </span>
-                  </div>
-                  <h3 className="text-xs font-bold text-slate-900 dark:text-white line-clamp-1 italic font-sans leading-relaxed">
-                    "{r.tema}"
-                  </h3>
-                </div>
-
-                <button
-                  onClick={(e) => handleExcluirReuniao(r.id, e)}
-                  className="p-2.5 text-gray-400 hover:text-rose-500 border border-transparent hover:border-rose-100 hover:bg-rose-50/10 rounded-xl transition cursor-pointer"
-                  aria-label="Excluir reunião"
-                >
-                  <Trash2 className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            ))}
-          </div>
-        )}
-      </section>
-
       {/* MODAL DETALHADO — ATA DE REUNIÃO SECUNDÁRIA */}
       {reuniaoDetalhada && (
         <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
@@ -619,6 +706,13 @@ export default function Reunioes({ liderId }: ReunioesProps) {
               </div>
 
             </div>
+
+            <button
+              onClick={() => abrirEdicao(reuniaoDetalhada)}
+              className="w-full py-2.5 bg-teal-700 hover:bg-teal-600 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition cursor-pointer flex items-center justify-center gap-1.5"
+            >
+              <Pencil className="w-3.5 h-3.5" /> Editar Reunião
+            </button>
 
             <button
               onClick={() => setReuniaoDetalhada(null)}
