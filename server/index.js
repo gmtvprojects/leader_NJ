@@ -28,8 +28,8 @@ app.set('trust proxy', 1);
 // ---------- Autenticação ----------
 
 const criarSessao = (usuario) => {
-  const user = { id: usuario.id, email: usuario.email, papel: usuario.papel || 'lider' };
-  const access_token = jwt.sign({ sub: user.id, email: user.email }, JWT_SECRET, { expiresIn: '30d' });
+  const user = { id: usuario.id, email: usuario.email || null, codigo: usuario.codigo || null, papel: usuario.papel || 'lider' };
+  const access_token = jwt.sign({ sub: user.id, email: user.email || '' }, JWT_SECRET, { expiresIn: '30d' });
   return { user, session: { access_token, user } };
 };
 
@@ -57,42 +57,26 @@ const limiteAuth = rateLimit({
 const jsonBody = express.json({ limit: '5mb' });
 
 function lerCredenciais(req) {
-  const email = String(req.body?.email || '').trim().toLowerCase();
+  const codigo = String(req.body?.codigo || '').replace(/\D/g, '');
   const senha = String(req.body?.password || '');
-  return { email, senha };
+  return { codigo, senha };
 }
 
-app.post('/api/auth/signup', limiteAuth, jsonBody, async (req, res) => {
-  const { email, senha } = lerCredenciais(req);
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    return res.status(400).json({ error: { message: 'Informe um e-mail válido.' } });
-  }
-  if (senha.length < 6) {
-    return res.status(400).json({ error: { message: 'A senha deve ter pelo menos 6 caracteres.' } });
-  }
-  try {
-    const hash = await bcrypt.hash(senha, 10);
-    const { rows } = await pool.query(
-      'INSERT INTO usuarios (email, senha_hash) VALUES ($1, $2) ON CONFLICT (email) DO NOTHING RETURNING id, email, papel',
-      [email, hash]
-    );
-    if (rows.length === 0) {
-      return res.status(409).json({ error: { message: 'Este e-mail já está cadastrado.' } });
-    }
-    res.json({ data: criarSessao(rows[0]), error: null });
-  } catch (err) {
-    console.error('Erro no cadastro:', err);
-    res.status(500).json({ error: { message: 'Não foi possível criar a conta.' } });
-  }
+// O cadastro público foi desativado: os líderes são cadastrados pelo Pastor, que define o código de acesso.
+app.post('/api/auth/signup', (_req, res) => {
+  res.status(403).json({ error: { message: 'O cadastro é feito pelo Pastor. Peça o seu código de acesso.' } });
 });
 
 app.post('/api/auth/login', limiteAuth, jsonBody, async (req, res) => {
-  const { email, senha } = lerCredenciais(req);
+  const { codigo, senha } = lerCredenciais(req);
+  if (!/^\d{6}$/.test(codigo)) {
+    return res.status(400).json({ error: { message: 'Informe o código de acesso de 6 números.' } });
+  }
   try {
-    const { rows } = await pool.query('SELECT id, email, senha_hash, papel FROM usuarios WHERE email = $1', [email]);
+    const { rows } = await pool.query('SELECT id, email, senha_hash, papel, codigo FROM usuarios WHERE codigo = $1', [codigo]);
     const ok = rows[0] && (await bcrypt.compare(senha, rows[0].senha_hash));
     if (!ok) {
-      return res.status(401).json({ error: { message: 'E-mail ou senha incorretos.' } });
+      return res.status(401).json({ error: { message: 'Código ou senha incorretos.' } });
     }
     res.json({ data: criarSessao(rows[0]), error: null });
   } catch (err) {
@@ -102,7 +86,7 @@ app.post('/api/auth/login', limiteAuth, jsonBody, async (req, res) => {
 });
 
 app.get('/api/auth/session', autenticar, async (req, res) => {
-  const { rows } = await pool.query('SELECT id, email, papel FROM usuarios WHERE id = $1', [req.userId]);
+  const { rows } = await pool.query('SELECT id, email, papel, codigo FROM usuarios WHERE id = $1', [req.userId]);
   if (rows.length === 0) {
     return res.status(401).json({ data: null, error: { message: 'Sessão inválida ou expirada.', code: 'NAO_AUTENTICADO' } });
   }

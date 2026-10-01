@@ -2,7 +2,7 @@
 // O pastor enxerga os dados de todos os líderes; a API genérica /api/db continua restrita ao dono de cada linha.
 import express from 'express';
 import bcrypt from 'bcryptjs';
-import { pool } from './db.js';
+import { pool, gerarCodigo } from './db.js';
 
 const jsonBody = express.json({ limit: '2mb' });
 
@@ -29,7 +29,7 @@ export function rotasPastor() {
     try {
       const [lideres, membros, reunioes, eventos, pedidos, presencas, ausenciasDet] = await Promise.all([
         pool.query(
-          `SELECT u.id, u.email, u.criado_em, p.nome_grupo, p.nome_lider, p.celular, p.culto, p.senib
+          `SELECT u.id, u.email, u.codigo, u.criado_em, p.nome_grupo, p.nome_lider, p.celular, p.culto, p.senib
              FROM usuarios u LEFT JOIN profiles p ON p.id = u.id
             WHERE u.papel = 'lider'
             ORDER BY lower(coalesce(p.nome_lider, p.nome_grupo, u.email))`
@@ -87,17 +87,18 @@ export function rotasPastor() {
     const celular = String(req.body?.celular || '').trim();
 
     if (!nomeLider) return erro(res, 400, 'Informe o nome do líder.');
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return erro(res, 400, 'Informe um e-mail válido.');
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return erro(res, 400, 'Informe um e-mail válido ou deixe em branco.');
     if (senha.length < 6) return erro(res, 400, 'A senha inicial deve ter pelo menos 6 caracteres.');
 
     const client = await pool.connect();
     try {
       await client.query('BEGIN');
       const hash = await bcrypt.hash(senha, 10);
+      const codigo = await gerarCodigo(client);
       const { rows } = await client.query(
-        `INSERT INTO usuarios (email, senha_hash, papel) VALUES ($1, $2, 'lider')
+        `INSERT INTO usuarios (email, senha_hash, papel, codigo) VALUES ($1, $2, 'lider', $3)
          ON CONFLICT (email) DO NOTHING RETURNING id, email, criado_em`,
-        [email, hash]
+        [email || null, hash, codigo]
       );
       if (rows.length === 0) {
         await client.query('ROLLBACK');
@@ -110,7 +111,7 @@ export function rotasPastor() {
       );
       await client.query('COMMIT');
       res.json({
-        data: { id: rows[0].id, email, criado_em: rows[0].criado_em, nome_grupo: nomeGrupo, nome_lider: nomeLider, celular },
+        data: { id: rows[0].id, email, codigo, criado_em: rows[0].criado_em, nome_grupo: nomeGrupo, nome_lider: nomeLider, celular },
         error: null,
       });
     } catch (err) {

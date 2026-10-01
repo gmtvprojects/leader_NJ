@@ -15,7 +15,26 @@ export async function conectar(connectionString) {
   pool = new pg.Pool({ connectionString });
   const sql = fs.readFileSync(path.join(__dirname, 'schema.sql'), 'utf8');
   await pool.query(sql);
+  await atribuirCodigos();
   await semearManual();
+}
+
+// Gera um código de 6 números ainda não usado por nenhuma conta.
+export async function gerarCodigo(executor = pool) {
+  for (let i = 0; i < 50; i++) {
+    const codigo = String(Math.floor(100000 + Math.random() * 900000));
+    const { rowCount } = await executor.query('SELECT 1 FROM usuarios WHERE codigo = $1', [codigo]);
+    if (rowCount === 0) return codigo;
+  }
+  throw new Error('Não foi possível gerar um código de acesso único.');
+}
+
+// Contas antigas (criadas com e-mail) recebem um código na primeira subida.
+async function atribuirCodigos() {
+  const { rows } = await pool.query('SELECT id FROM usuarios WHERE codigo IS NULL');
+  for (const { id } of rows) {
+    await pool.query('UPDATE usuarios SET codigo = $2 WHERE id = $1', [id, await gerarCodigo()]);
+  }
 }
 
 // Importa o manual de liderança (13 capítulos) na primeira subida, se a tabela estiver vazia.

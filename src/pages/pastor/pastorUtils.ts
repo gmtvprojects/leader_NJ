@@ -7,6 +7,7 @@ export interface LiderP {
   email: string;
   nome: string; // nome do líder (ou do GA / e-mail, na falta)
   nomeGrupo: string;
+  codigo: string;
   celular: string;
   culto: string;
   senib: string;
@@ -104,6 +105,7 @@ function mapear(raw: any): DadosPastor {
     email: l.email,
     nome: l.nome_lider || l.nome_grupo || l.email,
     nomeGrupo: l.nome_grupo || "",
+    codigo: l.codigo || "",
     celular: l.celular || "",
     culto: l.culto || "",
     senib: l.senib || ""

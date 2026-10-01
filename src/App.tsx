@@ -158,7 +158,7 @@ export default function App() {
         {activeTab === "eventos" && <PastorEventos />}
         {activeTab === "pedidos" && <PastorPedidos />}
         {activeTab === "manual" && <PastorManual />}
-        {activeTab === "config" && <PastorConfig email={session.user.email} />}
+        {activeTab === "config" && <PastorConfig email={session.user.email} codigo={session.user.codigo} />}
       </Shell>
     );
   }

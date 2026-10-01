@@ -29,12 +29,16 @@ Para usar outro banco, copie `.env.example` para `.env` e preencha.
 Cada conta tem um papel (`usuarios.papel`): `lider` (padrão) ou `pastor`. O Pastor enxerga os dados de todos os líderes
 (painel, líderes, membros por categoria, eventos e aprovações, pedidos de oração e manual de liderança).
 
-Criar uma conta de Pastor, ou promover uma conta existente (com `DATABASE_URL` definida usa esse banco; sem ela, o banco local):
+**Login:** por **código de acesso de 6 números** + senha (o e-mail não é mais usado para entrar). Todo usuário recebe um código
+único; o cadastro público foi desativado. O Pastor cadastra os líderes na aba Líderes (o sistema gera o código e o Pastor repassa
+código + senha inicial).
+
+Criar uma conta de Pastor, promover uma conta existente ou listar os códigos (com `DATABASE_URL` definida usa esse banco; sem ela, o banco local):
 
 ```bash
-node server/criar-pastor.js pastor@exemplo.com senha-inicial   # conta nova
-node server/criar-pastor.js lider@exemplo.com                  # promove uma conta existente
+node server/criar-pastor.js pastor@exemplo.com senha-inicial   # conta nova (e-mail + senha); imprime o código
+node server/criar-pastor.js 123456                             # promove a conta com esse código (ou informe o e-mail)
+node server/codigos.js                                         # lista os códigos de todas as contas (somente leitura)
 ```
 
-No Railway: `railway ssh --service web -- node server/criar-pastor.js <email> [senha]`.
-Os líderes são cadastrados pelo Pastor na aba Líderes (e-mail + senha inicial).
+No Railway: `railway ssh --service web -- node server/codigos.js`.

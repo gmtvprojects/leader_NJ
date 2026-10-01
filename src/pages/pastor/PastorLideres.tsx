@@ -29,7 +29,7 @@ export default function PastorLideres() {
     e.preventDefault();
     setSalvando(true);
     setErroForm("");
-    const { error } = await api.pastor.cadastrarLider({
+    const { data, error } = await api.pastor.cadastrarLider({
       nome_lider: nome.trim(),
       email: email.trim(),
       senha,
@@ -41,7 +41,7 @@ export default function PastorLideres() {
       setErroForm(error.message);
       return;
     }
-    setMensagem(`Líder cadastrado. Repasse a ${nome.trim()} o e-mail ${email.trim()} e a senha inicial definida.`);
+    setMensagem(`Líder cadastrado. Repasse a ${nome.trim()} o código de acesso ${data?.codigo} e a senha inicial definida.`);
     setView("lista");
     await recarregar();
   };
@@ -66,7 +66,7 @@ export default function PastorLideres() {
 
           <form onSubmit={salvar} className={`${cardClasse} p-5 space-y-4 w-full max-w-2xl`}>
             <p className="text-[0.6875rem] text-gray-500 dark:text-zinc-400 leading-relaxed">
-              Cadastro inicial: o líder entra com o e-mail e a senha inicial abaixo e depois completa o próprio perfil.
+              Cadastro inicial: o sistema gera um código de acesso de 6 números. O líder entra com esse código e a senha inicial abaixo e depois completa o próprio perfil.
             </p>
 
             <div className="space-y-1">
@@ -76,8 +76,8 @@ export default function PastorLideres() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label htmlFor="ld-email" className="block text-[0.625rem] font-black text-gray-400 uppercase tracking-widest">E-mail de acesso *</label>
-                <input id="ld-email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="lider@exemplo.com" className={campoClasse} />
+                <label htmlFor="ld-email" className="block text-[0.625rem] font-black text-gray-400 uppercase tracking-widest">E-mail (opcional)</label>
+                <input id="ld-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="lider@exemplo.com" className={campoClasse} />
               </div>
               <div className="space-y-1">
                 <label htmlFor="ld-senha" className="block text-[0.625rem] font-black text-gray-400 uppercase tracking-widest">Senha inicial *</label>
@@ -137,7 +137,7 @@ export default function PastorLideres() {
                     onClick={() => setLiderSelecionadoId(l.id)}
                     className={`${cardClasse} border-l-4 border-l-teal-300 p-4 flex items-center justify-between gap-3 text-left hover:shadow-lg hover:scale-[1.01] transition cursor-pointer`}
                   >
-                    <h3 className="text-sm font-bold text-slate-900 dark:text-white truncate">{l.nome}</h3>
+                    <h3 className="text-sm font-bold text-slate-900 dark:text-white truncate">{l.nomeGrupo || l.nome}</h3>
                     <span className="shrink-0 flex items-center gap-1 text-[0.6875rem] font-black px-2.5 py-1 rounded-full bg-teal-50 text-teal-700 border border-teal-200 shadow-sm">
                       {total} {total === 1 ? "membro" : "membros"}
                     </span>

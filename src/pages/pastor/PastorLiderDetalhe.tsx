@@ -30,12 +30,12 @@ export default function PastorLiderDetalhe({ dados, lider, onVoltar }: { dados: 
       <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
       {membro ? (
         <>
-          <button type="button" onClick={() => setMembroId(null)} className="text-teal-700 dark:text-teal-400 hover:underline cursor-pointer">{lider.nome}</button>
+          <button type="button" onClick={() => setMembroId(null)} className="text-teal-700 dark:text-teal-400 hover:underline cursor-pointer">{lider.nomeGrupo || lider.nome}</button>
           <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
           <span className="text-slate-900 dark:text-white">{membro.nome}</span>
         </>
       ) : (
-        <span className="text-slate-900 dark:text-white">{lider.nome}</span>
+        <span className="text-slate-900 dark:text-white">{lider.nomeGrupo || lider.nome}</span>
       )}
     </nav>
   );
@@ -59,8 +59,8 @@ export default function PastorLiderDetalhe({ dados, lider, onVoltar }: { dados: 
             {iniciais(lider.nome)}
           </div>
           <div className="min-w-0">
-            <h2 className="text-base font-bold text-slate-900 dark:text-white truncate">{lider.nome}</h2>
-            <p className="text-[0.6875rem] text-teal-700 dark:text-teal-400 font-bold truncate">{lider.nomeGrupo || "GA sem nome"} · {lider.email}</p>
+            <h2 className="text-base font-bold text-slate-900 dark:text-white truncate">{lider.nomeGrupo || lider.nome}</h2>
+            <p className="text-[0.6875rem] text-teal-700 dark:text-teal-400 font-bold truncate">Líder: {lider.nome}{lider.codigo ? ` · Código ${lider.codigo}` : ""}</p>
           </div>
         </div>
         {lider.celular && (

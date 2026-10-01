@@ -8,6 +8,10 @@ CREATE TABLE IF NOT EXISTS usuarios (
 );
 
 ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS papel text NOT NULL DEFAULT 'lider';
+-- Código de acesso de 6 números (substitui o e-mail no login).
+ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS codigo text;
+ALTER TABLE usuarios ALTER COLUMN email DROP NOT NULL;
+CREATE UNIQUE INDEX IF NOT EXISTS usuarios_codigo_idx ON usuarios(codigo);
 
 CREATE TABLE IF NOT EXISTS profiles (
   id uuid PRIMARY KEY REFERENCES usuarios(id) ON DELETE CASCADE,

@@ -3,7 +3,7 @@ import { Settings, Moon, Sun, LogOut, UserCircle } from "lucide-react";
 import { api } from "../../lib/api";
 import { Cabecalho, cardClasse } from "./PastorUi";
 
-export default function PastorConfig({ email }: { email: string }) {
+export default function PastorConfig({ email, codigo }: { email?: string | null; codigo?: string | null }) {
   const [tema, setTema] = useState<"light" | "dark">(() => ((localStorage.getItem("ga_theme") as "light" | "dark") || "light"));
 
   const alternarTema = () => {
@@ -24,7 +24,7 @@ export default function PastorConfig({ email }: { email: string }) {
           </div>
           <div className="min-w-0">
             <h3 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider leading-none">Perfil Pastor</h3>
-            <p className="text-[0.6875rem] text-gray-500 dark:text-zinc-400 mt-1 truncate">{email}</p>
+            <p className="text-[0.6875rem] text-gray-500 dark:text-zinc-400 mt-1 truncate">{codigo ? `Código ${codigo}` : ""}{codigo && email ? " · " : ""}{email || ""}</p>
           </div>
         </div>
 

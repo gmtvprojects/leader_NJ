@@ -5,7 +5,7 @@
 type ApiError = { message: string; code?: string }
 type ApiResult<T = any> = { data: T | null; error: ApiError | null }
 export type Papel = 'lider' | 'pastor'
-type Session = { access_token: string; user: { id: string; email: string; papel?: Papel } }
+type Session = { access_token: string; user: { id: string; email: string | null; codigo?: string | null; papel?: Papel } }
 type AuthChangeCallback = (event: string, session: Session | null) => void
 
 const SESSION_KEY = 'ga_pwa_session'
@@ -179,8 +179,8 @@ class QueryBuilder implements PromiseLike<ApiResult> {
   }
 }
 
-async function autenticarCom(rota: 'login' | 'signup', email: string, password?: string) {
-  const res = await postJson<{ user: Session['user']; session: Session }>(`/api/auth/${rota}`, { email, password })
+async function autenticarCom(rota: 'login' | 'signup', identificador: { codigo?: string; email?: string }, password?: string) {
+  const res = await postJson<{ user: Session['user']; session: Session }>(`/api/auth/${rota}`, { ...identificador, password })
   if (res.error || !res.data) {
     return { data: { user: null, session: null }, error: res.error || { message: 'Resposta inválida do servidor.' } }
   }
@@ -206,7 +206,7 @@ export const api = {
   // Rotas exclusivas do perfil Pastor
   pastor: {
     dados: () => chamar<any>('/api/pastor/dados'),
-    cadastrarLider: (dados: { nome_lider: string; email: string; senha: string; nome_grupo?: string; celular?: string }) =>
+    cadastrarLider: (dados: { nome_lider: string; email?: string; senha: string; nome_grupo?: string; celular?: string }) =>
       chamar<any>('/api/pastor/lideres', 'POST', dados),
     decidirEvento: (id: string, decisao: 'aprovado' | 'reprovado' | 'pendente', obs?: string) =>
       chamar<any>(`/api/pastor/eventos/${id}/aprovacao`, 'POST', { decisao, obs }),
@@ -227,8 +227,9 @@ export const api = {
       }
       // Atualiza o papel (líder/pastor) com o que o servidor informa, caso tenha mudado.
       const papelAtual = res.data?.user?.papel as Papel | undefined
-      if (papelAtual && local.user.papel !== papelAtual) {
-        local.user = { ...local.user, papel: papelAtual }
+      const codigoAtual = res.data?.user?.codigo as string | undefined
+      if ((papelAtual && local.user.papel !== papelAtual) || (codigoAtual && local.user.codigo !== codigoAtual)) {
+        local.user = { ...local.user, papel: papelAtual || local.user.papel, codigo: codigoAtual || local.user.codigo }
         setStoredSession(local)
       }
       // Sem rede, mantém a sessão salva: as telas mostram seus próprios erros de carregamento.
@@ -248,12 +249,13 @@ export const api = {
       }
     },
 
-    signInWithPassword({ email, password }: { email: string; password?: string }) {
-      return autenticarCom('login', email, password)
+    // Login pelo código de acesso de 6 números + senha
+    signInWithPassword({ codigo, password }: { codigo: string; password?: string }) {
+      return autenticarCom('login', { codigo }, password)
     },
 
     signUp({ email, password }: { email: string; password?: string }) {
-      return autenticarCom('signup', email, password)
+      return autenticarCom('signup', { email }, password)
     },
 
     async signOut() {

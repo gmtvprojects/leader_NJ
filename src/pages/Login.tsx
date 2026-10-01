@@ -1,10 +1,9 @@
 import React, { useState } from 'react'
 import { api } from '../lib/api'
-import { Lock, Mail, Eye, EyeOff, Loader2 } from 'lucide-react'
+import { Lock, KeyRound, Eye, EyeOff, Loader2 } from 'lucide-react'
 
 export default function Login() {
-  const [isLogin, setIsLogin] = useState(true)
-  const [email, setEmail] = useState('')
+  const [codigo, setCodigo] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -12,21 +11,20 @@ export default function Login() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!email || !password) {
-      setErrorMsg('Por favor, preencha todos os campos.')
+    if (codigo.length !== 6) {
+      setErrorMsg('Informe o código de acesso de 6 números.')
+      return
+    }
+    if (!password) {
+      setErrorMsg('Informe a senha.')
       return
     }
     setLoading(true)
     setErrorMsg('')
 
     try {
-      if (isLogin) {
-        const { error } = await api.auth.signInWithPassword({ email, password })
-        if (error) throw error
-      } else {
-        const { error } = await api.auth.signUp({ email, password })
-        if (error) throw error
-      }
+      const { error } = await api.auth.signInWithPassword({ codigo, password })
+      if (error) throw error
     } catch (err: any) {
       console.error(err)
       const msg = err?.message || ''
@@ -40,52 +38,19 @@ export default function Login() {
     }
   }
 
-
   return (
     <div className="min-h-screen bg-neutral-50 dark:bg-zinc-950 flex flex-col items-center justify-center p-4 transition-colors duration-200">
       <div className="w-full max-w-sm bg-white dark:bg-zinc-900 border border-neutral-200 dark:border-zinc-800 rounded-3xl p-6 shadow-lg space-y-6">
-        
+
         {/* Logo & Headline */}
         <div className="text-center space-y-1.5 select-none">
           <div className="text-[#0f766e] dark:text-teal-400 font-bold text-lg flex items-center justify-center gap-1.5">
-            <span className="text-xl">✝</span> 
+            <span className="text-xl">✝</span>
             <span>Firme na Palavra e no Amor</span>
           </div>
           <p className="text-[0.6875rem] text-zinc-500 dark:text-zinc-450 uppercase tracking-widest font-bold">
             App do Líder de GA
           </p>
-        </div>
-
-        {/* Auth Mode Toggle */}
-        <div className="flex bg-neutral-100 dark:bg-zinc-950 p-1 rounded-xl border border-neutral-200 dark:border-zinc-800 text-xs font-semibold select-none">
-          <button
-            type="button"
-            onClick={() => {
-              setIsLogin(true)
-              setErrorMsg('')
-            }}
-            className={`flex-1 py-1.5 rounded-lg transition-all cursor-pointer ${
-              isLogin 
-                ? 'bg-[#0f766e] text-white shadow-sm' 
-                : 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-800'
-            }`}
-          >
-            Entrar
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              setIsLogin(false)
-              setErrorMsg('')
-            }}
-            className={`flex-1 py-1.5 rounded-lg transition-all cursor-pointer ${
-              !isLogin 
-                ? 'bg-[#0f766e] text-white shadow-sm' 
-                : 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-800'
-            }`}
-          >
-            Criar conta
-          </button>
         </div>
 
         {/* Error Messaging */}
@@ -98,29 +63,34 @@ export default function Login() {
         {/* Credentials Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-3.5">
-            {/* Email field */}
+            {/* Código de acesso */}
             <div className="space-y-1">
-              <label className="block text-[0.5rem] font-black uppercase text-zinc-400 dark:text-zinc-450 tracking-wider">
-                Endereço de E-mail
+              <label htmlFor="login-codigo" className="block text-[0.5rem] font-black uppercase text-zinc-400 dark:text-zinc-450 tracking-wider">
+                Código de Acesso
               </label>
               <div className="relative">
                 <span className="absolute inset-y-0 left-3 flex items-center pr-1.5 border-r border-neutral-105 dark:border-zinc-800">
-                  <Mail className="w-3.5 h-3.5 text-zinc-400" />
+                  <KeyRound className="w-3.5 h-3.5 text-zinc-400" />
                 </span>
                 <input
-                  type="email"
+                  id="login-codigo"
+                  type="text"
+                  inputMode="numeric"
+                  autoComplete="username"
+                  pattern="[0-9]{6}"
+                  maxLength={6}
                   required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="exemplo@email.com"
-                  className="w-full text-xs pl-11 pr-3 py-2.5 bg-neutral-50 dark:bg-zinc-950 border border-neutral-200 dark:border-zinc-800 rounded-xl focus:outline-none focus:border-[#0f766e] text-slate-800 dark:text-white"
+                  value={codigo}
+                  onChange={(e) => setCodigo(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                  placeholder="000000"
+                  className="w-full text-sm tracking-[0.4em] font-bold pl-11 pr-3 py-2.5 bg-neutral-50 dark:bg-zinc-950 border border-neutral-200 dark:border-zinc-800 rounded-xl focus:outline-none focus:border-[#0f766e] text-slate-800 dark:text-white"
                 />
               </div>
             </div>
 
             {/* Password field */}
             <div className="space-y-1">
-              <label className="block text-[0.5rem] font-black uppercase text-zinc-400 dark:text-zinc-450 tracking-wider">
+              <label htmlFor="login-senha" className="block text-[0.5rem] font-black uppercase text-zinc-400 dark:text-zinc-450 tracking-wider">
                 Senha de Acesso
               </label>
               <div className="relative">
@@ -128,7 +98,9 @@ export default function Login() {
                   <Lock className="w-3.5 h-3.5 text-zinc-400" />
                 </span>
                 <input
+                  id="login-senha"
                   type={showPassword ? 'text' : 'password'}
+                  autoComplete="current-password"
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -139,6 +111,7 @@ export default function Login() {
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute inset-y-0 right-3 flex items-center text-zinc-400 hover:text-zinc-650"
+                  aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
@@ -160,10 +133,13 @@ export default function Login() {
                 <span>Processando...</span>
               </>
             ) : (
-              <span>{isLogin ? 'Fazer Login' : 'Cadastrar e Entrar'}</span>
+              <span>Entrar</span>
             )}
           </button>
 
+          <p className="text-center text-[0.625rem] text-zinc-400 leading-relaxed">
+            Não tem o código? Peça ao seu Pastor.
+          </p>
         </form>
       </div>
     </div>
