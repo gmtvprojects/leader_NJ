@@ -27,7 +27,7 @@ export function rotasPastor() {
   // Todos os dados necessários para o painel, líderes, membros, eventos e pedidos.
   router.get('/dados', async (_req, res) => {
     try {
-      const [lideres, membros, reunioes, eventos, pedidos] = await Promise.all([
+      const [lideres, membros, reunioes, eventos, pedidos, presencas, ausenciasDet] = await Promise.all([
         pool.query(
           `SELECT u.id, u.email, u.criado_em, p.nome_grupo, p.nome_lider, p.celular, p.culto, p.senib
              FROM usuarios u LEFT JOIN profiles p ON p.id = u.id
@@ -51,6 +51,14 @@ export function rotasPastor() {
         pool.query(
           `SELECT o.* FROM oracao_pedidos o JOIN usuarios u ON u.id = o.lider_id WHERE u.papel = 'lider' ORDER BY o.criado_em DESC`
         ),
+        pool.query(
+          `SELECT p.reuniao_id, p.membro_id FROM reuniao_presencas p
+             JOIN reunioes r ON r.id = p.reuniao_id JOIN usuarios u ON u.id = r.lider_id WHERE u.papel = 'lider'`
+        ),
+        pool.query(
+          `SELECT a.reuniao_id, a.membro_id, a.motivo, a.sem_justificativa FROM reuniao_ausencias a
+             JOIN reunioes r ON r.id = a.reuniao_id JOIN usuarios u ON u.id = r.lider_id WHERE u.papel = 'lider'`
+        ),
       ]);
       res.json({
         data: {
@@ -59,6 +67,8 @@ export function rotasPastor() {
           reunioes: reunioes.rows,
           eventos: eventos.rows,
           pedidos: pedidos.rows,
+          presencas: presencas.rows,
+          ausencias: ausenciasDet.rows,
         },
         error: null,
       });

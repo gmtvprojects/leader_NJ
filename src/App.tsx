@@ -11,7 +11,8 @@ import {
   LayoutDashboard,
   UserCog,
   CalendarCheck,
-  ScrollText
+  ScrollText,
+  Sparkles
 } from "lucide-react";
 
 import { api } from "./lib/api";
@@ -27,7 +28,8 @@ import Oracao from "./pages/Oracao";
 import BancoDoLider from "./pages/BancoDoLider";
 import Aniversariantes from "./pages/Aniversariantes";
 
-import PastorPainel from "./pages/pastor/PastorPainel";
+import PastorGeral from "./pages/pastor/PastorGeral";
+import PastorTransicao from "./pages/pastor/PastorTransicao";
 import PastorLideres from "./pages/pastor/PastorLideres";
 import PastorMembros from "./pages/pastor/PastorMembros";
 import PastorEventos from "./pages/pastor/PastorEventos";
@@ -49,9 +51,10 @@ const NAV_LIDER: ItemNav[] = [
 
 // Menu do perfil Pastor
 const NAV_PASTOR: ItemNav[] = [
-  { id: "painel", label: "Painel", Icon: LayoutDashboard },
+  { id: "geral", label: "Geral", Icon: LayoutDashboard },
   { id: "lideres", label: "Líderes", Icon: UserCog },
   { id: "membros", label: "Membros", Icon: Users },
+  { id: "transicao", label: "Transição", Icon: Sparkles },
   { id: "eventos", label: "Eventos", Icon: CalendarCheck },
   { id: "pedidos", label: "Pedidos de Oração", Icon: HeartHandshake },
   { id: "manual", label: "Manual", Icon: ScrollText },
@@ -121,7 +124,7 @@ export default function App() {
 
   const ehPastor = session.user.papel === "pastor";
   const nav = ehPastor ? NAV_PASTOR : NAV_LIDER;
-  const padrao = ehPastor ? "painel" : "inicio";
+  const padrao = ehPastor ? "geral" : "inicio";
   const activeTab = (() => {
     const id = hash.replace(/^#\/?/, "");
     return nav.some((n) => n.id === id) ? id : padrao;
@@ -147,7 +150,8 @@ export default function App() {
   if (ehPastor) {
     return (
       <Shell nav={NAV_PASTOR} activeTab={activeTab} onSelect={handleSelectTab} titulo="Painel do Pastor" larguraMax="max-w-6xl">
-        {activeTab === "painel" && <PastorPainel onSelectTab={handleSelectTab} />}
+        {activeTab === "geral" && <PastorGeral onSelectTab={handleSelectTab} />}
+        {activeTab === "transicao" && <PastorTransicao />}
         {activeTab === "lideres" && <PastorLideres />}
         {activeTab === "membros" && <PastorMembros categoriaInicial={membrosFiltro === "ausentes" ? "ausentes" : "todos"} />}
         {activeTab === "eventos" && <PastorEventos />}

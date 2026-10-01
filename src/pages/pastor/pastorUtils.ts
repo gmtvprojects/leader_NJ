@@ -74,15 +74,29 @@ export interface PedidoP {
   status: "pendente" | "finalizado" | "resolvido";
 }
 
+export interface PresencaP {
+  reuniaoId: string;
+  membroId: string;
+}
+
+export interface AusenciaP {
+  reuniaoId: string;
+  membroId: string;
+  motivo: string;
+  semJustificativa: boolean;
+}
+
 export interface DadosPastor {
   lideres: LiderP[];
   membros: MembroP[];
   reunioes: ReuniaoP[];
   eventos: EventoP[];
   pedidos: PedidoP[];
+  presencas: PresencaP[];
+  ausencias: AusenciaP[];
 }
 
-const VAZIO: DadosPastor = { lideres: [], membros: [], reunioes: [], eventos: [], pedidos: [] };
+const VAZIO: DadosPastor = { lideres: [], membros: [], reunioes: [], eventos: [], pedidos: [], presencas: [], ausencias: [] };
 
 function mapear(raw: any): DadosPastor {
   const lideres: LiderP[] = (raw.lideres || []).map((l: any) => ({
@@ -160,7 +174,37 @@ function mapear(raw: any): DadosPastor {
     status: o.status === "finalizado" || o.status === "resolvido" ? o.status : o.respondido ? "resolvido" : "pendente"
   }));
 
-  return { lideres, membros, reunioes, eventos, pedidos };
+  const presencas: PresencaP[] = (raw.presencas || []).map((x: any) => ({ reuniaoId: x.reuniao_id, membroId: x.membro_id }));
+  const ausencias: AusenciaP[] = (raw.ausencias || []).map((x: any) => ({
+    reuniaoId: x.reuniao_id,
+    membroId: x.membro_id,
+    motivo: x.motivo || "",
+    semJustificativa: !!x.sem_justificativa
+  }));
+
+  return { lideres, membros, reunioes, eventos, pedidos, presencas, ausencias };
+}
+
+export type EstadoDados = ReturnType<typeof useDadosPastor>;
+
+export const ehTransicao = (m: MembroP) => m.origemTransicao || m.status === "Transição" || m.faixa === "J1";
+
+// Registro de um membro em cada reunião do seu líder (da mais recente para a mais antiga)
+export function registroDoMembro(dados: DadosPastor, m: MembroP) {
+  return dados.reunioes
+    .filter((r) => r.liderId === m.liderId)
+    .sort((a, b) => b.data.localeCompare(a.data))
+    .map((r) => {
+      const presente = dados.presencas.some((p) => p.reuniaoId === r.id && p.membroId === m.id);
+      const aus = dados.ausencias.find((a) => a.reuniaoId === r.id && a.membroId === m.id);
+      return {
+        id: r.id,
+        data: r.data,
+        tema: r.tema,
+        presente,
+        motivo: aus && !aus.semJustificativa ? aus.motivo : ""
+      };
+    });
 }
 
 // Carrega (e permite recarregar) todos os dados de todos os líderes
@@ -210,7 +254,7 @@ export const CATEGORIAS_MEMBRO: CategoriaMembro[] = [
     id: "transicao",
     label: "Transição de J1",
     descricao: "Jovens vindos do J1 (até 17 anos) para o J2",
-    filtro: (m) => m.origemTransicao || m.status === "Transição" || m.faixa === "J1"
+    filtro: (m) => ehTransicao(m)
   },
   { id: "treinandos", label: "Treinandos", descricao: "Membros em formação para liderança", filtro: (m) => m.treinando },
   {
