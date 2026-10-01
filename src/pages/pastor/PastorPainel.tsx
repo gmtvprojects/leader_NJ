@@ -61,7 +61,7 @@ export default function PastorPainel({ estado, onSelectTab }: Props) {
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-5 items-start">
         {/* ANIVERSARIANTES */}
-        <section className={`${cardClasse} border-t-4 border-t-pink-500 p-4 space-y-3`}>
+        <section className={`${cardClasse} border-t-4 border-t-pink-300 p-4 space-y-3`}>
           <h2 className="text-[0.6875rem] font-black uppercase tracking-widest text-pink-700 dark:text-pink-300 flex items-center gap-1.5">
             <Cake className="w-3.5 h-3.5 text-pink-500" /> Aniversariantes
           </h2>
@@ -88,7 +88,7 @@ export default function PastorPainel({ estado, onSelectTab }: Props) {
         </section>
 
         {/* PRÓXIMOS EVENTOS */}
-        <section className={`${cardClasse} border-t-4 border-t-amber-500 p-4 space-y-3`}>
+        <section className={`${cardClasse} border-t-4 border-t-amber-300 p-4 space-y-3`}>
           <div className="flex items-center justify-between">
             <h2 className="text-[0.6875rem] font-black uppercase tracking-widest text-amber-700 dark:text-amber-300 flex items-center gap-1.5">
               <MapPin className="w-3.5 h-3.5 text-amber-600" /> Próximos eventos

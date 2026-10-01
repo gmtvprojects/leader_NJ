@@ -53,9 +53,9 @@ export default function PastorLiderDetalhe({ dados, lider, onVoltar }: { dados: 
     <div className="flex-1 flex flex-col space-y-4 px-4 py-4 animate-fadeIn text-left font-sans">
       {migalhas}
 
-      <div className={`${cardClasse} border-l-4 border-l-teal-500 p-4 flex items-center justify-between gap-3`}>
+      <div className={`${cardClasse} border-l-4 border-l-teal-300 p-4 flex items-center justify-between gap-3`}>
         <div className="flex items-center gap-3 min-w-0">
-          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-teal-600 to-emerald-500 text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-md shadow-teal-600/30">
+          <div className="w-12 h-12 rounded-full bg-teal-50 text-teal-700 border border-teal-200 flex items-center justify-center font-bold text-sm shrink-0 shadow-sm">
             {iniciais(lider.nome)}
           </div>
           <div className="min-w-0">
@@ -98,9 +98,9 @@ export default function PastorLiderDetalhe({ dados, lider, onVoltar }: { dados: 
                 <button
                   key={m.id}
                   onClick={() => setMembroId(m.id)}
-                  className={`${cardClasse} border-l-4 ${m.status === "Ausente" || m.faltas >= 2 ? "border-l-rose-500" : "border-l-teal-500"} p-3.5 text-left flex items-center gap-3 hover:shadow-lg transition cursor-pointer`}
+                  className={`${cardClasse} border-l-4 ${m.status === "Ausente" || m.faltas >= 2 ? "border-l-rose-300" : "border-l-teal-300"} p-3.5 text-left flex items-center gap-3 hover:shadow-lg transition cursor-pointer`}
                 >
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-teal-600 to-emerald-500 text-white flex items-center justify-center font-bold text-xs shrink-0">{iniciais(m.nome)}</div>
+                  <div className="w-10 h-10 rounded-full bg-teal-50 text-teal-700 border border-teal-200 flex items-center justify-center font-bold text-xs shrink-0">{iniciais(m.nome)}</div>
                   <div className="min-w-0 flex-1">
                     <h4 className="text-xs font-bold text-slate-900 dark:text-white truncate">{m.nome}</h4>
                     <p className="text-[0.625rem] text-gray-500 dark:text-zinc-400 truncate">
@@ -121,7 +121,7 @@ export default function PastorLiderDetalhe({ dados, lider, onVoltar }: { dados: 
         ) : (
           <div className="space-y-2.5 pb-6">
             {reunioes.map((r) => (
-              <div key={r.id} className={`${cardClasse} border-l-4 border-l-indigo-500 p-3.5 flex items-center justify-between gap-3`}>
+              <div key={r.id} className={`${cardClasse} border-l-4 border-l-indigo-300 p-3.5 flex items-center justify-between gap-3`}>
                 <div className="min-w-0">
                   <p className="text-xs font-bold text-slate-900 dark:text-white font-mono">{formatarData(r.data)}</p>
                   {r.tema && <p className="text-[0.6875rem] text-gray-500 dark:text-zinc-400 truncate">{r.tema}</p>}
@@ -146,7 +146,7 @@ export default function PastorLiderDetalhe({ dados, lider, onVoltar }: { dados: 
         ) : (
           <div className="space-y-2.5 pb-6">
             {eventos.map((e) => (
-              <div key={e.id} className={`${cardClasse} border-l-4 border-l-amber-500 p-3.5 flex items-center justify-between gap-3`}>
+              <div key={e.id} className={`${cardClasse} border-l-4 border-l-amber-300 p-3.5 flex items-center justify-between gap-3`}>
                 <div className="min-w-0">
                   <p className="text-xs font-bold text-slate-900 dark:text-white truncate">{e.titulo}</p>
                   <p className="text-[0.6875rem] text-gray-500 dark:text-zinc-400 flex items-center gap-1 truncate">

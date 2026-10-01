@@ -171,8 +171,8 @@ export default function PastorManual() {
           {capitulos.length === 0 && <div className={`${cardClasse} py-12 text-center text-xs text-gray-400`}>Nenhum capítulo. Use o botão + para criar o primeiro.</div>}
 
           {capitulos.map((c) => (
-            <div key={c.id} className={`${cardClasse} border-l-4 border-l-indigo-500 p-4 flex items-start gap-3`}>
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-600 to-violet-500 text-white flex items-center justify-center font-black text-sm shrink-0 shadow-md shadow-indigo-600/30">{c.ordem}</div>
+            <div key={c.id} className={`${cardClasse} border-l-4 border-l-indigo-300 p-4 flex items-start gap-3`}>
+              <div className="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 border border-indigo-200 flex items-center justify-center font-black text-sm shrink-0 shadow-sm">{c.ordem}</div>
               <div className="min-w-0 flex-1 space-y-1">
                 <h3 className="text-xs font-bold text-slate-900 dark:text-white">{c.titulo}</h3>
                 {c.texto && <p className="text-[0.6875rem] text-gray-500 dark:text-zinc-400 line-clamp-2 leading-relaxed">{c.texto}</p>}

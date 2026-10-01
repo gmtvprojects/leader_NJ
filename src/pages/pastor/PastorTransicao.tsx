@@ -60,7 +60,7 @@ export default function PastorTransicao() {
   };
   const porSituacao = contarPor((m) => m.status).map((i) => ({
     ...i,
-    cor: i.rotulo === "Ativo" ? "bg-gradient-to-r from-teal-600 to-emerald-400" : i.rotulo === "Ausente" ? "bg-gradient-to-r from-rose-500 to-pink-400" : i.rotulo === "Esporádico" ? "bg-gradient-to-r from-amber-500 to-orange-400" : "bg-gradient-to-r from-indigo-600 to-violet-400"
+    cor: i.rotulo === "Ativo" ? "bg-teal-300" : i.rotulo === "Ausente" ? "bg-rose-300" : i.rotulo === "Esporádico" ? "bg-amber-300" : "bg-indigo-300"
   }));
   const porGa = contarPor((m) => m.ga || "Sem G.A");
   const porLider = contarPor((m) => nomeDoLider(lideres, m.liderId));
@@ -173,7 +173,7 @@ export default function PastorTransicao() {
             </CardGrafico>
           </div>
 
-          <section className={`${cardClasse} border-t-4 border-t-teal-500 p-4 space-y-3`}>
+          <section className={`${cardClasse} border-t-4 border-t-teal-300 p-4 space-y-3`}>
             <h2 className="text-[0.6875rem] font-black uppercase tracking-widest text-teal-800 dark:text-teal-300">Situação de cada membro</h2>
             {todos.length === 0 ? (
               <p className="text-xs text-gray-400 italic py-3">Nenhum membro em transição.</p>

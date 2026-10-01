@@ -15,7 +15,7 @@ export function BarrasVerticais({ itens, altura = 140 }: { itens: ItemBarra[]; a
         {itens.map((i) => (
           <div key={i.rotulo} className="flex flex-col items-center justify-end gap-1 flex-1 min-w-[2rem]" style={{ height: "100%" }}>
             <span className="text-[0.625rem] font-black text-slate-700 dark:text-zinc-300">{i.valor}</span>
-            <div className={`w-full max-w-[2.5rem] rounded-t-lg shadow-sm ${i.cor || "bg-gradient-to-t from-teal-600 to-emerald-400"}`} style={{ height: Math.max(3, (i.valor / max) * altura) }} />
+            <div className={`w-full max-w-[2.5rem] rounded-t-lg shadow-sm ${i.cor || "bg-teal-300"}`} style={{ height: Math.max(3, (i.valor / max) * altura) }} />
             <span className="text-[0.5625rem] font-bold uppercase text-gray-500 whitespace-nowrap">{i.rotulo}</span>
           </div>
         ))}
@@ -36,7 +36,7 @@ export function BarrasHorizontais({ itens }: { itens: ItemBarra[] }) {
             <span>{i.valor}</span>
           </div>
           <div className="h-3 rounded-full bg-slate-100 dark:bg-zinc-800 overflow-hidden shadow-inner">
-            <div className={`h-full rounded-full ${i.cor || "bg-gradient-to-r from-teal-600 to-emerald-400"}`} style={{ width: `${(i.valor / max) * 100}%` }} />
+            <div className={`h-full rounded-full ${i.cor || "bg-teal-300"}`} style={{ width: `${(i.valor / max) * 100}%` }} />
           </div>
         </div>
       ))}
@@ -51,8 +51,8 @@ export function Proporcao({ a, b, rotuloA, rotuloB }: { a: number; b: number; ro
   return (
     <div className="space-y-2">
       <div className="flex h-5 rounded-full overflow-hidden bg-slate-100 dark:bg-zinc-800 shadow-inner">
-        <div className="bg-gradient-to-r from-teal-600 to-emerald-400" style={{ width: `${total ? (a / total) * 100 : 0}%` }} />
-        <div className="bg-gradient-to-r from-rose-400 to-pink-400" style={{ width: `${total ? (b / total) * 100 : 0}%` }} />
+        <div className="bg-teal-300" style={{ width: `${total ? (a / total) * 100 : 0}%` }} />
+        <div className="bg-rose-200" style={{ width: `${total ? (b / total) * 100 : 0}%` }} />
       </div>
       <div className="flex justify-between text-[0.6563rem] font-bold">
         <span className="text-teal-700 dark:text-teal-400">{rotuloA}: {a} ({pa}%)</span>
@@ -64,12 +64,12 @@ export function Proporcao({ a, b, rotuloA, rotuloB }: { a: number; b: number; ro
 
 type CorGrafico = "teal" | "indigo" | "amber" | "pink" | "rose" | "emerald";
 const TOPO: Record<CorGrafico, string> = {
-  teal: "border-t-teal-500 text-teal-800 dark:text-teal-300",
-  indigo: "border-t-indigo-500 text-indigo-800 dark:text-indigo-300",
-  amber: "border-t-amber-500 text-amber-800 dark:text-amber-300",
-  pink: "border-t-pink-500 text-pink-800 dark:text-pink-300",
-  rose: "border-t-rose-500 text-rose-800 dark:text-rose-300",
-  emerald: "border-t-emerald-500 text-emerald-800 dark:text-emerald-300"
+  teal: "border-t-teal-300 text-teal-800 dark:text-teal-300",
+  indigo: "border-t-indigo-300 text-indigo-800 dark:text-indigo-300",
+  amber: "border-t-amber-300 text-amber-800 dark:text-amber-300",
+  pink: "border-t-pink-300 text-pink-800 dark:text-pink-300",
+  rose: "border-t-rose-300 text-rose-800 dark:text-rose-300",
+  emerald: "border-t-emerald-300 text-emerald-800 dark:text-emerald-300"
 };
 
 export function CardGrafico({ titulo, cor = "teal", children }: { titulo: string; cor?: CorGrafico; children: React.ReactNode }) {

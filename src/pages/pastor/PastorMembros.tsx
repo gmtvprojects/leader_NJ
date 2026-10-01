@@ -56,10 +56,10 @@ export default function PastorMembros({ categoriaInicial = "todos" }: { categori
     const transicao = m.origemTransicao || m.status === "Transição" || m.faixa === "J1";
 
     return (
-      <div key={m.id} className={`${cardClasse} border-l-4 p-3.5 space-y-2.5 ${ausente ? "border-l-rose-500" : transicao ? "border-l-emerald-500" : m.status === "Esporádico" ? "border-l-amber-500" : "border-l-teal-500"}`}>
+      <div key={m.id} className={`${cardClasse} border-l-4 p-3.5 space-y-2.5 ${ausente ? "border-l-rose-300" : transicao ? "border-l-emerald-300" : m.status === "Esporádico" ? "border-l-amber-300" : "border-l-teal-300"}`}>
         <div className="flex items-start justify-between gap-2">
           <div className="flex items-center gap-3 min-w-0">
-            <div className="w-11 h-11 rounded-full bg-gradient-to-br from-teal-600 to-emerald-500 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-md shadow-teal-600/30">{iniciais(m.nome)}</div>
+            <div className="w-11 h-11 rounded-full bg-teal-50 text-teal-700 border border-teal-200 flex items-center justify-center font-bold text-xs shrink-0 shadow-sm">{iniciais(m.nome)}</div>
             <div className="min-w-0 space-y-0.5">
               <h4 className="text-xs font-bold text-slate-900 dark:text-white truncate">{m.nome}</h4>
               <p className="text-[0.625rem] text-gray-500 dark:text-zinc-400 truncate">

@@ -100,7 +100,7 @@ export default function PastorEventos() {
           ) : (
             <div className="grid grid-cols-1 lg:grid-cols-2 items-start gap-3 pb-6">
               {lista.map((e) => (
-                <div key={e.id} className={`${cardClasse} border-l-4 p-4 space-y-3 ${!e.precisaAprovacao ? "border-l-slate-300" : e.aprovacaoStatus === "aprovado" ? "border-l-emerald-500" : e.aprovacaoStatus === "reprovado" ? "border-l-rose-500" : "border-l-amber-500"}`}>
+                <div key={e.id} className={`${cardClasse} border-l-4 p-4 space-y-3 ${!e.precisaAprovacao ? "border-l-slate-300" : e.aprovacaoStatus === "aprovado" ? "border-l-emerald-300" : e.aprovacaoStatus === "reprovado" ? "border-l-rose-300" : "border-l-amber-300"}`}>
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
                       <h3 className="text-sm font-bold text-slate-900 dark:text-white">{e.titulo}</h3>

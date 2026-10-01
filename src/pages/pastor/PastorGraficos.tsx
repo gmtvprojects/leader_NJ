@@ -42,7 +42,7 @@ export default function PastorGraficos({ estado }: { estado: EstadoDados }) {
     .map(([chave, valor]) => ({
       rotulo: `${NOMES_MESES[parseInt(chave.substring(5), 10) - 1]}/${chave.substring(2, 4)}`,
       valor,
-      cor: "bg-gradient-to-t from-amber-500 to-orange-400"
+      cor: "bg-amber-300"
     }));
   const contagemAprov = {
     aprovado: eventosPeriodo.filter((e) => e.precisaAprovacao && e.aprovacaoStatus === "aprovado").length,
@@ -73,16 +73,16 @@ export default function PastorGraficos({ estado }: { estado: EstadoDados }) {
     ...faixas.map((f) => ({
       rotulo: f.rotulo,
       valor: idades.filter((i) => i !== null && i >= f.min && i <= f.max).length,
-      cor: "bg-gradient-to-r from-indigo-600 to-violet-400"
+      cor: "bg-indigo-300"
     })),
-    { rotulo: "Sem data", valor: idades.filter((i) => i === null).length, cor: "bg-gradient-to-r from-slate-400 to-slate-300" }
+    { rotulo: "Sem data", valor: idades.filter((i) => i === null).length, cor: "bg-slate-300" }
   ];
 
   // ---- Aniversariantes por mês
   const barrasNiver = NOMES_MESES.map((nome, i) => ({
     rotulo: nome,
     valor: membrosAteFim.filter((m) => parseInt((m.aniversario || "").split("-")[1], 10) === i + 1).length,
-    cor: "bg-gradient-to-t from-pink-600 to-fuchsia-400"
+    cor: "bg-pink-300"
   }));
 
   const rotuloPeriodo =
@@ -91,7 +91,7 @@ export default function PastorGraficos({ estado }: { estado: EstadoDados }) {
   return (
     <div className="space-y-5">
       {/* FILTRO DE PERÍODO */}
-      <section className={`${cardClasse} border-l-4 border-l-teal-500 p-3.5 flex flex-wrap items-end gap-3`}>
+      <section className={`${cardClasse} border-l-4 border-l-teal-300 p-3.5 flex flex-wrap items-end gap-3`}>
         <div className="space-y-1">
           <label htmlFor="filtro-periodo" className="block text-[0.5625rem] font-black text-teal-800 dark:text-teal-300 uppercase tracking-widest">Período</label>
           <select id="filtro-periodo" value={periodo} onChange={(e) => setPeriodo(e.target.value as Periodo)} className={`${campoClasse} w-52 cursor-pointer`}>

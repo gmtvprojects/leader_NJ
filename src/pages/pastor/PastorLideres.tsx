@@ -135,10 +135,10 @@ export default function PastorLideres() {
                   <button
                     key={l.id}
                     onClick={() => setLiderSelecionadoId(l.id)}
-                    className={`${cardClasse} border-l-4 border-l-teal-500 p-4 flex items-center justify-between gap-3 text-left hover:shadow-lg hover:scale-[1.01] transition cursor-pointer`}
+                    className={`${cardClasse} border-l-4 border-l-teal-300 p-4 flex items-center justify-between gap-3 text-left hover:shadow-lg hover:scale-[1.01] transition cursor-pointer`}
                   >
                     <h3 className="text-sm font-bold text-slate-900 dark:text-white truncate">{l.nome}</h3>
-                    <span className="shrink-0 flex items-center gap-1 text-[0.6875rem] font-black px-2.5 py-1 rounded-full bg-gradient-to-r from-teal-600 to-emerald-500 text-white shadow-sm">
+                    <span className="shrink-0 flex items-center gap-1 text-[0.6875rem] font-black px-2.5 py-1 rounded-full bg-teal-50 text-teal-700 border border-teal-200 shadow-sm">
                       {total} {total === 1 ? "membro" : "membros"}
                     </span>
                   </button>
