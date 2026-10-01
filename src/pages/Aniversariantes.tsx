@@ -262,7 +262,7 @@ export default function Aniversariantes({ liderId, onVoltar }: AniversariantesPr
       </header>
 
       {/* ABAS */}
-      <div className="px-4 pt-4">
+      <div className="px-4 pt-4 flex justify-center md:justify-start">
         <div className="inline-flex bg-white dark:bg-zinc-900 border border-gray-150 dark:border-zinc-800 rounded-xl p-1 gap-1">
           {([["proximos", "Próximos"], ["calendario", "Calendário"]] as const).map(([id, label]) => (
             <button
@@ -331,6 +331,7 @@ export default function Aniversariantes({ liderId, onVoltar }: AniversariantesPr
                       ) : (
                         doMes.map(m => {
                           const linkWa = obterLinkWhatsapp(obterContatoPrincipal(m));
+                          const linkTel = obterLinkTelefone(obterContatoPrincipal(m));
                           return (
                             <div key={m.id} className="flex items-center justify-between gap-3 py-2.5 border-b last:border-b-0 border-gray-100 dark:border-zinc-800/60">
                               <div className="flex items-center gap-3 min-w-0">
@@ -342,17 +343,28 @@ export default function Aniversariantes({ liderId, onVoltar }: AniversariantesPr
                                   <p className="text-[0.625rem] text-gray-400 uppercase font-semibold mt-0.5">{formatarDataLocal(m.mesNiver, m.diaNiver)}</p>
                                 </div>
                               </div>
-                              {linkWa && (
-                                <a
-                                  href={linkWa}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  className="w-8 h-8 rounded-full bg-[#25d366]/10 text-[#25d366] flex items-center justify-center hover:bg-[#25d366]/20 transition shrink-0"
-                                  aria-label="Enviar mensagem no WhatsApp"
-                                >
-                                  <MessageCircle className="w-4 h-4" />
-                                </a>
-                              )}
+                              <div className="flex items-center gap-2 shrink-0">
+                                {linkWa && (
+                                  <a
+                                    href={linkWa}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="w-8 h-8 rounded-full bg-[#25d366]/10 text-[#25d366] flex items-center justify-center hover:bg-[#25d366]/20 transition shrink-0"
+                                    aria-label="Enviar mensagem no WhatsApp"
+                                  >
+                                    <MessageCircle className="w-4 h-4" />
+                                  </a>
+                                )}
+                                {linkTel && (
+                                  <a
+                                    href={linkTel}
+                                    className="w-8 h-8 rounded-full bg-teal-50 dark:bg-teal-950/40 text-teal-700 dark:text-teal-300 flex items-center justify-center hover:bg-teal-100 dark:hover:bg-teal-900/40 transition shrink-0"
+                                    aria-label="Ligar"
+                                  >
+                                    <Phone className="w-4 h-4" />
+                                  </a>
+                                )}
+                              </div>
                             </div>
                           );
                         })
@@ -535,6 +547,16 @@ export default function Aniversariantes({ liderId, onVoltar }: AniversariantesPr
                                 <MessageCircle className="w-4 h-4" />
                               </a>
                             )}
+                            {linkTel && (
+                              <a
+                                href={linkTel}
+                                onClick={(e) => e.stopPropagation()}
+                                className="w-8 h-8 rounded-full bg-teal-50 dark:bg-teal-950/40 text-teal-700 dark:text-teal-300 flex items-center justify-center hover:bg-teal-100 dark:hover:bg-teal-900/40 transition shrink-0"
+                                aria-label="Ligar"
+                              >
+                                <Phone className="w-4 h-4" />
+                              </a>
+                            )}
                             <div>
                               {isExpanded ? (
                                 <ChevronUp className="w-4 h-4 text-gray-400" />
@@ -627,6 +649,16 @@ export default function Aniversariantes({ liderId, onVoltar }: AniversariantesPr
                                 <MessageCircle className="w-4 h-4" />
                               </a>
                             )}
+                            {linkTel && (
+                              <a
+                                href={linkTel}
+                                onClick={(e) => e.stopPropagation()}
+                                className="w-8 h-8 rounded-full bg-teal-50 dark:bg-teal-950/40 text-teal-700 dark:text-teal-300 flex items-center justify-center hover:bg-teal-100 dark:hover:bg-teal-900/40 transition shrink-0"
+                                aria-label="Ligar"
+                              >
+                                <Phone className="w-4 h-4" />
+                              </a>
+                            )}
                             <div>
                               {isExpanded ? (
                                 <ChevronUp className="w-4 h-4 text-gray-400" />
@@ -717,6 +749,16 @@ export default function Aniversariantes({ liderId, onVoltar }: AniversariantesPr
                                 aria-label="Enviar mensagem no WhatsApp"
                               >
                                 <MessageCircle className="w-4 h-4" />
+                              </a>
+                            )}
+                            {linkTel && (
+                              <a
+                                href={linkTel}
+                                onClick={(e) => e.stopPropagation()}
+                                className="w-8 h-8 rounded-full bg-teal-50 dark:bg-teal-950/40 text-teal-700 dark:text-teal-300 flex items-center justify-center hover:bg-teal-100 dark:hover:bg-teal-900/40 transition shrink-0"
+                                aria-label="Ligar"
+                              >
+                                <Phone className="w-4 h-4" />
                               </a>
                             )}
                             <div>
