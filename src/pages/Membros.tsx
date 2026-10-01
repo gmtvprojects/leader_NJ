@@ -20,7 +20,6 @@ import {
   X,
   PhoneCall,
   Clock,
-  Compass,
   AlertTriangle
 } from "lucide-react";
 import { api } from "../lib/api";
@@ -522,53 +521,6 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
             </button>
           </div>
 
-          {/* BANNER DINÂMICO DE TRANSIÇÃO J1 -> J2 */}
-          <div className="bg-gradient-to-r from-teal-800 to-emerald-900 dark:from-teal-950 dark:to-zinc-900 border border-teal-700/40 rounded-2xl p-3.5 text-white shadow-sm space-y-2">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="p-1.5 bg-white/10 rounded-xl text-teal-200">
-                  <Sparkles className="w-4 h-4" />
-                </span>
-                <div>
-                  <span className="text-[0.5625rem] font-black uppercase tracking-widest text-teal-300">Integração Pastoral</span>
-                  <h3 className="text-xs font-bold leading-tight">Transição Jovens 1 (17 anos) ➔ Jovens 2 (18 a 30)</h3>
-                </div>
-              </div>
-              <button
-                onClick={() => handleNovoMembro(true)}
-                className="text-[0.625rem] font-bold bg-white text-teal-900 px-2.5 py-1 rounded-xl hover:bg-teal-50 transition cursor-pointer shrink-0"
-              >
-                + Novo Jovem J1
-              </button>
-            </div>
-
-            <div className="grid grid-cols-3 gap-2 pt-1 border-t border-white/10">
-              <button
-                onClick={() => setFiltroStatus("Transição J1 ➔ J2")}
-                className="bg-white/5 hover:bg-white/10 p-1.5 rounded-xl text-left transition cursor-pointer"
-              >
-                <span className="block text-[0.5rem] text-teal-200 uppercase font-black">Em Transição</span>
-                <span className="text-sm font-bold">{jovensTransicao.length} jovens</span>
-              </button>
-
-              <button
-                onClick={() => setFiltroStatus("Sem GA")}
-                className="bg-white/5 hover:bg-white/10 p-1.5 rounded-xl text-left transition cursor-pointer"
-              >
-                <span className="block text-[0.5rem] text-amber-300 uppercase font-black">Sem G.A</span>
-                <span className="text-sm font-bold text-amber-200">{jovensSemGa.length} jovens</span>
-              </button>
-
-              <button
-                onClick={() => setFiltroStatus("Ausente")}
-                className="bg-white/5 hover:bg-white/10 p-1.5 rounded-xl text-left transition cursor-pointer"
-              >
-                <span className="block text-[0.5rem] text-rose-300 uppercase font-black">Ausentes</span>
-                <span className="text-sm font-bold text-rose-200">{jovensAusentes.length} alerta</span>
-              </button>
-            </div>
-          </div>
-
           {/* BUSCA E FILTROS */}
           <div className="space-y-2">
             <div className="relative">
@@ -583,67 +535,44 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
               />
             </div>
 
-            {/* SELETORES DE STATUS / CATEGORIA */}
-            <div className="flex flex-wrap gap-1.5 py-1">
-              {[
-                { id: "Todos", label: "Todos" },
-                { id: "Transição J1 ➔ J2", label: `Transição J1 ➔ J2 (${jovensTransicao.length})` },
-                { id: "Sem GA", label: `Sem G.A (${jovensSemGa.length})` },
-                { id: "Ativo", label: "Ativos" },
-                { id: "Ausente", label: `Ausentes (${jovensAusentes.length})` },
-                { id: "Esporádico", label: "Esporádicos" },
-              ].map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setFiltroStatus(tab.id)}
-                  className={`text-[0.625rem] font-bold px-2.5 py-1.5 uppercase tracking-wider rounded-xl border shrink-0 transition cursor-pointer ${
-                    filtroStatus === tab.id
-                      ? "bg-teal-50 dark:bg-teal-950/40 text-teal-700 dark:text-teal-300 border-teal-300 dark:border-teal-800 shadow-xs"
-                      : "bg-white dark:bg-zinc-900 text-slate-600 dark:text-gray-400 border-gray-200 dark:border-zinc-800"
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              ))}
-            </div>
+            {/* FILTROS DE STATUS / CATEGORIA E DE G.A */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <select
+                id="filtro-status-membros"
+                aria-label="Filtrar por situação"
+                value={filtroStatus}
+                onChange={(e) => setFiltroStatus(e.target.value)}
+                className="w-full text-xs px-3 py-2.5 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-2xl focus:outline-none focus:border-teal-500 text-slate-900 dark:text-white cursor-pointer"
+              >
+                <option value="Todos">Todas as situações</option>
+                <option value="Transição J1 ➔ J2">Transição J1 ➔ J2 ({jovensTransicao.length})</option>
+                <option value="Sem GA">Sem G.A ({jovensSemGa.length})</option>
+                <option value="Ativo">Ativos</option>
+                <option value="Ausente">Ausentes ({jovensAusentes.length})</option>
+                <option value="Esporádico">Esporádicos</option>
+              </select>
 
-            {/* FILTRO SECUNDÁRIO POR G.A */}
-            {listaGas.length > 0 && (
-              <div className="flex items-center gap-2 overflow-x-auto pb-1 text-xs">
-                <span className="text-[0.5625rem] font-black text-gray-400 uppercase tracking-wider shrink-0 flex items-center gap-1">
-                  <Compass className="w-3 h-3 text-teal-600" /> Filtrar G.A:
-                </span>
-                <button
-                  onClick={() => setFiltroGa("Todos")}
-                  className={`text-[0.5938rem] px-2 py-0.5 rounded-lg border shrink-0 transition cursor-pointer font-bold ${
-                    filtroGa === "Todos"
-                      ? "bg-slate-800 dark:bg-slate-200 text-white dark:text-slate-900 border-transparent"
-                      : "bg-white dark:bg-zinc-900 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-zinc-800"
-                  }`}
+              {listaGas.length > 0 && (
+                <select
+                  id="filtro-ga-membros"
+                  aria-label="Filtrar por G.A"
+                  value={filtroGa}
+                  onChange={(e) => setFiltroGa(e.target.value)}
+                  className="w-full text-xs px-3 py-2.5 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-2xl focus:outline-none focus:border-teal-500 text-slate-900 dark:text-white cursor-pointer"
                 >
-                  Todos os GAs
-                </button>
-                {listaGas.map((gaNome) => (
-                  <button
-                    key={gaNome}
-                    onClick={() => setFiltroGa(gaNome)}
-                    className={`text-[0.5938rem] px-2 py-0.5 rounded-lg border shrink-0 transition cursor-pointer font-bold ${
-                      filtroGa === gaNome
-                        ? "bg-teal-700 text-white border-transparent"
-                        : "bg-white dark:bg-zinc-900 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-zinc-800"
-                    }`}
-                  >
-                    📍 {gaNome}
-                  </button>
-                ))}
-              </div>
-            )}
+                  <option value="Todos">Todos os GAs</option>
+                  {listaGas.map((gaNome) => (
+                    <option key={gaNome} value={gaNome}>{gaNome}</option>
+                  ))}
+                </select>
+              )}
+            </div>
           </div>
 
           {/* QUANTIDADE DE REGISTROS */}
           <div className="text-[0.625rem] font-semibold text-gray-400 uppercase tracking-widest leading-none flex justify-between items-center">
             <span>{membrosFiltrados.length} jovens encontrados</span>
-            {filtroStatus !== "Todos" && (
+            {(filtroStatus !== "Todos" || filtroGa !== "Todos") && (
               <button 
                 onClick={() => { setFiltroStatus("Todos"); setFiltroGa("Todos"); }}
                 className="text-teal-600 dark:text-teal-400 hover:underline font-bold text-[0.5625rem] cursor-pointer"
