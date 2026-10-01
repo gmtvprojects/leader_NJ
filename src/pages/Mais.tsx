@@ -12,10 +12,21 @@ import {
   Upload, 
   ChevronRight,
   LogOut,
-  Loader2
+  Loader2,
+  Coffee,
+  Check,
+  X,
+  Pencil
 } from "lucide-react";
 import { api } from "../lib/api";
 import { Membro, Reuniao } from "../types";
+
+interface EquipeLanche {
+  id: string;
+  nome: string;
+  membrosIds: string[];
+  incluiLider: boolean;
+}
 
 interface HistoricoTamanho {
   mes: string; // YYYY-MM
@@ -38,6 +49,13 @@ const mapToTSMembro = (db: any): Membro => ({
   faltas: db.faltas || 0,
 });
 
+const mapToTSEquipe = (db: any): EquipeLanche => ({
+  id: db.id,
+  nome: db.nome || '',
+  membrosIds: db.membros_ids || [],
+  incluiLider: !!db.inclui_lider
+});
+
 const mapToTSHist = (db: any): HistoricoTamanho => ({
   mes: db.mes || '',
   total: db.total || 0
@@ -49,7 +67,7 @@ interface MaisProps {
 }
 
 export default function Mais({ liderId, onSelectTab }: MaisProps) {
-  const [subView, setSubView] = useState<"menu" | "crescimento" | "oracao" | "config">("menu");
+  const [subView, setSubView] = useState<"menu" | "crescimento" | "oracao" | "lanche" | "config">("menu");
   const [themeMode, setThemeMode] = useState<"light" | "dark">("light");
   const [grupoNome, setGrupoNome] = useState("GA Ebenezer");
   const [loading, setLoading] = useState<boolean>(true);
@@ -57,6 +75,9 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
   // Estados dos Módulos
   const [membros, setMembros] = useState<Membro[]>([]);
   const [reunioes, setReunioes] = useState<Reuniao[]>([]);
+  const [equipes, setEquipes] = useState<EquipeLanche[]>([]);
+  // Formulário de equipe (null = lista de equipes)
+  const [formEquipe, setFormEquipe] = useState<{ id?: string; nome: string; membrosIds: string[]; incluiLider: boolean } | null>(null);
   const [historicoTamanho, setHistoricoTamanho] = useState<HistoricoTamanho[]>([]);
   const [oracoesRespondidasIds, setOracoesRespondidasIds] = useState<string[]>([]);
 
@@ -100,6 +121,15 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
         presentes: []
       }));
       setReunioes(formattedReunioes);
+
+      // 4. Carregar equipes de lanche
+      const { data: equipesData } = await api
+        .from('equipes_lanche')
+        .select('*')
+        .eq('lider_id', liderId)
+        .order('criado_em', { ascending: true });
+
+      setEquipes((equipesData || []).map(mapToTSEquipe));
 
       // 5. Carregar histórico_tamanho do servidor
       const { data: histData } = await api
@@ -181,6 +211,59 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
       setLoading(false);
     }
   };
+
+  // --- MÓDULO LANCHE (EQUIPES) ---
+  const handleSalvarEquipe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formEquipe) return;
+    const nome = formEquipe.nome.trim();
+    if (!nome) return;
+    if (formEquipe.membrosIds.length === 0 && !formEquipe.incluiLider) {
+      alert("Selecione pelo menos um integrante (ou marque \"Eu\").");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const payload = {
+        lider_id: liderId,
+        nome,
+        membros_ids: formEquipe.membrosIds,
+        inclui_lider: formEquipe.incluiLider
+      };
+
+      const { error } = formEquipe.id
+        ? await api.from('equipes_lanche').update(payload).eq('id', formEquipe.id)
+        : await api.from('equipes_lanche').insert(payload);
+
+      if (error) throw error;
+
+      setFormEquipe(null);
+      await carregarDadosEstatisticas();
+    } catch (error: any) {
+      console.error('Erro ao salvar equipe de lanche:', error);
+      alert('Não foi possível salvar a equipe.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleExcluirEquipe = async (id: string) => {
+    if (!confirm("Deseja excluir esta equipe de lanche?")) return;
+    setLoading(true);
+    try {
+      const { error } = await api.from('equipes_lanche').delete().eq('id', id);
+      if (error) throw error;
+      setEquipes(prev => prev.filter(eq => eq.id !== id));
+    } catch (error: any) {
+      console.error('Erro ao excluir equipe:', error);
+      alert('Não foi possível excluir a equipe.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const todosSelecionados = !!formEquipe && membros.length > 0 && membros.every(m => formEquipe.membrosIds.includes(m.id));
 
   // --- MÓDULO ORAÇÃO ---
   const alternarOracaoRespondida = (reuniaoId: string) => {
@@ -364,6 +447,33 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
 
               <div className="flex justify-between items-center text-[0.6875rem] text-gray-500 dark:text-zinc-400">
                 <span>Total de fichas salvas de liderança: <strong>{membros.length}</strong></span>
+                <ChevronRight className="w-4 h-4 text-gray-400" />
+              </div>
+            </div>
+
+            {/* CARD LANCHE */}
+            <div
+              onClick={() => { setFormEquipe(null); setSubView("lanche"); }}
+              className="bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800/80 p-4 rounded-2xl flex flex-col hover:border-teal-500 transition shadow-sm cursor-pointer space-y-3 text-left"
+            >
+              <div className="flex justify-between items-start">
+                <div className="flex items-center gap-2">
+                  <div className="p-2 bg-amber-50 dark:bg-amber-950/30 text-amber-600 dark:text-amber-400 rounded-xl">
+                    <Coffee className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h3 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider font-sans leading-none">Lanche</h3>
+                    <p className="text-[0.5938rem] text-gray-400 font-medium uppercase mt-1">Equipes de lanche do GA</p>
+                  </div>
+                </div>
+
+                <span className="text-[0.5625rem] font-mono font-bold text-slate-900 dark:text-white bg-slate-100 dark:bg-zinc-800 px-2 py-1 rounded-lg">
+                  {equipes.length} {equipes.length === 1 ? "equipe" : "equipes"}
+                </span>
+              </div>
+
+              <div className="flex justify-between items-center text-[0.6875rem] text-gray-500 dark:text-zinc-400">
+                <span>Crie equipes e escolha quem leva o lanche em cada reunião</span>
                 <ChevronRight className="w-4 h-4 text-gray-400" />
               </div>
             </div>
@@ -552,6 +662,176 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
               )}
             </div>
           </div>
+        </div>
+      )}
+
+      {/* SUBVIEW: EQUIPES DE LANCHE */}
+      {subView === "lanche" && (
+        <div className="w-full max-w-2xl mx-auto space-y-4 text-left animate-slideUp font-sans">
+          <header className="flex items-center gap-3">
+            <button
+              onClick={() => (formEquipe ? setFormEquipe(null) : setSubView("menu"))}
+              className="p-2 bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 text-slate-850 dark:text-white rounded-xl hover:bg-slate-50 cursor-pointer"
+              aria-label="Voltar"
+            >
+              <ArrowLeft className="w-4 h-4" />
+            </button>
+            <div>
+              <span className="text-[0.5625rem] font-black uppercase text-gray-400 tracking-wider">Configurações</span>
+              <h1 className="text-sm font-bold text-slate-900 dark:text-white leading-none">
+                {formEquipe ? (formEquipe.id ? "Editar Equipe" : "Nova Equipe") : "Lanche"}
+              </h1>
+            </div>
+          </header>
+
+          {!formEquipe ? (
+            <>
+              <div className="space-y-2.5 pb-24">
+                {equipes.length === 0 ? (
+                  <div className="text-center py-12 bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 rounded-2xl text-gray-400 space-y-2">
+                    <Coffee className="w-8 h-8 mx-auto opacity-40 text-amber-500" />
+                    <p className="text-xs font-semibold">Nenhuma equipe de lanche criada.</p>
+                    <p className="text-[0.625rem]">Use o botão + para criar a primeira.</p>
+                  </div>
+                ) : (
+                  equipes.map(eq => (
+                    <div key={eq.id} className="bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 rounded-2xl p-4 space-y-2.5 shadow-sm">
+                      <div className="flex justify-between items-start gap-2">
+                        <h3 className="text-xs font-bold text-slate-900 dark:text-white">{eq.nome}</h3>
+                        <div className="flex items-center gap-1 shrink-0">
+                          <button
+                            onClick={() => setFormEquipe({ id: eq.id, nome: eq.nome, membrosIds: eq.membrosIds, incluiLider: eq.incluiLider })}
+                            className="p-1.5 text-gray-400 hover:text-teal-600 cursor-pointer"
+                            aria-label="Editar equipe"
+                          >
+                            <Pencil className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            onClick={() => handleExcluirEquipe(eq.id)}
+                            className="p-1.5 text-gray-400 hover:text-rose-500 cursor-pointer"
+                            aria-label="Excluir equipe"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </div>
+                      <div className="flex flex-wrap gap-1">
+                        {eq.incluiLider && (
+                          <span className="bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 border border-amber-200/60 dark:border-amber-900/40 text-[0.625rem] font-bold px-2 py-0.5 rounded-lg">Eu (líder)</span>
+                        )}
+                        {eq.membrosIds.map(id => {
+                          const m = membros.find(x => x.id === id);
+                          return m ? (
+                            <span key={id} className="bg-teal-50 dark:bg-teal-950/30 text-teal-800 dark:text-teal-400 border border-teal-200/50 dark:border-teal-900/40 text-[0.625rem] font-bold px-2 py-0.5 rounded-lg">{m.nome}</span>
+                          ) : null;
+                        })}
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+
+              <button
+                id="btn-nova-equipe"
+                onClick={() => setFormEquipe({ nome: "", membrosIds: [], incluiLider: false })}
+                className="fixed bottom-20 md:bottom-8 right-6 md:right-8 z-30 p-4 bg-teal-700 hover:bg-teal-600 text-white rounded-full shadow-lg hover:scale-105 active:scale-95 cursor-pointer transition-transform flex items-center justify-center"
+                aria-label="Nova equipe de lanche"
+              >
+                <Plus className="w-6 h-6" />
+              </button>
+            </>
+          ) : (
+            <form onSubmit={handleSalvarEquipe} className="bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 p-4 rounded-2xl space-y-4 shadow-sm">
+              <div className="space-y-1">
+                <label htmlFor="equipe-nome" className="block text-[0.5rem] font-bold uppercase text-gray-400">Nome da Equipe *</label>
+                <input
+                  id="equipe-nome"
+                  type="text"
+                  required
+                  value={formEquipe.nome}
+                  onChange={(e) => setFormEquipe({ ...formEquipe, nome: e.target.value })}
+                  placeholder="Ex. Equipe 1, Equipe dos Doces..."
+                  className="w-full text-xs px-3.5 py-2.5 bg-slate-50 dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-lg focus:outline-none focus:border-[#0f766e] text-slate-900 dark:text-white font-medium"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="block text-[0.5rem] font-bold uppercase text-gray-400">Integrantes *</span>
+                  <button
+                    type="button"
+                    onClick={() => setFormEquipe({
+                      ...formEquipe,
+                      membrosIds: todosSelecionados ? [] : membros.map(m => m.id)
+                    })}
+                    disabled={membros.length === 0}
+                    className="text-[0.5625rem] font-extrabold uppercase text-teal-700 dark:text-teal-400 hover:underline cursor-pointer disabled:opacity-50"
+                  >
+                    {todosSelecionados ? "Desmarcar todos" : "Selecionar todos"}
+                  </button>
+                </div>
+
+                <label className="flex items-center gap-2.5 p-2.5 bg-amber-50/50 dark:bg-amber-950/10 border border-amber-200/60 dark:border-amber-900/30 rounded-xl cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={formEquipe.incluiLider}
+                    onChange={(e) => setFormEquipe({ ...formEquipe, incluiLider: e.target.checked })}
+                    className="w-4 h-4 accent-teal-700 cursor-pointer"
+                  />
+                  <span className="text-xs font-bold text-slate-800 dark:text-zinc-200">Eu (líder)</span>
+                </label>
+
+                {membros.length === 0 ? (
+                  <p className="text-[0.6875rem] text-gray-400 italic py-2">Nenhum membro cadastrado. Você pode criar uma equipe só com você.</p>
+                ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 max-h-72 overflow-y-auto pr-1">
+                    {membros.map(m => {
+                      const marcado = formEquipe.membrosIds.includes(m.id);
+                      return (
+                        <label
+                          key={m.id}
+                          className={`flex items-center gap-2.5 p-2.5 rounded-xl border cursor-pointer select-none transition ${
+                            marcado
+                              ? "bg-teal-50/60 dark:bg-teal-950/20 border-teal-500"
+                              : "bg-white dark:bg-zinc-900 border-gray-200 dark:border-zinc-800"
+                          }`}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={marcado}
+                            onChange={() => setFormEquipe({
+                              ...formEquipe,
+                              membrosIds: marcado
+                                ? formEquipe.membrosIds.filter(id => id !== m.id)
+                                : [...formEquipe.membrosIds, m.id]
+                            })}
+                            className="w-4 h-4 accent-teal-700 cursor-pointer"
+                          />
+                          <span className="text-xs font-semibold text-slate-800 dark:text-zinc-200 truncate">{m.nome}</span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+
+              <div className="flex gap-2 pt-1">
+                <button
+                  type="button"
+                  onClick={() => setFormEquipe(null)}
+                  className="flex-1 h-10 bg-gray-100 hover:bg-gray-200 dark:bg-zinc-800 text-slate-800 dark:text-white font-bold text-xs uppercase tracking-wider rounded-xl cursor-pointer flex items-center justify-center gap-1"
+                >
+                  <X className="w-4 h-4" /> Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 h-10 bg-teal-700 hover:bg-teal-600 text-white font-bold text-xs uppercase tracking-wider rounded-xl cursor-pointer flex items-center justify-center gap-1"
+                >
+                  <Check className="w-4 h-4" /> Salvar Equipe
+                </button>
+              </div>
+            </form>
+          )}
         </div>
       )}
 

@@ -34,23 +34,9 @@ interface AniversariantesProps {
 export default function Aniversariantes({ liderId, onVoltar }: AniversariantesProps) {
   const [membros, setMembros] = useState<MembroAniversariante[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [celebrados, setCelebrados] = useState<{ [key: string]: boolean }>({});
   const [expandedCardId, setExpandedCardId] = useState<string | null>(null);
   const [aba, setAba] = useState<"proximos" | "calendario">("proximos");
   const [mesesAbertos, setMesesAbertos] = useState<number[]>([new Date().getMonth()]);
-
-  // Obter formato YYYY-MM-DD para hoje
-  const obterDataHojeStr = () => {
-    const hoje = new Date();
-    const ano = hoje.getFullYear();
-    const mes = String(hoje.getMonth() + 1).padStart(2, "0");
-    const dia = String(hoje.getDate()).padStart(2, "0");
-    return `${ano}-${mes}-${dia}`;
-  };
-
-  const obterDataCelebId = (membroId: string) => {
-    return `ga_celebrado_${membroId}_${obterDataHojeStr()}`;
-  };
 
   useEffect(() => {
     carregarAniversariantes();
@@ -70,7 +56,6 @@ export default function Aniversariantes({ liderId, onVoltar }: AniversariantesPr
       hoje.setHours(0, 0, 0, 0);
 
       const listaMapeada: MembroAniversariante[] = [];
-      const celebradosState: { [key: string]: boolean } = {};
 
       if (data) {
         data.forEach((m: any) => {
@@ -107,40 +92,17 @@ export default function Aniversariantes({ liderId, onVoltar }: AniversariantesPr
             diaNiver,
             proximoNiver
           });
-
-          // Carregar status do localStorage
-          const celebKey = `ga_celebrado_${m.id}_${obterDataHojeStr()}`;
-          if (localStorage.getItem(celebKey) === "true") {
-            celebradosState[m.id] = true;
-          }
         });
       }
 
       // Ordenar do mais próximo para o mais distante
       listaMapeada.sort((a, b) => a.diffDays - b.diffDays);
       setMembros(listaMapeada);
-      setCelebrados(celebradosState);
     } catch (err) {
       console.error("Erro ao carregar aniversariantes:", err);
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleToggleCelebrado = (membroId: string) => {
-    const key = obterDataCelebId(membroId);
-    const novoStatus = !celebrados[membroId];
-    
-    if (novoStatus) {
-      localStorage.setItem(key, "true");
-    } else {
-      localStorage.removeItem(key);
-    }
-
-    setCelebrados(prev => ({
-      ...prev,
-      [membroId]: novoStatus
-    }));
   };
 
   const obterIniciais = (nome: string) => {
@@ -415,7 +377,6 @@ export default function Aniversariantes({ liderId, onVoltar }: AniversariantesPr
                     const fone = obterContatoPrincipal(m);
                     const linkWa = obterLinkWhatsapp(fone);
                     const linkTel = obterLinkTelefone(fone);
-                    const isCel = celebrados[m.id];
 
                     return (
                       <div 
@@ -475,17 +436,6 @@ export default function Aniversariantes({ liderId, onVoltar }: AniversariantesPr
                               <span>Ligar</span>
                             </a>
                           )}
-                          <button
-                            onClick={() => handleToggleCelebrado(m.id)}
-                            className={`h-9 px-3 font-bold text-[0.6563rem] uppercase tracking-wider rounded-xl transition flex items-center justify-center gap-1.5 shrink-0 select-none ${
-                              isCel 
-                                ? "bg-emerald-600 hover:bg-emerald-700 text-white" 
-                                : "bg-teal-50 dark:bg-teal-950/40 text-teal-800 dark:text-teal-300 border border-teal-200 dark:border-teal-850 hover:bg-teal-100"
-                            }`}
-                          >
-                            <Check className="w-4 h-4" />
-                            <span>{isCel ? "Celebrado" : "Celebrar"}</span>
-                          </button>
                         </div>
                       </div>
                     );

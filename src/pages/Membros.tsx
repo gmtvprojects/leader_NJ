@@ -133,6 +133,7 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
   const [busca, setBusca] = useState("");
   const [filtroStatus, setFiltroStatus] = useState("Todos");
   const [filtroGa, setFiltroGa] = useState("Todos");
+  const [abaFicha, setAbaFicha] = useState<"presenca" | "ausencias">("presenca");
 
   // Modal rápido para registrar motivo de ausência ou contato pastoral
   const [modalContatoAberto, setModalContatoAberto] = useState(false);
@@ -183,7 +184,7 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
       // Carregar reuniões para histórico de presenças
       const { data: reunioesData, error: reunioesError } = await api
         .from('reunioes')
-        .select('*, reuniao_presencas(membro_id)')
+        .select('*, reuniao_presencas(membro_id), reuniao_ausencias(membro_id, motivo, sem_justificativa)')
         .eq('lider_id', liderId);
 
       if (!reunioesError && reunioesData) {
@@ -191,7 +192,8 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
           id: r.id,
           data: r.data,
           tema: r.tema,
-          presentes: (r.reuniao_presencas || []).map((p: any) => p.membro_id)
+          presentes: (r.reuniao_presencas || []).map((p: any) => p.membro_id),
+          ausencias: (r.reuniao_ausencias || []) as { membro_id: string; motivo: string | null; sem_justificativa: boolean }[]
         }));
         setReunioes(mappedReunioes);
       }
@@ -428,31 +430,21 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
     return diffDays >= 0 && diffDays <= 7;
   };
 
-  // Calcular bolinhas de presença para o histórico de reuniões
-  const obterHistoricoPresenca = (membroId: string) => {
-    const ultimasReunioes = [...reunioes]
-      .sort((a, b) => new Date(a.data).getTime() - new Date(b.data).getTime())
-      .slice(-8);
-
-    const circulos = [];
-    for (let i = 0; i < 8; i++) {
-      if (i < ultimasReunioes.length) {
-        const r = ultimasReunioes[i];
+  // Registro do membro em cada reunião (da mais recente para a mais antiga)
+  const obterRegistroReunioes = (membroId: string) => {
+    return [...reunioes]
+      .sort((a, b) => new Date(b.data).getTime() - new Date(a.data).getTime())
+      .map(r => {
         const presente = r.presentes ? r.presentes.includes(membroId) : false;
-        circulos.push({
-          estado: presente ? "presente" : "ausente",
-          data: r.data,
-          tema: r.tema
-        });
-      } else {
-        circulos.push({
-          estado: "sem_dado",
-          data: "",
-          tema: ""
-        });
-      }
-    }
-    return circulos;
+        const aus = (r.ausencias || []).find((x: any) => x.membro_id === membroId);
+        return {
+          id: r.id as string,
+          data: r.data as string,
+          tema: (r.tema || "") as string,
+          presente,
+          motivo: aus && !aus.sem_justificativa ? (aus.motivo || "") : ""
+        };
+      });
   };
 
   // Estatísticas Rápidas da Transição J1 -> J2
@@ -527,7 +519,7 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
             </button>
           </div>
 
-          {/* BUSCA E FILTROS */}
+          {/* BUSCA */}
           <div className="space-y-2">
             <div className="relative">
               <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -541,38 +533,6 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
               />
             </div>
 
-            {/* FILTROS DE STATUS / CATEGORIA E DE G.A */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              <select
-                id="filtro-status-membros"
-                aria-label="Filtrar por situação"
-                value={filtroStatus}
-                onChange={(e) => setFiltroStatus(e.target.value)}
-                className="w-full text-xs px-3 py-2.5 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-2xl focus:outline-none focus:border-teal-500 text-slate-900 dark:text-white cursor-pointer"
-              >
-                <option value="Todos">Todas as situações</option>
-                <option value="Transição J1 ➔ J2">Transição J1 ➔ J2 ({jovensTransicao.length})</option>
-                <option value="Sem GA">Sem G.A ({jovensSemGa.length})</option>
-                <option value="Ativo">Ativos</option>
-                <option value="Ausente">Ausentes ({jovensAusentes.length})</option>
-                <option value="Esporádico">Esporádicos</option>
-              </select>
-
-              {listaGas.length > 0 && (
-                <select
-                  id="filtro-ga-membros"
-                  aria-label="Filtrar por G.A"
-                  value={filtroGa}
-                  onChange={(e) => setFiltroGa(e.target.value)}
-                  className="w-full text-xs px-3 py-2.5 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-2xl focus:outline-none focus:border-teal-500 text-slate-900 dark:text-white cursor-pointer"
-                >
-                  <option value="Todos">Todos os GAs</option>
-                  {listaGas.map((gaNome) => (
-                    <option key={gaNome} value={gaNome}>{gaNome}</option>
-                  ))}
-                </select>
-              )}
-            </div>
           </div>
 
           {/* QUANTIDADE DE REGISTROS */}
@@ -594,13 +554,12 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
               <Users className="w-8 h-8 mx-auto opacity-40 text-teal-600" />
               <p className="text-xs font-semibold">Nenhum jovem encontrado nesta categoria.</p>
               <p className="text-[0.625rem] max-w-xs mx-auto text-gray-400">
-                Ajuste os filtros ou clique no botão acima para cadastrar novos participantes.
+                Use o botão + para cadastrar novos participantes.
               </p>
             </div>
           ) : (
             <div className="grid grid-cols-1 lg:grid-cols-2 items-start gap-3">
               {membrosFiltrados.map((m) => {
-                const isNiver = isAniversarianteProximo(m.aniversario);
                 const idade = calcularIdade(m.aniversario);
                 const isTransicao = m.origemTransicao || m.status === "Transição" || m.faixa === "J1";
                 const isSemGa = !m.ga || m.ga === "Sem GA / A Definir" || m.ga === "Aguardando GA";
@@ -637,11 +596,6 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
                             {idade !== null && (
                               <span className="text-[0.5625rem] font-bold text-gray-500 dark:text-zinc-400 bg-gray-100 dark:bg-zinc-800 px-1.5 py-0.2 rounded-md shrink-0">
                                 {idade} anos
-                              </span>
-                            )}
-                            {isNiver && (
-                              <span className="bg-rose-500/15 text-rose-600 dark:text-rose-400 text-[0.5rem] font-bold px-1 rounded uppercase tracking-wide shrink-0">
-                                Niver 🎉
                               </span>
                             )}
                           </div>
@@ -716,14 +670,7 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
                     )}
 
                     {/* BOTÕES RÁPIDOS DE CONTATO PASTORAL */}
-                    <div className="flex items-center justify-between pt-1 border-t border-gray-100 dark:border-zinc-800/80 text-[0.625rem]">
-                      <button
-                        onClick={(e) => abrirModalContato(m, e)}
-                        className="text-teal-700 dark:text-teal-400 font-bold hover:underline flex items-center gap-1 cursor-pointer"
-                      >
-                        <Clock className="w-3 h-3" /> Registrar Cuidado / Motivo
-                      </button>
-
+                    <div className="flex items-center justify-end pt-1 border-t border-gray-100 dark:border-zinc-800/80 text-[0.625rem]">
                       <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
                         {m.contato1 && (
                           <>
@@ -738,10 +685,11 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
                               href={gerarLinkWhatsApp(m, isAusente ? 'falta' : isTransicao ? 'acolhimento' : 'contato')}
                               target="_blank"
                               rel="noreferrer"
-                              className="px-2 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold text-[0.5625rem] flex items-center gap-1 transition"
-                              title="Enviar WhatsApp Pastoral"
+                              className="p-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition"
+                              title="Enviar WhatsApp"
+                              aria-label="Enviar WhatsApp"
                             >
-                              <MessageCircle className="w-3 h-3" /> WhatsApp
+                              <MessageCircle className="w-3 h-3" />
                             </a>
                           </>
                         )}
@@ -852,58 +800,89 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
               </div>
             </div>
 
-            {/* SEÇÃO MOTIVO DA AUSÊNCIA (SE HOUVER) */}
-            <div className="bg-amber-50/40 dark:bg-amber-950/10 border border-amber-200/50 dark:border-amber-900/30 p-3 rounded-xl space-y-1">
-              <div className="flex justify-between items-center text-[0.5625rem] font-black uppercase text-amber-800 dark:text-amber-400">
-                <span>Motivo da Ausência / Situação na Igreja:</span>
-                <button
-                  onClick={() => abrirModalContato(membroSelecionado)}
-                  className="text-teal-700 dark:text-teal-400 hover:underline font-bold text-[0.5313rem] cursor-pointer"
-                >
-                  Editar Motivo
-                </button>
-              </div>
-              <p className="font-bold text-slate-800 dark:text-white text-xs">
-                {membroSelecionado.motivoAusencia || "Frequência normal / Sem ausências registradas"}
-              </p>
-              {membroSelecionado.detalheAusencia && (
-                <p className="text-[0.625rem] text-gray-600 dark:text-zinc-300 italic">
-                  "{membroSelecionado.detalheAusencia}"
-                </p>
-              )}
-              {membroSelecionado.ultimoContato && (
-                <p className="text-[0.5625rem] text-gray-400 pt-0.5">
-                  Último contato pastoral registrado em: <strong>{new Date(membroSelecionado.ultimoContato + "T12:00:00").toLocaleDateString("pt-BR")}</strong>
-                  {membroSelecionado.responsavelContato && ` por ${membroSelecionado.responsavelContato}`}
-                </p>
-              )}
-            </div>
+            {/* ABAS: PRESENÇA / AUSÊNCIAS */}
+            {(() => {
+              const registro = obterRegistroReunioes(membroSelecionado.id);
+              const ultimas = registro.slice(0, 8);
+              const ausencias = registro.filter(r => !r.presente);
+              const presencasUltimas = ultimas.filter(r => r.presente).length;
 
-            {/* HISTÓRICO DE PRESENÇA (ÚLTIMAS 8 REUNIÕES) */}
-            <div className="space-y-1.5 pb-2">
-              <div className="flex justify-between items-center text-[0.5625rem] font-black text-gray-400 uppercase tracking-wide font-sans">
-                <span>Presença Linear nas Reuniões de GA (8 Encontros)</span>
-                <span className="text-gray-400 font-bold">Esquerda para Direita →</span>
-              </div>
-              <div className="flex justify-between bg-slate-50 dark:bg-zinc-950 p-2.5 border border-gray-100 dark:border-zinc-800 rounded-xl">
-                {obterHistoricoPresenca(membroSelecionado.id).map((c, idx) => (
-                  <div
-                    key={idx}
-                    className="flex flex-col items-center gap-1"
-                    title={c.tema ? `${new Date(c.data + "T12:00:00").toLocaleDateString("pt-BR")} \nTema: ${c.tema}` : "Sem dados"}
-                  >
-                    <div className={`w-4 h-4 rounded-full border ${
-                      c.estado === "presente"
-                        ? "bg-emerald-500 border-emerald-600 shadow-xs"
-                        : c.estado === "ausente"
-                        ? "bg-rose-400 border-rose-500"
-                        : "bg-white dark:bg-zinc-900 border-gray-200 dark:border-zinc-800"
-                    }`} />
-                    <span className="text-[0.4688rem] font-mono text-gray-400">R{idx + 1}</span>
+              return (
+                <div className="space-y-2.5 pb-2">
+                  <div className="flex bg-slate-50 dark:bg-zinc-950 border border-gray-100 dark:border-zinc-800 rounded-xl p-1 gap-1">
+                    {([["presenca", "Presença"], ["ausencias", `Ausências (${ausencias.length})`]] as const).map(([id, label]) => (
+                      <button
+                        key={id}
+                        type="button"
+                        onClick={() => setAbaFicha(id)}
+                        className={`flex-1 py-1.5 rounded-lg text-[0.625rem] font-extrabold uppercase tracking-wider transition cursor-pointer ${
+                          abaFicha === id
+                            ? "bg-teal-700 text-white shadow-sm"
+                            : "text-slate-600 dark:text-zinc-400 hover:bg-white dark:hover:bg-zinc-900"
+                        }`}
+                      >
+                        {label}
+                      </button>
+                    ))}
                   </div>
-                ))}
-              </div>
-            </div>
+
+                  {abaFicha === "presenca" ? (
+                    <div className="space-y-1.5">
+                      <p className="text-[0.5625rem] font-black text-gray-400 uppercase tracking-wide">
+                        Últimas {ultimas.length || 8} semanas · {presencasUltimas} presença{presencasUltimas === 1 ? "" : "s"}
+                      </p>
+                      {ultimas.length === 0 ? (
+                        <p className="text-[0.6875rem] text-gray-400 italic py-2">Nenhuma reunião registrada ainda.</p>
+                      ) : (
+                        ultimas.map(r => (
+                          <div key={r.id} className="flex items-center justify-between gap-2 p-2.5 bg-slate-50 dark:bg-zinc-950 border border-gray-100 dark:border-zinc-800 rounded-xl">
+                            <div className="min-w-0">
+                              <span className="block text-[0.6875rem] font-bold text-slate-800 dark:text-zinc-200 font-mono">
+                                {new Date(r.data + "T12:00:00").toLocaleDateString("pt-BR")}
+                              </span>
+                              {r.tema && <span className="block text-[0.5938rem] text-gray-400 truncate">{r.tema}</span>}
+                            </div>
+                            <span className={`text-[0.5625rem] font-black uppercase px-2 py-0.5 rounded-lg border shrink-0 ${
+                              r.presente
+                                ? "bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-900/40"
+                                : "bg-rose-50 dark:bg-rose-950/20 text-rose-700 dark:text-rose-400 border-rose-200 dark:border-rose-900/40"
+                            }`}>
+                              {r.presente ? "Presente" : "Ausente"}
+                            </span>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  ) : (
+                    <div className="space-y-1.5">
+                      {membroSelecionado.motivoAusencia && (
+                        <div className="bg-amber-50/40 dark:bg-amber-950/10 border border-amber-200/50 dark:border-amber-900/30 p-2.5 rounded-xl space-y-0.5">
+                          <span className="block text-[0.5625rem] font-black uppercase text-amber-800 dark:text-amber-400">Situação registrada pelo líder</span>
+                          <p className="font-bold text-slate-800 dark:text-white text-xs">{membroSelecionado.motivoAusencia}</p>
+                          {membroSelecionado.detalheAusencia && (
+                            <p className="text-[0.625rem] text-gray-600 dark:text-zinc-300 italic">"{membroSelecionado.detalheAusencia}"</p>
+                          )}
+                        </div>
+                      )}
+                      {ausencias.length === 0 ? (
+                        <p className="text-[0.6875rem] text-gray-400 italic py-2">Nenhuma ausência registrada.</p>
+                      ) : (
+                        ausencias.map(r => (
+                          <div key={r.id} className="p-2.5 bg-slate-50 dark:bg-zinc-950 border border-gray-100 dark:border-zinc-800 rounded-xl space-y-0.5">
+                            <span className="block text-[0.6875rem] font-bold text-slate-800 dark:text-zinc-200 font-mono">
+                              {new Date(r.data + "T12:00:00").toLocaleDateString("pt-BR")}
+                            </span>
+                            <p className={`text-[0.6875rem] ${r.motivo ? "text-slate-700 dark:text-zinc-300" : "text-gray-400 italic"}`}>
+                              {r.motivo || "Sem justificativa"}
+                            </p>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
 
             {/* CAMPOS EM FORMATO GRID */}
             <div className="grid grid-cols-2 gap-3 pb-3 border-b border-gray-100 dark:border-zinc-800/80">
@@ -951,16 +930,16 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
             </div>
 
             {/* BOTÕES DE AÇÕES DIRETAS (LIGAR / WHATSAPP PASTORAL) */}
-            <div className="grid grid-cols-2 gap-3 pt-1">
+            <div className="grid grid-cols-2 gap-2 sm:gap-3 pt-1 w-full">
               <a
                 href={membroSelecionado.contato1 ? `tel:${membroSelecionado.contato1.replace(/\D/g, "")}` : "#"}
-                className={`h-11 text-xs font-black uppercase tracking-wider rounded-xl flex items-center justify-center gap-2 border transition ${
+                className={`h-11 min-w-0 px-2 text-xs font-black uppercase tracking-wider rounded-xl flex items-center justify-center gap-2 border transition ${
                   membroSelecionado.contato1
                     ? "bg-white dark:bg-zinc-800 hover:bg-slate-50 border-gray-200 text-slate-800 dark:text-white dark:border-zinc-800 cursor-pointer"
                     : "opacity-50 cursor-not-allowed bg-gray-50 text-gray-400 border-transparent"
                 }`}
               >
-                <Phone className="w-4 h-4 text-teal-700 dark:text-teal-400" /> Ligar Celular
+                <Phone className="w-4 h-4 text-teal-700 dark:text-teal-400 shrink-0" /> Ligar
               </a>
 
               <a
@@ -970,13 +949,13 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
                 )}
                 target="_blank"
                 rel="noreferrer"
-                className={`h-11 text-xs font-black uppercase tracking-wider rounded-xl flex items-center justify-center gap-2 text-white transition cursor-pointer ${
+                className={`h-11 min-w-0 px-2 text-xs font-black uppercase tracking-wider rounded-xl flex items-center justify-center gap-2 text-white transition cursor-pointer ${
                   membroSelecionado.contato1
                     ? "bg-emerald-600 hover:bg-emerald-700"
                     : "opacity-50 cursor-not-allowed bg-gray-50 text-gray-400"
                 }`}
               >
-                <MessageCircle className="w-4 h-4 text-white" /> WhatsApp Pastoral
+                <MessageCircle className="w-4 h-4 text-white shrink-0" /> WhatsApp
               </a>
             </div>
 

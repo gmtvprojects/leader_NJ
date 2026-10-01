@@ -52,6 +52,26 @@ CREATE TABLE IF NOT EXISTS reuniao_presencas (
   UNIQUE (reuniao_id, membro_id)
 );
 
+CREATE TABLE IF NOT EXISTS reuniao_ausencias (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  reuniao_id uuid NOT NULL REFERENCES reunioes(id) ON DELETE CASCADE,
+  membro_id uuid NOT NULL REFERENCES membros(id) ON DELETE CASCADE,
+  motivo text,
+  sem_justificativa boolean NOT NULL DEFAULT false,
+  UNIQUE (reuniao_id, membro_id)
+);
+
+-- Equipes de lanche: membros do grupo (e/ou o próprio líder) que se revezam no lanche.
+CREATE TABLE IF NOT EXISTS equipes_lanche (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  lider_id uuid NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+  nome text NOT NULL,
+  membros_ids jsonb NOT NULL DEFAULT '[]',
+  inclui_lider boolean NOT NULL DEFAULT false,
+  criado_em timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS equipes_lanche_lider_idx ON equipes_lanche(lider_id);
+
 CREATE TABLE IF NOT EXISTS oracao_pedidos (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   lider_id uuid NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,

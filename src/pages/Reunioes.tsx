@@ -13,6 +13,7 @@ import {
   X,
   FileText,
   Pencil,
+  UserX,
   ArrowLeft,
   ChevronRight,
   Loader2
@@ -75,6 +76,13 @@ export default function Reunioes({ liderId }: ReunioesProps) {
   // Pedidos já enviados, agrupados por reunião
   const [pedidosPorReuniao, setPedidosPorReuniao] = useState<Record<string, { id: string; membroNome: string; texto: string }[]>>({});
   const [presentesIds, setPresentesIds] = useState<string[]>([]);
+  // Ausências marcadas na chamada (membro -> motivo / sem justificativa)
+  const [ausencias, setAusencias] = useState<Record<string, { motivo: string; semJustificativa: boolean }>>({});
+  const [ausenciaModal, setAusenciaModal] = useState<string | null>(null); // id do membro
+  const [ausMotivo, setAusMotivo] = useState("");
+  const [ausSem, setAusSem] = useState(false);
+  // Equipes de lanche criadas em Configurações
+  const [equipes, setEquipes] = useState<string[]>([]);
   
   // Controle de Interface
   const [mostrarForm, setMostrarForm] = useState(false);
@@ -107,7 +115,7 @@ export default function Reunioes({ liderId }: ReunioesProps) {
       // 2. Carregar reuniões com JOIN de presenças
       const { data: reunioesData, error: reunioesError } = await api
         .from('reunioes')
-        .select('*, reuniao_presencas(membro_id)')
+        .select('*, reuniao_presencas(membro_id), reuniao_ausencias(membro_id, motivo, sem_justificativa)')
         .eq('lider_id', liderId)
         .order('data', { ascending: false });
 
@@ -120,10 +128,23 @@ export default function Reunioes({ liderId }: ReunioesProps) {
         lanche: r.lanche || '',
         lancheEquipe: r.lanche_equipe || '',
         oracoes: r.oracoes || '',
-        presentes: (r.reuniao_presencas || []).map((p: any) => p.membro_id)
+        presentes: (r.reuniao_presencas || []).map((p: any) => p.membro_id),
+        ausencias: (r.reuniao_ausencias || []).map((a: any) => ({
+          membroId: a.membro_id,
+          motivo: a.motivo || '',
+          semJustificativa: !!a.sem_justificativa
+        }))
       }));
 
       setReunioes(formattedReunioes);
+
+      // Equipes de lanche
+      const { data: equipesData } = await api
+        .from('equipes_lanche')
+        .select('*')
+        .eq('lider_id', liderId)
+        .order('criado_em', { ascending: true });
+      setEquipes((equipesData || []).map((eq: any) => eq.nome as string));
 
       // 3. Pedidos de oração vinculados às reuniões
       const { data: pedidosData } = await api
@@ -149,6 +170,28 @@ export default function Reunioes({ liderId }: ReunioesProps) {
     carregarDados();
     setDataReuniao(getSabado());
   }, [liderId]);
+
+  // Grava as ausências marcadas na chamada (substitui as anteriores da reunião)
+  const salvarAusenciasDaReuniao = async (reuniaoId: string) => {
+    const { error: delError } = await api
+      .from('reuniao_ausencias')
+      .delete()
+      .eq('reuniao_id', reuniaoId);
+    if (delError) throw delError;
+
+    const linhas = (Object.entries(ausencias) as [string, { motivo: string; semJustificativa: boolean }][])
+      .filter(([membroId]) => !presentesIds.includes(membroId))
+      .map(([membroId, a]) => ({
+        reuniao_id: reuniaoId,
+        membro_id: membroId,
+        motivo: a.semJustificativa ? null : a.motivo.trim(),
+        sem_justificativa: a.semJustificativa
+      }));
+    if (linhas.length === 0) return;
+
+    const { error } = await api.from('reuniao_ausencias').insert(linhas);
+    if (error) throw error;
+  };
 
   // Cria os pedidos de oração digitados na reunião (aparecem na aba Pedidos de Oração)
   const salvarPedidosDaReuniao = async (reuniaoId: string) => {
@@ -207,6 +250,7 @@ export default function Reunioes({ liderId }: ReunioesProps) {
           if (insError) throw insError;
         }
 
+        await salvarAusenciasDaReuniao(editandoId);
         await salvarPedidosDaReuniao(editandoId);
 
         fecharForm();
@@ -248,6 +292,7 @@ export default function Reunioes({ liderId }: ReunioesProps) {
         if (presencasError) throw presencasError;
       }
 
+      await salvarAusenciasDaReuniao(reuniaoCriadaId);
       await salvarPedidosDaReuniao(reuniaoCriadaId);
 
       // 3. Atualizar inteligência de faltas e status dos membros
@@ -293,10 +338,8 @@ export default function Reunioes({ liderId }: ReunioesProps) {
     }
   };
 
-  // Equipes disponíveis para o lanche: os G.A.s dos membros (mantém o valor já salvo ao editar)
-  const equipesLanche = Array.from(
-    new Set([...membros.map(m => m.ga?.trim()), lancheEquipe.trim()].filter((g): g is string => !!g))
-  ).sort((a, b) => a.localeCompare(b, "pt-BR"));
+  // Equipes de lanche criadas em Configurações (mantém o valor já salvo ao editar)
+  const equipesLanche = Array.from(new Set([...equipes, lancheEquipe.trim()].filter(Boolean)));
 
   const fecharForm = () => {
     setMostrarForm(false);
@@ -307,6 +350,8 @@ export default function Reunioes({ liderId }: ReunioesProps) {
     setOracoes("");
     setPedidosNovos([]);
     setPresentesIds([]);
+    setAusencias({});
+    setAusenciaModal(null);
     setIsFazerChamada(false);
     setDataReuniao(getSabado());
   };
@@ -327,6 +372,7 @@ export default function Reunioes({ liderId }: ReunioesProps) {
     setOracoes(r.oracoes || "");
     setPedidosNovos([]);
     setPresentesIds(r.presentes || []);
+    setAusencias(Object.fromEntries((r.ausencias || []).map(a => [a.membroId, { motivo: a.motivo, semJustificativa: a.semJustificativa }])));
     setIsFazerChamada(false);
     setMostrarForm(true);
   };
@@ -355,13 +401,44 @@ export default function Reunioes({ liderId }: ReunioesProps) {
     }
   };
 
-  // Alternar presença do membro no formulário de hoje
+  // Alternar presença do membro no formulário de hoje (marcar presença remove a ausência)
   const togglePresenca = (id: string) => {
     if (presentesIds.includes(id)) {
       setPresentesIds(presentesIds.filter(item => item !== id));
     } else {
       setPresentesIds([...presentesIds, id]);
+      setAusencias(prev => {
+        const { [id]: _removido, ...resto } = prev;
+        return resto;
+      });
     }
+  };
+
+  const abrirModalAusencia = (id: string) => {
+    const atual = ausencias[id];
+    setAusMotivo(atual ? atual.motivo : "");
+    setAusSem(atual ? atual.semJustificativa : false);
+    setAusenciaModal(id);
+  };
+
+  const confirmarAusencia = () => {
+    if (!ausenciaModal) return;
+    if (!ausSem && !ausMotivo.trim()) {
+      alert("Informe o motivo da ausência ou marque \"Sem justificativa\".");
+      return;
+    }
+    setAusencias(prev => ({ ...prev, [ausenciaModal]: { motivo: ausSem ? "" : ausMotivo.trim(), semJustificativa: ausSem } }));
+    setPresentesIds(prev => prev.filter(x => x !== ausenciaModal));
+    setAusenciaModal(null);
+  };
+
+  const removerAusencia = () => {
+    if (!ausenciaModal) return;
+    setAusencias(prev => {
+      const { [ausenciaModal]: _removido, ...resto } = prev;
+      return resto;
+    });
+    setAusenciaModal(null);
   };
 
   // Fechar o checklist de segurança e salvar estado
@@ -504,7 +581,7 @@ export default function Reunioes({ liderId }: ReunioesProps) {
                 PRESENÇA
               </span>
               <span className="text-[0.5938rem] font-bold text-teal-700 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/30 px-2 py-0.5 rounded-full font-sans">
-                {presentesIds.length} presentes
+                {presentesIds.length} presentes{Object.keys(ausencias).length > 0 ? ` · ${Object.keys(ausencias).length} ausências` : ""}
               </span>
             </div>
 
@@ -518,9 +595,9 @@ export default function Reunioes({ liderId }: ReunioesProps) {
                 <Users className="w-4 h-4 text-teal-600" /> REALIZAR CHAMADA
               </button>
             ) : (
-              <div className="bg-slate-50 dark:bg-[#161618] border border-gray-100 dark:border-zinc-800 p-3.5 rounded-2xl space-y-3 max-h-56 overflow-y-auto animate-fadeIn">
+              <div className="bg-slate-50 dark:bg-[#161618] border border-gray-100 dark:border-zinc-800 p-3.5 rounded-2xl space-y-3 max-h-80 overflow-y-auto animate-fadeIn">
                 <div className="flex justify-between items-center border-b border-gray-100 dark:border-zinc-800 pb-1.5">
-                  <span className="text-[0.5625rem] font-black text-gray-400 uppercase">Selecione os Presentes</span>
+                  <span className="text-[0.5625rem] font-black text-gray-400 uppercase">Marque presença ou ausência</span>
                   <button
                     type="button"
                     onClick={() => setIsFazerChamada(false)}
@@ -535,37 +612,57 @@ export default function Reunioes({ liderId }: ReunioesProps) {
                 ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1.5">
                     {membros.map(m => {
-                       const isPresent = presentesIds.includes(m.id);
-                       return (
-                        <button
-                          key={m.id}
-                          type="button"
-                          onClick={() => togglePresenca(m.id)}
-                          className={`p-2.5 rounded-xl border text-[0.6875rem] font-bold text-left flex justify-between items-center cursor-pointer transition ${
-                            isPresent
-                              ? "bg-teal-50/60 dark:bg-teal-950/20 border-teal-500 text-teal-800 dark:text-teal-400"
-                              : "bg-white dark:bg-zinc-900 border-gray-200 dark:border-zinc-800 text-slate-700 dark:text-gray-400 opacity-80"
-                          }`}
-                        >
-                          <div className="space-y-0.5">
-                            <div className="flex items-center gap-1.5">
-                              <span className="font-sans font-semibold">{m.nome}</span>
-                              {m.origemTransicao && (
-                                <span className="text-[0.4688rem] font-black uppercase px-1 py-0.2 bg-teal-100 dark:bg-teal-900/40 text-teal-800 dark:text-teal-300 rounded">
-                                  J1 ➔ J2
-                                </span>
-                              )}
+                      const isPresent = presentesIds.includes(m.id);
+                      const aus = ausencias[m.id];
+                      return (
+                        <div key={m.id} className="flex items-stretch gap-1.5">
+                          <button
+                            type="button"
+                            onClick={() => togglePresenca(m.id)}
+                            className={`flex-1 min-w-0 p-2.5 rounded-xl border text-[0.6875rem] font-bold text-left flex justify-between items-center gap-2 cursor-pointer transition ${
+                              isPresent
+                                ? "bg-teal-50/60 dark:bg-teal-950/20 border-teal-500 text-teal-800 dark:text-teal-400"
+                                : aus
+                                ? "bg-rose-50/60 dark:bg-rose-950/20 border-rose-300 dark:border-rose-900/60 text-rose-800 dark:text-rose-400"
+                                : "bg-white dark:bg-zinc-900 border-gray-200 dark:border-zinc-800 text-slate-700 dark:text-gray-400 opacity-80"
+                            }`}
+                          >
+                            <div className="space-y-0.5 min-w-0">
+                              <div className="flex items-center gap-1.5">
+                                <span className="font-sans font-semibold truncate">{m.nome}</span>
+                                {m.origemTransicao && (
+                                  <span className="text-[0.4688rem] font-black uppercase px-1 py-0.2 bg-teal-100 dark:bg-teal-900/40 text-teal-800 dark:text-teal-300 rounded shrink-0">
+                                    J1 ➔ J2
+                                  </span>
+                                )}
+                              </div>
+                              <span className="text-[0.5313rem] text-gray-400 block truncate">
+                                {aus
+                                  ? `Ausente · ${aus.semJustificativa ? "Sem justificativa" : aus.motivo}`
+                                  : `📍 ${m.ga || "Sem G.A"} • ${m.status}`}
+                              </span>
                             </div>
-                            <span className="text-[0.5313rem] text-gray-400 block">
-                              📍 {m.ga || "Sem G.A"} • {m.status}
-                            </span>
-                          </div>
-                          <div className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${
-                            isPresent ? "bg-teal-600 border-teal-700 text-white" : "border-gray-200 bg-transparent"
-                          }`}>
-                            {isPresent && <Check className="w-2.5 h-2.5" />}
-                          </div>
-                        </button>
+                            <div className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${
+                              isPresent ? "bg-teal-600 border-teal-700 text-white" : "border-gray-200 bg-transparent"
+                            }`}>
+                              {isPresent && <Check className="w-2.5 h-2.5" />}
+                            </div>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => abrirModalAusencia(m.id)}
+                            className={`px-2.5 rounded-xl border text-[0.5625rem] font-black uppercase tracking-wider flex flex-col items-center justify-center gap-0.5 cursor-pointer transition shrink-0 ${
+                              aus
+                                ? "bg-rose-600 border-rose-700 text-white"
+                                : "bg-white dark:bg-zinc-900 border-gray-200 dark:border-zinc-800 text-rose-600 hover:border-rose-400"
+                            }`}
+                            aria-label={`Marcar ausência de ${m.nome}`}
+                          >
+                            <UserX className="w-3.5 h-3.5" />
+                            Ausência
+                          </button>
+                        </div>
                       );
                     })}
                   </div>
@@ -597,12 +694,12 @@ export default function Reunioes({ liderId }: ReunioesProps) {
             </label>
             <select
               id="lanche-equipe"
-              aria-label="Equipe que levou o lanche"
+              aria-label="Selecione a Equipe"
               value={lancheEquipe}
               onChange={(e) => setLancheEquipe(e.target.value)}
               className="w-full text-xs px-3.5 py-2.5 bg-slate-50 dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-xl focus:outline-none focus:border-teal-500 text-slate-900 dark:text-white cursor-pointer"
             >
-              <option value="">Selecione a equipe que levou</option>
+              <option value="">Selecione a Equipe</option>
               {equipesLanche.map(eq => (
                 <option key={eq} value={eq}>{eq}</option>
               ))}
@@ -774,6 +871,66 @@ export default function Reunioes({ liderId }: ReunioesProps) {
         </section>
       )}
 
+      {/* MODAL: MOTIVO DA AUSÊNCIA */}
+      {ausenciaModal && (
+        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4" onClick={() => setAusenciaModal(null)}>
+          <div onClick={(e) => e.stopPropagation()} className="bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 rounded-3xl w-full max-w-sm p-5 space-y-4 animate-slideUp">
+            <div className="flex justify-between items-center pb-2 border-b border-gray-100 dark:border-zinc-800">
+              <span className="text-xs font-black uppercase text-rose-600 flex items-center gap-1 font-sans">
+                <UserX className="w-4 h-4" /> Ausência · {membros.find(m => m.id === ausenciaModal)?.nome}
+              </span>
+              <button type="button" onClick={() => setAusenciaModal(null)} className="p-1 text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer" aria-label="Fechar">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="space-y-3 font-sans text-xs">
+              <div className="space-y-1">
+                <label htmlFor="aus-motivo" className="block text-[0.625rem] font-black text-gray-400 uppercase tracking-widest">Motivo da ausência</label>
+                <textarea
+                  id="aus-motivo"
+                  rows={3}
+                  value={ausMotivo}
+                  disabled={ausSem}
+                  onChange={(e) => setAusMotivo(e.target.value)}
+                  placeholder="Ex. Viagem, doença, trabalho..."
+                  className="w-full text-xs p-3 bg-slate-50 dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-xl focus:outline-none focus:border-teal-500 text-slate-900 dark:text-white leading-relaxed resize-none disabled:opacity-50"
+                />
+              </div>
+
+              <label className="flex items-center gap-2 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={ausSem}
+                  onChange={(e) => setAusSem(e.target.checked)}
+                  className="w-4 h-4 accent-teal-700 cursor-pointer"
+                />
+                <span className="font-bold text-slate-800 dark:text-zinc-200">Sem justificativa</span>
+              </label>
+            </div>
+
+            <div className="flex gap-2">
+              {ausencias[ausenciaModal] && (
+                <button
+                  type="button"
+                  onClick={removerAusencia}
+                  className="h-10 px-3 bg-gray-100 hover:bg-gray-200 dark:bg-zinc-800 text-slate-800 dark:text-white font-bold text-[0.625rem] uppercase tracking-wider rounded-xl cursor-pointer"
+                >
+                  Remover
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={confirmarAusencia}
+                className="flex-1 h-10 bg-teal-700 hover:bg-teal-600 text-white font-bold text-xs uppercase tracking-wider rounded-xl cursor-pointer"
+              >
+                Confirmar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* MODAL DETALHADO — ATA DE REUNIÃO SECUNDÁRIA */}
       {reuniaoDetalhada && (
         <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
@@ -837,6 +994,20 @@ export default function Reunioes({ liderId }: ReunioesProps) {
                   </div>
                 )}
               </div>
+
+              {reuniaoDetalhada.ausencias && reuniaoDetalhada.ausencias.length > 0 && (
+                <div>
+                  <span className="text-[0.5625rem] font-black text-gray-400 uppercase tracking-widest block mb-0.5">Ausências ({reuniaoDetalhada.ausencias.length})</span>
+                  <div className="space-y-1">
+                    {reuniaoDetalhada.ausencias.map(a => (
+                      <div key={a.membroId} className="p-2 bg-rose-50/40 dark:bg-rose-950/10 border border-rose-100 dark:border-rose-900/30 rounded-lg">
+                        <span className="block text-[0.6563rem] font-bold text-slate-800 dark:text-zinc-200">{membros.find(m => m.id === a.membroId)?.nome || "Participante"}</span>
+                        <span className="block text-[0.625rem] text-gray-500 italic">{a.semJustificativa ? "Sem justificativa" : a.motivo}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               <div>
                 <span className="text-[0.5625rem] font-black text-gray-400 uppercase tracking-widest block mb-0.5">Participantes Presentes ({reuniaoDetalhada.presentes ? reuniaoDetalhada.presentes.length : 0})</span>

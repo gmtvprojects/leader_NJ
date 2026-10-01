@@ -41,6 +41,7 @@ export interface Reuniao {
   lancheEquipe?: string;
   oracoes: string;
   presentes: string[]; // Array de IDs de membros presentes
+  ausencias?: { membroId: string; motivo: string; semJustificativa: boolean }[];
 }
 
 export interface EventoChecklist {

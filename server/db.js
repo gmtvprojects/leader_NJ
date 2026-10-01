@@ -37,11 +37,23 @@ export const TABELAS = {
     colunas: ['id', 'lider_id', 'data', 'tema', 'lanche', 'lanche_equipe', 'oracoes', 'criado_em'],
     dono: 'lider_id',
     datas: ['data'],
-    embutir: { reuniao_presencas: { fk: 'reuniao_id', colunas: ['id', 'reuniao_id', 'membro_id'] } },
+    embutir: {
+      reuniao_presencas: { fk: 'reuniao_id', colunas: ['id', 'reuniao_id', 'membro_id'] },
+      reuniao_ausencias: { fk: 'reuniao_id', colunas: ['id', 'reuniao_id', 'membro_id', 'motivo', 'sem_justificativa'] },
+    },
   },
   reuniao_presencas: {
     colunas: ['id', 'reuniao_id', 'membro_id'],
     via: { tabela: 'reunioes', fk: 'reuniao_id', dono: 'lider_id' },
+  },
+  reuniao_ausencias: {
+    colunas: ['id', 'reuniao_id', 'membro_id', 'motivo', 'sem_justificativa'],
+    via: { tabela: 'reunioes', fk: 'reuniao_id', dono: 'lider_id' },
+  },
+  equipes_lanche: {
+    colunas: ['id', 'lider_id', 'nome', 'membros_ids', 'inclui_lider', 'criado_em'],
+    dono: 'lider_id',
+    json: ['membros_ids'],
   },
   oracao_pedidos: {
     colunas: ['id', 'lider_id', 'membro_id', 'membro_nome', 'texto', 'respondido', 'status', 'reuniao_id', 'criado_em'],
