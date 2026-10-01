@@ -37,6 +37,7 @@ export interface Reuniao {
   data: string; // formato "YYYY-MM-DD"
   tema: string;
   lanche: string;
+  lancheEquipe?: string;
   oracoes: string;
   presentes: string[]; // Array de IDs de membros presentes
 }

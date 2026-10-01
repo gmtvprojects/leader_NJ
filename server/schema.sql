@@ -37,9 +37,11 @@ CREATE TABLE IF NOT EXISTS reunioes (
   data date NOT NULL,
   tema text,
   lanche text,
+  lanche_equipe text,
   oracoes text,
   criado_em timestamptz NOT NULL DEFAULT now()
 );
+ALTER TABLE reunioes ADD COLUMN IF NOT EXISTS lanche_equipe text;
 CREATE INDEX IF NOT EXISTS reunioes_lider_idx ON reunioes(lider_id);
 
 CREATE TABLE IF NOT EXISTS reuniao_presencas (

@@ -68,6 +68,7 @@ export default function Reunioes({ liderId }: ReunioesProps) {
   const [dataReuniao, setDataReuniao] = useState(getSabado());
   const [tema, setTema] = useState("");
   const [lanche, setLanche] = useState("");
+  const [lancheEquipe, setLancheEquipe] = useState("");
   const [oracoes, setOracoes] = useState("");
   const [presentesIds, setPresentesIds] = useState<string[]>([]);
   
@@ -113,6 +114,7 @@ export default function Reunioes({ liderId }: ReunioesProps) {
         data: r.data,
         tema: r.tema || '',
         lanche: r.lanche || '',
+        lancheEquipe: r.lanche_equipe || '',
         oracoes: r.oracoes || '',
         presentes: (r.reuniao_presencas || []).map((p: any) => p.membro_id)
       }));
@@ -149,6 +151,7 @@ export default function Reunioes({ liderId }: ReunioesProps) {
             data: dataReuniao,
             tema: tema.trim(),
             lanche: lanche.trim(),
+            lanche_equipe: lancheEquipe || null,
             oracoes: oracoes.trim()
           })
           .eq('id', editandoId);
@@ -182,6 +185,7 @@ export default function Reunioes({ liderId }: ReunioesProps) {
           data: dataReuniao,
           tema: tema.trim(),
           lanche: lanche.trim(),
+          lanche_equipe: lancheEquipe || null,
           oracoes: oracoes.trim()
         })
         .select()
@@ -248,11 +252,17 @@ export default function Reunioes({ liderId }: ReunioesProps) {
     }
   };
 
+  // Equipes disponíveis para o lanche: os G.A.s dos membros (mantém o valor já salvo ao editar)
+  const equipesLanche = Array.from(
+    new Set([...membros.map(m => m.ga?.trim()), lancheEquipe.trim()].filter((g): g is string => !!g))
+  ).sort((a, b) => a.localeCompare(b, "pt-BR"));
+
   const fecharForm = () => {
     setMostrarForm(false);
     setEditandoId(null);
     setTema("");
     setLanche("");
+    setLancheEquipe("");
     setOracoes("");
     setPresentesIds([]);
     setIsFazerChamada(false);
@@ -271,6 +281,7 @@ export default function Reunioes({ liderId }: ReunioesProps) {
     setDataReuniao(r.data);
     setTema(r.tema);
     setLanche(r.lanche || "");
+    setLancheEquipe(r.lancheEquipe || "");
     setOracoes(r.oracoes || "");
     setPresentesIds(r.presentes || []);
     setIsFazerChamada(false);
@@ -425,7 +436,7 @@ export default function Reunioes({ liderId }: ReunioesProps) {
         <span className="text-slate-900 dark:text-white">{editandoId ? "Editar Reunião" : "Nova Reunião"}</span>
       </nav>
 
-      <section className="bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 rounded-3xl p-4.5 space-y-4 w-full max-w-3xl">
+      <section className="bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 rounded-3xl p-4.5 lg:p-7 space-y-4 w-full max-w-5xl">
         <div className="flex justify-between items-center pb-2 border-b border-gray-100 dark:border-zinc-800/40">
           <span className="text-xs font-black uppercase text-teal-750 dark:text-teal-450 tracking-wider flex items-center gap-1">
             <Clock className="w-4 h-4 text-teal-600" /> {editandoId ? "Editar Reunião" : "Nova Reunião"}
@@ -441,10 +452,10 @@ export default function Reunioes({ liderId }: ReunioesProps) {
           </div>
         </div>
 
-        <form onSubmit={handleSalvarReuniao} className="space-y-4 text-xs font-sans">
+        <form onSubmit={handleSalvarReuniao} className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-x-8 text-xs font-sans">
           
           {/* LANÇAMENTO CHAMADA BUTTON */}
-          <div className="space-y-1.5 text-left">
+          <div className="space-y-1.5 text-left lg:col-span-2">
             <div className="flex justify-between items-center">
               <span className="text-[0.625rem] font-black uppercase text-gray-400 dark:text-zinc-500 tracking-widest font-sans">
                 PRESENÇA
@@ -527,7 +538,7 @@ export default function Reunioes({ liderId }: ReunioesProps) {
             </label>
             <textarea
               id="tema-reuniao"
-              rows={2}
+              rows={4}
               required
               value={tema}
               onChange={(e) => setTema(e.target.value)}
@@ -541,18 +552,30 @@ export default function Reunioes({ liderId }: ReunioesProps) {
             <label htmlFor="lanche-reuniao" className="block text-[0.625rem] font-black text-gray-400 dark:text-zinc-500 uppercase tracking-widest font-sans flex items-center gap-1">
               <Coffee className="w-3.5 h-3.5 text-amber-500" /> LANCHE
             </label>
+            <select
+              id="lanche-equipe"
+              aria-label="Equipe que levou o lanche"
+              value={lancheEquipe}
+              onChange={(e) => setLancheEquipe(e.target.value)}
+              className="w-full text-xs px-3.5 py-2.5 bg-slate-50 dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-xl focus:outline-none focus:border-teal-500 text-slate-900 dark:text-white cursor-pointer"
+            >
+              <option value="">Selecione a equipe que levou</option>
+              {equipesLanche.map(eq => (
+                <option key={eq} value={eq}>{eq}</option>
+              ))}
+            </select>
             <input
               id="lanche-reuniao"
               type="text"
               value={lanche}
               onChange={(e) => setLanche(e.target.value)}
-              placeholder="Ex. Samuel trouxe bolo de chocolate e suco..."
+              placeholder="Qual foi o lanche? (opcional) Ex. bolo de chocolate e suco..."
               className="w-full text-xs px-3.5 py-2.5 bg-slate-50 dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-xl focus:outline-none focus:border-teal-500 text-slate-900 dark:text-white"
             />
           </div>
 
           {/* Pedidos de oração do dia */}
-          <div className="space-y-1">
+          <div className="space-y-1 lg:col-span-2">
             <label htmlFor="oracao-reuniao" className="block text-[0.625rem] font-black text-gray-400 dark:text-zinc-500 uppercase tracking-widest font-sans flex items-center gap-1">
                <Heart className="w-3.5 h-3.5 text-rose-500" /> PEDIDOS DE ORAÇÃO
             </label>
@@ -570,7 +593,7 @@ export default function Reunioes({ liderId }: ReunioesProps) {
           <button
             id="btn-salvar-ata"
             type="submit"
-            className="w-full h-11 bg-teal-700 hover:bg-teal-600 font-bold text-xs uppercase tracking-widest rounded-xl text-white transition shadow-md flex items-center justify-center gap-1 cursor-pointer"
+            className="w-full lg:col-span-2 h-11 bg-teal-700 hover:bg-teal-600 font-bold text-xs uppercase tracking-widest rounded-xl text-white transition shadow-md flex items-center justify-center gap-1 cursor-pointer"
           >
             <CheckCircle className="w-4 h-4 text-white" /> {editandoId ? "Salvar Alterações" : "Concluir e Salvar Reunião"}
           </button>
@@ -692,7 +715,7 @@ export default function Reunioes({ liderId }: ReunioesProps) {
               <div>
                 <span className="text-[0.5625rem] font-black text-gray-400 uppercase tracking-widest block mb-0.5">Comunhão e Lanche</span>
                 <p className="font-bold text-slate-800 dark:text-white">
-                  {reuniaoDetalhada.lanche || "Nenhum cadastrado"}
+                  {[reuniaoDetalhada.lancheEquipe, reuniaoDetalhada.lanche].filter(Boolean).join(" — ") || "Nenhum cadastrado"}
                 </p>
               </div>
 

@@ -34,7 +34,7 @@ export const TABELAS = {
     datas: ['aniversario', 'data_entrada'],
   },
   reunioes: {
-    colunas: ['id', 'lider_id', 'data', 'tema', 'lanche', 'oracoes', 'criado_em'],
+    colunas: ['id', 'lider_id', 'data', 'tema', 'lanche', 'lanche_equipe', 'oracoes', 'criado_em'],
     dono: 'lider_id',
     datas: ['data'],
     embutir: { reuniao_presencas: { fk: 'reuniao_id', colunas: ['id', 'reuniao_id', 'membro_id'] } },
