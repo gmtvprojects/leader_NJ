@@ -72,7 +72,7 @@ export default function Login() {
             <span className="text-xl">✝</span> 
             <span>Firme na Palavra e no Amor</span>
           </div>
-          <p className="text-[11px] text-zinc-500 dark:text-zinc-450 uppercase tracking-widest font-bold">
+          <p className="text-[0.6875rem] text-zinc-500 dark:text-zinc-450 uppercase tracking-widest font-bold">
             App do Líder de GA
           </p>
         </div>
@@ -111,7 +111,7 @@ export default function Login() {
 
         {/* Error Messaging */}
         {errorMsg && (
-          <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/40 text-red-700 dark:text-red-400 text-[11px] p-3 rounded-xl font-medium">
+          <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/40 text-red-700 dark:text-red-400 text-[0.6875rem] p-3 rounded-xl font-medium">
             <p className="leading-normal">{errorMsg}</p>
           </div>
         )}
@@ -121,7 +121,7 @@ export default function Login() {
           <div className="space-y-3.5">
             {/* Email field */}
             <div className="space-y-1">
-              <label className="block text-[8px] font-black uppercase text-zinc-400 dark:text-zinc-450 tracking-wider">
+              <label className="block text-[0.5rem] font-black uppercase text-zinc-400 dark:text-zinc-450 tracking-wider">
                 Endereço de E-mail
               </label>
               <div className="relative">
@@ -141,7 +141,7 @@ export default function Login() {
 
             {/* Password field */}
             <div className="space-y-1">
-              <label className="block text-[8px] font-black uppercase text-zinc-400 dark:text-zinc-450 tracking-wider">
+              <label className="block text-[0.5rem] font-black uppercase text-zinc-400 dark:text-zinc-450 tracking-wider">
                 Senha de Acesso
               </label>
               <div className="relative">
@@ -188,7 +188,7 @@ export default function Login() {
           {/* Divisor */}
           <div className="relative flex items-center justify-center pt-1">
             <div className="border-t border-neutral-200 dark:border-zinc-800 w-full"></div>
-            <span className="bg-white dark:bg-zinc-900 px-2 text-[10px] uppercase font-bold text-zinc-400 absolute">
+            <span className="bg-white dark:bg-zinc-900 px-2 text-[0.625rem] uppercase font-bold text-zinc-400 absolute">
               ou
             </span>
           </div>
@@ -198,7 +198,7 @@ export default function Login() {
             type="button"
             onClick={handleEntrarModoLocal}
             disabled={loading}
-            className="w-full py-2.5 px-3 bg-neutral-100 hover:bg-neutral-200 dark:bg-zinc-800 dark:hover:bg-zinc-750 text-slate-700 dark:text-zinc-200 font-bold text-[11px] rounded-xl transition border border-neutral-200 dark:border-zinc-700 flex items-center justify-center gap-2 cursor-pointer"
+            className="w-full py-2.5 px-3 bg-neutral-100 hover:bg-neutral-200 dark:bg-zinc-800 dark:hover:bg-zinc-750 text-slate-700 dark:text-zinc-200 font-bold text-[0.6875rem] rounded-xl transition border border-neutral-200 dark:border-zinc-700 flex items-center justify-center gap-2 cursor-pointer"
           >
             <span>Entrar como Líder de GA (Modo Local)</span>
           </button>

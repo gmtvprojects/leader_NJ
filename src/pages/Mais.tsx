@@ -407,7 +407,7 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
                 x={p.x}
                 y={p.y - 8}
                 textAnchor="middle"
-                className="text-[8px] font-black fill-slate-700 dark:fill-zinc-300 font-sans"
+                className="text-[0.5rem] font-black fill-slate-700 dark:fill-zinc-300 font-sans"
               >
                 {p.total}
               </text>
@@ -415,7 +415,7 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
                 x={p.x}
                 y={height - 2}
                 textAnchor="middle"
-                className="text-[7.5px] font-black text-gray-400 dark:text-zinc-500 uppercase font-mono"
+                className="text-[0.4688rem] font-black text-gray-400 dark:text-zinc-500 uppercase font-mono"
               >
                 {p.mes.slice(5)}
               </text>
@@ -433,7 +433,7 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
         <div className="fixed inset-0 bg-white/60 dark:bg-zinc-950/60 flex items-center justify-center z-50">
           <div className="flex flex-col items-center gap-2">
             <Loader2 className="w-8 h-8 animate-spin text-[#0f766e]" />
-            <p className="text-[10px] uppercase font-black tracking-wider text-[#0f766e]">Consolidando informações...</p>
+            <p className="text-[0.625rem] uppercase font-black tracking-wider text-[#0f766e]">Consolidando informações...</p>
           </div>
         </div>
       )}
@@ -445,7 +445,7 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
             <h1 className="text-xl font-bold text-slate-950 dark:text-white tracking-tight leading-none flex items-center gap-1.5 font-sans justify-start text-left">
               Painel de Liderança
             </h1>
-            <p className="text-[10px] uppercase font-black text-gray-400 mt-1 tracking-wider text-left">Apoio de crescimento, estatísticas e manutenção</p>
+            <p className="text-[0.625rem] uppercase font-black text-gray-400 mt-1 tracking-wider text-left">Apoio de crescimento, estatísticas e manutenção</p>
           </div>
 
           <div className="grid grid-cols-1 gap-3.5 pt-1">
@@ -462,26 +462,26 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
                   </div>
                   <div>
                     <h3 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider font-sans leading-none">MEU G.A E HISTÓRICO</h3>
-                    <p className="text-[9.5px] text-gray-400 font-medium uppercase mt-1">Estatística do tamanho do GA</p>
+                    <p className="text-[0.5938rem] text-gray-400 font-medium uppercase mt-1">Estatística do tamanho do GA</p>
                   </div>
                 </div>
 
                 {membros.length > 15 ? (
-                  <span className="text-[8.5px] font-black uppercase tracking-wider bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400 px-2 py-1 rounded-lg font-sans">
+                  <span className="text-[0.5313rem] font-black uppercase tracking-wider bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400 px-2 py-1 rounded-lg font-sans">
                     Excelente Tamanho ({membros.length})
                   </span>
                 ) : membros.length < 8 ? (
-                  <span className="text-[8.5px] font-black uppercase tracking-wider bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400 px-2 py-1 rounded-lg font-sans">
+                  <span className="text-[0.5313rem] font-black uppercase tracking-wider bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400 px-2 py-1 rounded-lg font-sans">
                     Crescer o G.A
                   </span>
                 ) : (
-                  <span className="text-[8.5px] font-black uppercase tracking-wider bg-teal-50 dark:bg-teal-950/20 text-teal-700 dark:text-teal-400 px-2 py-1 rounded-lg font-sans">
+                  <span className="text-[0.5313rem] font-black uppercase tracking-wider bg-teal-50 dark:bg-teal-950/20 text-teal-700 dark:text-teal-400 px-2 py-1 rounded-lg font-sans">
                     GA Saudável ({membros.length})
                   </span>
                 )}
               </div>
 
-              <div className="flex justify-between items-center text-[11px] text-gray-500 dark:text-zinc-400">
+              <div className="flex justify-between items-center text-[0.6875rem] text-gray-500 dark:text-zinc-400">
                 <span>Total de fichas salvas de liderança: <strong>{membros.length}</strong></span>
                 <ChevronRight className="w-4 h-4 text-gray-400" />
               </div>
@@ -499,16 +499,16 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
                   </div>
                   <div>
                     <h3 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider font-sans leading-none">CADASTRAR TREINANDOS</h3>
-                    <p className="text-[9.5px] text-gray-400 font-medium uppercase mt-1">COMO SEU TREINANDO ESTA?</p>
+                    <p className="text-[0.5938rem] text-gray-400 font-medium uppercase mt-1">COMO SEU TREINANDO ESTA?</p>
                   </div>
                 </div>
 
-                <span className="text-[9px] font-mono font-bold text-slate-900 dark:text-white bg-slate-100 dark:bg-zinc-800 px-2 py-1 rounded-lg">
+                <span className="text-[0.5625rem] font-mono font-bold text-slate-900 dark:text-white bg-slate-100 dark:bg-zinc-800 px-2 py-1 rounded-lg">
                   {treinandos.length} em treinamento
                 </span>
               </div>
 
-              <div className="flex justify-between items-center text-[11px] text-gray-500 dark:text-zinc-400">
+              <div className="flex justify-between items-center text-[0.6875rem] text-gray-500 dark:text-zinc-400">
                 <span>PROGRESSO DO SE TREINANDO</span>
                 <ChevronRight className="w-4 h-4 text-gray-400" />
               </div>
@@ -530,12 +530,12 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
                   </div>
                   <div>
                     <h3 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider font-sans leading-none">Aniversariantes</h3>
-                    <p className="text-[9.5px] text-gray-400 font-medium uppercase mt-1">Alertas e dicas de celebração</p>
+                    <p className="text-[0.5938rem] text-gray-400 font-medium uppercase mt-1">Alertas e dicas de celebração</p>
                   </div>
                 </div>
               </div>
 
-              <div className="flex justify-between items-center text-[11px] text-gray-500 dark:text-zinc-400 font-sans">
+              <div className="flex justify-between items-center text-[0.6875rem] text-gray-500 dark:text-zinc-400 font-sans">
                 <span>Datas especiais e linguagens de amor do GA</span>
                 <ChevronRight className="w-4 h-4 text-gray-400" />
               </div>
@@ -553,11 +553,11 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
                   </div>
                   <div>
                     <h3 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider font-sans leading-none">Manual do Líder GA 2026</h3>
-                    <p className="text-[9.5px] text-gray-400 font-medium uppercase mt-1">Consultar o manual do líder (Importante: isso não substitui o seu manual recebido durante os treinamentos)</p>
+                    <p className="text-[0.5938rem] text-gray-400 font-medium uppercase mt-1">Consultar o manual do líder (Importante: isso não substitui o seu manual recebido durante os treinamentos)</p>
                   </div>
                 </div>
 
-                <span className={`text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded-lg ${
+                <span className={`text-[0.5625rem] font-black uppercase tracking-wider px-2 py-1 rounded-lg ${
                   trilhaStatus.includes("Concluída")
                     ? "bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400"
                     : "bg-indigo-50 dark:bg-indigo-950/20 text-indigo-700 dark:text-indigo-400"
@@ -566,7 +566,7 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
                 </span>
               </div>
 
-              <div className="flex justify-between items-center text-[11px] text-gray-500 dark:text-zinc-400 font-sans">
+              <div className="flex justify-between items-center text-[0.6875rem] text-gray-500 dark:text-zinc-400 font-sans">
                 <span>Leitura das 13 diretrizes e consolidação pastoral</span>
                 <ChevronRight className="w-4 h-4 text-gray-400" />
               </div>
@@ -584,12 +584,12 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
                   </div>
                   <div>
                     <h3 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider font-sans leading-none">PERFIL</h3>
-                    <p className="text-[9.5px] text-gray-400 font-medium uppercase mt-1">Nome do GA, Aparência e Manutenção</p>
+                    <p className="text-[0.5938rem] text-gray-400 font-medium uppercase mt-1">Nome do GA, Aparência e Manutenção</p>
                   </div>
                 </div>
               </div>
 
-              <div className="flex justify-between items-center text-[11px] text-gray-500 dark:text-zinc-400">
+              <div className="flex justify-between items-center text-[0.6875rem] text-gray-500 dark:text-zinc-400">
                 <span>Exportar backup local, modo escuro e restaurações</span>
                 <ChevronRight className="w-4 h-4 text-gray-400" />
               </div>
@@ -613,7 +613,7 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
 
       {/* SUBVIEW A: CRESCIMENTO PASTORAL */}
       {subView === "crescimento" && (
-        <div className="space-y-4 text-left animate-slideUp font-sans">
+        <div className="w-full max-w-2xl mx-auto space-y-4 text-left animate-slideUp font-sans">
           <header className="flex items-center gap-3">
             <button
               onClick={() => setSubView("menu")}
@@ -622,7 +622,7 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
               <ArrowLeft className="w-4 h-4" />
             </button>
             <div>
-              <span className="text-[9px] font-black uppercase text-gray-400 tracking-wider">Histórico de Membros</span>
+              <span className="text-[0.5625rem] font-black uppercase text-gray-400 tracking-wider">Histórico de Membros</span>
               <h1 className="text-sm font-bold text-slate-900 dark:text-white leading-none">Meu G.A E Histórico</h1>
             </div>
           </header>
@@ -632,11 +632,11 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
               <TrendingUp className="w-4 h-4 text-[#0f766e]" /> Saúde do Censo de Membros
             </h3>
             
-            <p className="text-[11px] leading-relaxed text-gray-550 dark:text-zinc-400 pb-0.5">
+            <p className="text-[0.6875rem] leading-relaxed text-gray-550 dark:text-zinc-400 pb-0.5">
               O tamanho atual do seu GA é de <strong>{membros.length} membros ativos</strong>. Incentive sempre a participação e o engajamento contínuo de todos.
             </p>
 
-            <div className="p-3.5 bg-slate-55 dark:bg-[#131315] border border-gray-150 dark:border-zinc-800 text-[11px] leading-relaxed rounded-xl font-medium">
+            <div className="p-3.5 bg-slate-55 dark:bg-[#131315] border border-gray-150 dark:border-zinc-800 text-[0.6875rem] leading-relaxed rounded-xl font-medium">
               {membros.length > 15 ? (
                 <p className="text-emerald-800 dark:text-emerald-400">
                   ✓ <strong>Excelente saúde de tamanho!</strong> O GA está rico em conexões com mais de 15 pessoas. Continue motivando todos os liderados a acolherem bem novos visitantes e crescerem juntos.
@@ -656,10 +656,10 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
           {/* GRÁFICO HISTÓRICO */}
           <div className="bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 p-4 rounded-2xl space-y-3 shadow-sm">
             <div className="flex justify-between items-center">
-              <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none">Gráfico de Crescimento Linear</h3>
+              <h3 className="text-[0.625rem] font-black text-gray-400 uppercase tracking-widest leading-none">Gráfico de Crescimento Linear</h3>
               <button
                 onClick={handleRegistrarTamanhoHoje}
-                className="px-2.5 py-1 text-[9px] uppercase tracking-wider font-extrabold text-white bg-teal-700 hover:bg-teal-655 rounded-lg cursor-pointer"
+                className="px-2.5 py-1 text-[0.5625rem] uppercase tracking-wider font-extrabold text-white bg-teal-700 hover:bg-teal-655 rounded-lg cursor-pointer"
               >
                 Salvar Hoje
               </button>
@@ -667,14 +667,14 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
 
             {renderMiniGraficoSVG()}
 
-            <p className="text-[9.5px] text-gray-500 leading-relaxed italic text-center text-gray-400">Gráfico em tempo real comparando a variação histórica cadastrada. Toque em "Salvar Hoje" para registrar o total deste mês.</p>
+            <p className="text-[0.5938rem] text-gray-500 leading-relaxed italic text-center text-gray-400">Gráfico em tempo real comparando a variação histórica cadastrada. Toque em "Salvar Hoje" para registrar o total deste mês.</p>
           </div>
         </div>
       )}
 
       {/* SUBVIEW B: NOVOS LÍDERES EM FORMAÇÃO (TREINANDOS) */}
       {subView === "treinandos" && (
-        <div className="space-y-4 text-left animate-slideUp font-sans">
+        <div className="w-full max-w-2xl mx-auto space-y-4 text-left animate-slideUp font-sans">
           <header className="flex items-center gap-3">
             <button
               onClick={() => setSubView("menu")}
@@ -683,7 +683,7 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
               <ArrowLeft className="w-4 h-4" />
             </button>
             <div>
-              <span className="text-[9px] font-black uppercase text-gray-400 tracking-wider">Apoio a Formações</span>
+              <span className="text-[0.5625rem] font-black uppercase text-gray-400 tracking-wider">Apoio a Formações</span>
               <h1 className="text-sm font-bold text-slate-900 dark:text-white leading-none">Módulo de Treinandos</h1>
             </div>
           </header>
@@ -709,14 +709,14 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
                       <div className="flex justify-between items-start gap-1">
                         <div>
                           <h4 className="text-xs font-bold text-slate-905 dark:text-white leading-none">{trein.nome}</h4>
-                          <span className="text-[9px] text-gray-400 mt-1 block font-mono">Início: {new Date(trein.dataInicio + "T12:00:00").toLocaleDateString("pt-BR")}</span>
+                          <span className="text-[0.5625rem] text-gray-400 mt-1 block font-mono">Início: {new Date(trein.dataInicio + "T12:00:00").toLocaleDateString("pt-BR")}</span>
                         </div>
 
                         <div className="flex items-center gap-1.5 shrink-0">
                           {atrasado ? (
-                            <span className="text-[8px] font-extrabold uppercase bg-rose-50 dark:bg-rose-950/20 text-rose-600 px-1.5 py-0.5 rounded-md">Atrasado</span>
+                            <span className="text-[0.5rem] font-extrabold uppercase bg-rose-50 dark:bg-rose-950/20 text-rose-600 px-1.5 py-0.5 rounded-md">Atrasado</span>
                           ) : (
-                            <span className="text-[8px] font-extrabold uppercase bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 px-1.5 py-0.5 rounded-md font-sans">No prazo</span>
+                            <span className="text-[0.5rem] font-extrabold uppercase bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 px-1.5 py-0.5 rounded-md font-sans">No prazo</span>
                           )}
 
                           <button 
@@ -730,7 +730,7 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
 
                       {/* Tempo bar progresso */}
                       <div className="space-y-1">
-                        <div className="flex justify-between items-center text-[8.5px] font-extrabold text-gray-400">
+                        <div className="flex justify-between items-center text-[0.5313rem] font-extrabold text-gray-400">
                           <span>Tempo decorrido (Prazo total original 6m):</span>
                           <span>{porcen}%</span>
                         </div>
@@ -740,7 +740,7 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
                             style={{ width: `${porcen}%` }}
                           />
                         </div>
-                        <div className="text-[8.5px] text-slate-500 font-mono">
+                        <div className="text-[0.5313rem] text-slate-500 font-mono">
                           {atrasado 
                             ? `Prazo extrapolado há ${diasRestantes} dias!` 
                             : `Restam aproximadamente ${diasRestantes} dias para conclusão da formação legal.`
@@ -760,7 +760,7 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
             
             <div className="space-y-3 font-sans">
               <div className="space-y-1">
-                <label htmlFor="trein-nome" className="block text-[8px] font-bold uppercase text-gray-400">Nome do Treinando *</label>
+                <label htmlFor="trein-nome" className="block text-[0.5rem] font-bold uppercase text-gray-400">Nome do Treinando *</label>
                 <input
                   id="trein-nome"
                   type="text"
@@ -773,7 +773,7 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
               </div>
 
               <div className="space-y-1">
-                <label htmlFor="trein-data" className="block text-[8px] font-bold uppercase text-gray-400">Data de Entrada / Nomeação *</label>
+                <label htmlFor="trein-data" className="block text-[0.5rem] font-bold uppercase text-gray-400">Data de Entrada / Nomeação *</label>
                 <input
                   id="trein-data"
                   type="date"
@@ -797,7 +797,7 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
 
       {/* SUBVIEW C: CLAMORES DE CÉLULAS (ORAÇÕES EM REUNIÃO) */}
       {subView === "oracao" && (
-        <div className="space-y-4 text-left animate-slideUp font-sans">
+        <div className="w-full max-w-2xl mx-auto space-y-4 text-left animate-slideUp font-sans">
           <header className="flex items-center gap-3">
             <button
               onClick={() => setSubView("menu")}
@@ -806,7 +806,7 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
               <ArrowLeft className="w-4 h-4" />
             </button>
             <div>
-              <span className="text-[9px] font-black uppercase text-gray-400 tracking-wider">Apoio Pastoral</span>
+              <span className="text-[0.5625rem] font-black uppercase text-gray-400 tracking-wider">Apoio Pastoral</span>
               <h1 className="text-sm font-bold text-slate-900 dark:text-white leading-none">Pedidos Consolidados</h1>
             </div>
           </header>
@@ -821,7 +821,7 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
               <select
                 value={buscaOracaoFiltro}
                 onChange={(e) => setBuscaOracaoFiltro(e.target.value as any)}
-                className="text-[9.5px] font-extrabold uppercase bg-slate-5 w-fit border border-gray-200 dark:border-zinc-800 rounded-lg p-1 text-slate-700 dark:text-zinc-300 cursor-pointer outline-none"
+                className="text-[0.5938rem] font-extrabold uppercase bg-slate-5 w-fit border border-gray-200 dark:border-zinc-800 rounded-lg p-1 text-slate-700 dark:text-zinc-300 cursor-pointer outline-none"
               >
                 <option value="todos">Todos</option>
                 <option value="pendentes">Pendentes</option>
@@ -829,7 +829,7 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
               </select>
             </div>
 
-            <p className="text-[11px] leading-relaxed text-gray-500 dark:text-zinc-400 pb-1">
+            <p className="text-[0.6875rem] leading-relaxed text-gray-500 dark:text-zinc-400 pb-1">
               Pedidos anotados durante as atas das reuniões ministeriais do <strong>{grupoNome}</strong>. Mantenha os registros atualizados para alimentar a fé do GA.
             </p>
 
@@ -853,11 +853,11 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
                       }`}
                     >
                       <div className="space-y-1 text-left">
-                        <span className="text-[8.5px] font-semibold text-rose-600 dark:text-rose-405 font-mono uppercase bg-rose-50/10 px-1.5 py-0.5 rounded border border-rose-500/10 inline-block mb-1">
+                        <span className="text-[0.5313rem] font-semibold text-rose-600 dark:text-rose-405 font-mono uppercase bg-rose-50/10 px-1.5 py-0.5 rounded border border-rose-500/10 inline-block mb-1">
                           Reunião {new Date(or.data + "T12:00:00").toLocaleDateString("pt-BR")}
                         </span>
                         
-                        <p className={`text-[11px] leading-relaxed font-semibold italic ${
+                        <p className={`text-[0.6875rem] leading-relaxed font-semibold italic ${
                           or.respondido ? "line-through text-gray-400 dark:text-zinc-500" : "text-slate-800 dark:text-zinc-200"
                         }`}>
                           "{or.texto}"
@@ -866,7 +866,7 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
 
                       <button
                         onClick={() => alternarOracaoRespondida(or.id)}
-                        className={`text-[9.5px] font-extrabold uppercase shrink-0 py-1 px-2.5 rounded-lg border transition cursor-pointer select-none ${
+                        className={`text-[0.5938rem] font-extrabold uppercase shrink-0 py-1 px-2.5 rounded-lg border transition cursor-pointer select-none ${
                           or.respondido
                             ? "bg-emerald-50 border-emerald-300 text-emerald-700 hover:scale-95"
                             : "bg-white dark:bg-zinc-950 border-gray-200 dark:border-zinc-800 hover:border-teal-500 text-gray-500"
@@ -884,7 +884,7 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
 
       {/* SUBVIEW D: TRILHA DE FORMAÇÃO MANUAL COMPLETO */}
       {subView === "trilha" && (
-        <div className="space-y-4 animate-slideUp">
+        <div className="w-full max-w-3xl mx-auto space-y-4 animate-slideUp">
           <header className="flex items-center gap-3 text-left">
             <button
               onClick={() => setSubView("menu")}
@@ -893,7 +893,7 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
               <ArrowLeft className="w-4 h-4" />
             </button>
             <div>
-              <span className="text-[9px] font-black uppercase text-gray-400 tracking-wider">Manual de Capacitação</span>
+              <span className="text-[0.5625rem] font-black uppercase text-gray-400 tracking-wider">Manual de Capacitação</span>
               <h1 className="text-sm font-bold text-slate-900 dark:text-white leading-none">Capacitação Oficial de Lideres</h1>
             </div>
           </header>
@@ -906,7 +906,7 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
 
       {/* SUBVIEW E: CONFIGURAÇÕES, GESTÃO DE DADOS */}
       {subView === "config" && (
-        <div className="space-y-4 text-left animate-slideUp font-sans">
+        <div className="w-full max-w-2xl mx-auto space-y-4 text-left animate-slideUp font-sans">
           <header className="flex items-center gap-3">
             <button
               onClick={() => setSubView("menu")}
@@ -915,7 +915,7 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
               <ArrowLeft className="w-4 h-4" />
             </button>
             <div>
-              <span className="text-[9px] font-black uppercase text-gray-400 tracking-wider">Configuração de Perfil</span>
+              <span className="text-[0.5625rem] font-black uppercase text-gray-400 tracking-wider">Configuração de Perfil</span>
               <h1 className="text-sm font-bold text-slate-900 dark:text-white leading-none font-sans">Perfil</h1>
             </div>
           </header>
@@ -927,7 +927,7 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
             </h3>
 
             <div className="space-y-1">
-              <label htmlFor="cfg-nome" className="block text-[8px] font-bold uppercase text-gray-400">Nome Oficial do Grupo de Amigos</label>
+              <label htmlFor="cfg-nome" className="block text-[0.5rem] font-bold uppercase text-gray-400">Nome Oficial do Grupo de Amigos</label>
               <input
                 id="cfg-nome"
                 type="text"
@@ -939,7 +939,7 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
             </div>
 
             <div className="space-y-1 mt-2.5">
-              <span className="block text-[8px] font-bold uppercase text-gray-400">Igreja Vinculada</span>
+              <span className="block text-[0.5rem] font-bold uppercase text-gray-400">Igreja Vinculada</span>
               <div className="text-xs px-3 py-2 bg-gray-50 dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-lg text-slate-500 dark:text-zinc-400 font-medium select-none font-sans">
                 Igreja: Firme na Palavra e no Amor
               </div>
@@ -948,7 +948,7 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
             <div className="flex justify-between items-center pt-2.5 border-t border-gray-100 dark:border-zinc-800/80">
               <div>
                 <span className="block text-xs font-bold text-slate-900 dark:text-white">Tema Escuro Confortável</span>
-                <span className="block text-[8px] text-gray-400 uppercase mt-0.5 font-bold font-mono">ga_theme localstorage</span>
+                <span className="block text-[0.5rem] text-gray-400 uppercase mt-0.5 font-bold font-mono">ga_theme localstorage</span>
               </div>
               <button
                 type="button"
@@ -956,11 +956,11 @@ export default function Mais({ liderId, onSelectTab }: MaisProps) {
                 className="py-2.5 px-4 bg-slate-50 dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 text-teal-700 dark:text-teal-400 rounded-xl shadow-sm transition hover:scale-103 cursor-pointer"
               >
                 {themeMode === "light" ? (
-                  <div className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider">
+                  <div className="flex items-center gap-1.5 text-[0.625rem] font-black uppercase tracking-wider">
                     <Moon className="w-4 h-4 text-slate-600 dark:text-zinc-400" /> Ativar Escuro
                   </div>
                 ) : (
-                  <div className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider">
+                  <div className="flex items-center gap-1.5 text-[0.625rem] font-black uppercase tracking-wider">
                     <Sun className="w-4 h-4 text-amber-500" /> Ativar Claro
                   </div>
                 )}

@@ -417,7 +417,7 @@ export default function TrilhaFormacao({ onConcluir }) {
               <Sparkles className="w-8 h-8 text-teal-700 dark:text-teal-400" />
             </div>
 
-            <div className="px-4 py-1.5 bg-teal-50 dark:bg-teal-950/20 text-teal-800 dark:text-teal-300 border border-teal-100 dark:border-teal-900 rounded-full text-[10px] font-bold tracking-wider uppercase mb-3">
+            <div className="px-4 py-1.5 bg-teal-50 dark:bg-teal-950/20 text-teal-800 dark:text-teal-300 border border-teal-100 dark:border-teal-900 rounded-full text-[0.625rem] font-bold tracking-wider uppercase mb-3">
               Certificação de Liderança
             </div>
 
@@ -433,14 +433,14 @@ export default function TrilhaFormacao({ onConcluir }) {
 
             {/* BOX DE CONFIRMAÇÃO DO COMPROMISSO */}
             <div className="w-full bg-white dark:bg-[#1e1e1e] border border-slate-200 dark:border-slate-700 rounded-2xl p-5 text-left mb-6">
-              <h3 className="text-[10px] font-bold uppercase tracking-wider text-teal-700 dark:text-teal-400 mb-3.5 flex items-center gap-1.5 underline underline-offset-2">
+              <h3 className="text-[0.625rem] font-bold uppercase tracking-wider text-teal-700 dark:text-teal-400 mb-3.5 flex items-center gap-1.5 underline underline-offset-2">
                 <User className="w-3.5 h-3.5" />
                 Compromisso Homologado
               </h3>
               
               <div className="space-y-3">
                 <div>
-                  <div className="text-[9px] text-gray-400 dark:text-zinc-500 uppercase tracking-wider font-bold font-sans">
+                  <div className="text-[0.5625rem] text-gray-400 dark:text-zinc-500 uppercase tracking-wider font-bold font-sans">
                     Líder Declarado
                   </div>
                   <div className="text-sm font-semibold text-slate-800 dark:text-slate-200">
@@ -451,7 +451,7 @@ export default function TrilhaFormacao({ onConcluir }) {
                 <div className="h-[0.5px] bg-slate-100 dark:bg-[#2e2e2e]" />
                 
                 <div>
-                  <div className="text-[9px] text-gray-400 dark:text-zinc-500 uppercase tracking-wider font-bold font-sans">
+                  <div className="text-[0.5625rem] text-gray-400 dark:text-zinc-500 uppercase tracking-wider font-bold font-sans">
                     Data da Assinatura
                   </div>
                   <div className="text-xs font-medium text-slate-700 dark:text-slate-300 flex items-center gap-1.5 mt-0.5">
@@ -468,7 +468,7 @@ export default function TrilhaFormacao({ onConcluir }) {
             {/* PROGRESS HEADER - HIGH DENSITY STYLE */}
             <div className="mb-5">
               <div className="flex justify-between items-end mb-2">
-                <span className="text-[10px] uppercase tracking-widest font-bold text-teal-700 dark:text-teal-400 italic underline underline-offset-4">
+                <span className="text-[0.625rem] uppercase tracking-widest font-bold text-teal-700 dark:text-teal-400 italic underline underline-offset-4">
                   CONTEÚDO DO MANUAL &middot; {licaoAtiva.titulo}
                 </span>
                 <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 font-mono flex items-center gap-2">
@@ -522,7 +522,7 @@ export default function TrilhaFormacao({ onConcluir }) {
                   </div>
                   <div>
                     <div
-                      className={`inline-block px-1.5 py-0.5 text-[9px] font-bold rounded uppercase tracking-wider mb-0.5 ${
+                      className={`inline-block px-1.5 py-0.5 text-[0.5625rem] font-bold rounded uppercase tracking-wider mb-0.5 ${
                         isAmber
                           ? "bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300"
                           : "bg-teal-100 dark:bg-teal-900/50 text-teal-800 dark:text-teal-300"
@@ -545,7 +545,7 @@ export default function TrilhaFormacao({ onConcluir }) {
 
                 {/* PONTOS CHAVE DA LIÇÃO - SQUARED BULLETS FROM THEME */}
                 <div className="bg-slate-50 dark:bg-slate-800/35 border border-slate-100 dark:border-slate-800 rounded-xl p-3.5 space-y-2.5">
-                  <h3 className="text-[9px] font-extrabold uppercase text-slate-400 dark:text-slate-500 tracking-widest font-sans">
+                  <h3 className="text-[0.5625rem] font-extrabold uppercase text-slate-400 dark:text-slate-500 tracking-widest font-sans">
                     Diretrizes Fundamentais
                   </h3>
                   <ul className="space-y-2.5">
@@ -574,7 +574,7 @@ export default function TrilhaFormacao({ onConcluir }) {
                     <div className="mt-3.5 p-3.5 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/50 rounded-xl flex gap-3 text-xs text-amber-800 dark:text-amber-300 leading-normal">
                       <ShieldAlert className="w-5 h-5 shrink-0 text-amber-600 dark:text-amber-400" />
                       <div className="space-y-1">
-                        <div className="font-extrabold uppercase tracking-wider text-[10px] text-amber-700 dark:text-amber-400 font-sans">
+                        <div className="font-extrabold uppercase tracking-wider text-[0.625rem] text-amber-700 dark:text-amber-400 font-sans">
                           IMPORTANTE
                         </div>
                         <p className="font-medium">{licaoAtiva.alerta}</p>
@@ -595,7 +595,7 @@ export default function TrilhaFormacao({ onConcluir }) {
                         : "bg-[#E1F5EE]/30 dark:bg-teal-950/10 border-teal-100/50 dark:border-teal-900/60 text-teal-900 dark:text-teal-200"
                     }`}
                   >
-                    <div className="flex items-center gap-1.5 text-[9px] uppercase tracking-wider font-extrabold text-slate-400 dark:text-zinc-500 font-sans">
+                    <div className="flex items-center gap-1.5 text-[0.5625rem] uppercase tracking-wider font-extrabold text-slate-400 dark:text-zinc-500 font-sans">
                       <Bookmark className={`w-3.5 h-3.5 shrink-0 ${isAmber ? "text-amber-700 dark:text-amber-400" : "text-teal-700 dark:text-teal-400"}`} />
                       Fundamento Bíblico (Toque para abrir na Bíblia)
                     </div>
@@ -608,7 +608,7 @@ export default function TrilhaFormacao({ onConcluir }) {
                             setBibleReference(part);
                             setIsBibleOpen(true);
                           }}
-                          className="inline-flex items-center px-2.5 py-1 text-[11px] font-semibold rounded-lg bg-white hover:bg-neutral-50 dark:bg-zinc-90 w-fit border border-slate-200 dark:border-zinc-800 text-slate-700 dark:text-slate-300 hover:text-teal-700 dark:hover:text-teal-400 hover:border-teal-300 dark:hover:border-teal-900 transition hover:scale-[1.02] active:scale-[0.98] cursor-pointer gap-1 shadow-sm font-sans"
+                          className="inline-flex items-center px-2.5 py-1 text-[0.6875rem] font-semibold rounded-lg bg-white hover:bg-neutral-50 dark:bg-zinc-90 w-fit border border-slate-200 dark:border-zinc-800 text-slate-700 dark:text-slate-300 hover:text-teal-700 dark:hover:text-teal-400 hover:border-teal-300 dark:hover:border-teal-900 transition hover:scale-[1.02] active:scale-[0.98] cursor-pointer gap-1 shadow-sm font-sans"
                           title={`Abrir ${part} na Bíblia`}
                         >
                           <BookOpen className="w-3 h-3 text-teal-600 dark:text-teal-400 shrink-0" />
@@ -629,7 +629,7 @@ export default function TrilhaFormacao({ onConcluir }) {
                       Assinatura de Compromisso
                     </div>
                     
-                    <p className="text-[11px] text-gray-500 dark:text-zinc-400 leading-snug">
+                    <p className="text-[0.6875rem] text-gray-500 dark:text-zinc-400 leading-snug">
                       Ao assinar abaixo, você confirma a leitura completa de cada ponto do manual de 2026 e se compromete oficialmente a zelar pelo Grupo de Amigos sob a supervisão do pastor de jovens.
                     </p>
 
@@ -638,7 +638,7 @@ export default function TrilhaFormacao({ onConcluir }) {
                       <div>
                         <label
                           htmlFor="nome-completo"
-                          className="block text-[10px] font-semibold text-slate-400 dark:text-zinc-500 uppercase tracking-wider mb-1 font-sans"
+                          className="block text-[0.625rem] font-semibold text-slate-400 dark:text-zinc-500 uppercase tracking-wider mb-1 font-sans"
                         >
                           Nome Completo do Líder
                         </label>
@@ -657,7 +657,7 @@ export default function TrilhaFormacao({ onConcluir }) {
                       <div>
                         <label
                           htmlFor="data-compromisso"
-                          className="block text-[10px] font-semibold text-slate-400 dark:text-zinc-500 uppercase tracking-wider mb-1 font-sans"
+                          className="block text-[0.625rem] font-semibold text-slate-400 dark:text-zinc-500 uppercase tracking-wider mb-1 font-sans"
                         >
                           Data
                         </label>

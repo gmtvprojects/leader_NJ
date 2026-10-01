@@ -38,3 +38,16 @@
   }
 }
 
+
+/* Escala tipografia e espaçamentos (baseados em rem) em telas maiores */
+@media (min-width: 1024px) {
+  html {
+    font-size: 112.5%;
+  }
+}
+
+@media (min-width: 1280px) {
+  html {
+    font-size: 118.75%;
+  }
+}

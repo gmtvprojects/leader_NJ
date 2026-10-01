@@ -205,7 +205,7 @@ export default function Inicio({ onSelectTab, liderId }: InicioProps) {
         <div className="fixed inset-0 bg-white/60 dark:bg-zinc-950/60 flex items-center justify-center z-50">
           <div className="flex flex-col items-center gap-2">
             <Loader2 className="w-8 h-8 animate-spin text-[#0f766e]" />
-            <p className="text-[10px] uppercase font-black tracking-wider text-[#0f766e]">SINCRONIZANDO PAINEL DO LÍDER</p>
+            <p className="text-[0.625rem] uppercase font-black tracking-wider text-[#0f766e]">SINCRONIZANDO PAINEL DO LÍDER</p>
           </div>
         </div>
       )}
@@ -213,11 +213,11 @@ export default function Inicio({ onSelectTab, liderId }: InicioProps) {
       {/* HEADER EDITÁVEL COM INLINE MODAL */}
       <header className="flex justify-between items-center bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 p-4 rounded-2xl shadow-xs">
         <div className="text-left">
-          <p className="text-[10px] font-black uppercase text-teal-600 dark:text-teal-400 tracking-wider">Liderança Pastoral</p>
+          <p className="text-[0.625rem] font-black uppercase text-teal-600 dark:text-teal-400 tracking-wider">Liderança Pastoral</p>
           <h1 className="text-xl font-bold text-slate-950 dark:text-white tracking-tight flex items-baseline gap-1.5 font-sans leading-none">
             {nomeGrupo} 
           </h1>
-          <p className="text-[10px] italic text-[#0f766e] mt-1 flex items-center gap-1">
+          <p className="text-[0.625rem] italic text-[#0f766e] mt-1 flex items-center gap-1">
             <span>✝</span> Jovens 2 (18 a 30 anos) • G.A e Integração
           </p>
         </div>
@@ -273,27 +273,27 @@ export default function Inicio({ onSelectTab, liderId }: InicioProps) {
           onClick={() => onSelectTab("membros")}
           className="bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 p-3 rounded-2xl text-center space-y-0.5 hover:border-teal-500 transition cursor-pointer"
         >
-          <span className="block text-[9px] font-black uppercase text-gray-400 dark:text-zinc-500 tracking-wider">Jovens</span>
+          <span className="block text-[0.5625rem] font-black uppercase text-gray-400 dark:text-zinc-500 tracking-wider">Jovens</span>
           <span className="block text-xl font-bold text-slate-950 dark:text-white font-sans">{totalMembros}</span>
-          <span className="block text-[8px] text-gray-500 dark:text-zinc-400">Total cadastrados</span>
+          <span className="block text-[0.5rem] text-gray-500 dark:text-zinc-400">Total cadastrados</span>
         </button>
 
         <button
           onClick={() => onSelectTab("reunioes")}
           className="bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 p-3 rounded-2xl text-center space-y-0.5 hover:border-teal-500 transition cursor-pointer"
         >
-          <span className="block text-[9px] font-black uppercase text-gray-400 dark:text-zinc-500 tracking-wider">Presença</span>
+          <span className="block text-[0.5625rem] font-black uppercase text-gray-400 dark:text-zinc-500 tracking-wider">Presença</span>
           <span className="block text-xl font-bold text-teal-700 dark:text-teal-400 font-sans">{presencaMedia}%</span>
-          <span className="block text-[8px] text-gray-500 dark:text-zinc-400">Em reuniões</span>
+          <span className="block text-[0.5rem] text-gray-500 dark:text-zinc-400">Em reuniões</span>
         </button>
 
         <button
           onClick={() => onSelectTab("membros", { filtro: "transicao" })}
           className="bg-white dark:bg-zinc-900 border border-teal-200/80 dark:border-teal-900/60 p-3 rounded-2xl text-center space-y-0.5 hover:border-teal-500 transition cursor-pointer"
         >
-          <span className="block text-[9px] font-black uppercase text-teal-600 dark:text-teal-400 tracking-wider">Transição J1</span>
+          <span className="block text-[0.5625rem] font-black uppercase text-teal-600 dark:text-teal-400 tracking-wider">Transição J1</span>
           <span className="block text-xl font-bold text-emerald-600 dark:text-emerald-400 font-sans">{jovensTransicao.length}</span>
-          <span className="block text-[8px] text-gray-500 dark:text-zinc-400">17 ➔ 18 anos</span>
+          <span className="block text-[0.5rem] text-gray-500 dark:text-zinc-400">17 ➔ 18 anos</span>
         </button>
       </section>
 
@@ -305,50 +305,50 @@ export default function Inicio({ onSelectTab, liderId }: InicioProps) {
               <Sparkles className="w-5 h-5 text-teal-200" />
             </div>
             <div>
-              <span className="text-[9px] font-black uppercase tracking-widest text-teal-300">Integração Prioritária</span>
+              <span className="text-[0.5625rem] font-black uppercase tracking-widest text-teal-300">Integração Prioritária</span>
               <h2 className="text-sm font-bold leading-tight text-white">Transição Jovens 1 ➔ Jovens 2</h2>
             </div>
           </div>
-          <span className="text-[10px] font-black bg-emerald-500/20 text-emerald-200 px-2 py-0.5 rounded-full border border-emerald-400/30">
+          <span className="text-[0.625rem] font-black bg-emerald-500/20 text-emerald-200 px-2 py-0.5 rounded-full border border-emerald-400/30">
             {jovensTransicao.length} Jovens
           </span>
         </div>
 
-        <p className="text-[11px] text-teal-100 leading-relaxed">
+        <p className="text-[0.6875rem] text-teal-100 leading-relaxed">
           Acompanhamento para acolher os jovens de até 17 anos que estão entrando no Jovens 2 (18 a 30 anos). Garanta que cada um tenha um G.A e esteja firme na igreja.
         </p>
 
         {/* MÉTRICAS ESPECÍFICAS DE TRANSIÇÃO */}
         <div className="grid grid-cols-2 gap-2 text-xs">
           <div className="bg-white/10 rounded-xl p-2.5">
-            <span className="text-[8.5px] uppercase font-black text-teal-200 block">Alocação de G.A:</span>
+            <span className="text-[0.5313rem] uppercase font-black text-teal-200 block">Alocação de G.A:</span>
             <div className="flex items-baseline gap-1 mt-0.5">
               <span className="text-base font-bold text-white">
                 {jovensTransicao.length - transicaoSemGa.length}
               </span>
-              <span className="text-[9px] text-teal-200">/ {jovensTransicao.length} com G.A</span>
+              <span className="text-[0.5625rem] text-teal-200">/ {jovensTransicao.length} com G.A</span>
             </div>
             {transicaoSemGa.length > 0 && (
-              <span className="text-[8.5px] text-amber-300 font-bold block mt-1">
+              <span className="text-[0.5313rem] text-amber-300 font-bold block mt-1">
                 ⚠️ {transicaoSemGa.length} jovem(ns) sem G.A definido
               </span>
             )}
           </div>
 
           <div className="bg-white/10 rounded-xl p-2.5">
-            <span className="text-[8.5px] uppercase font-black text-teal-200 block">Presença & Faltas:</span>
+            <span className="text-[0.5313rem] uppercase font-black text-teal-200 block">Presença & Faltas:</span>
             <div className="flex items-baseline gap-1 mt-0.5">
               <span className="text-base font-bold text-white">
                 {jovensTransicao.length - transicaoAusentes.length}
               </span>
-              <span className="text-[9px] text-teal-200">frequentes</span>
+              <span className="text-[0.5625rem] text-teal-200">frequentes</span>
             </div>
             {transicaoAusentes.length > 0 ? (
-              <span className="text-[8.5px] text-rose-300 font-bold block mt-1">
+              <span className="text-[0.5313rem] text-rose-300 font-bold block mt-1">
                 🚨 {transicaoAusentes.length} ausente(s) requerem contato
               </span>
             ) : (
-              <span className="text-[8.5px] text-emerald-300 font-bold block mt-1">
+              <span className="text-[0.5313rem] text-emerald-300 font-bold block mt-1">
                 ✅ Todos presentes recentemente
               </span>
             )}
@@ -378,16 +378,16 @@ export default function Inicio({ onSelectTab, liderId }: InicioProps) {
               <h3 className="text-xs font-bold uppercase tracking-wider text-rose-800 dark:text-rose-400 font-sans">
                 {totalAusentesCriticos} Jovem(ns) com Alerta de Ausência
               </h3>
-              <span className="text-[9px] font-bold text-rose-600 dark:text-rose-400">Ver todos →</span>
+              <span className="text-[0.5625rem] font-bold text-rose-600 dark:text-rose-400">Ver todos →</span>
             </div>
-            <p className="font-medium leading-relaxed text-rose-700 dark:text-rose-300 text-[11px]">
+            <p className="font-medium leading-relaxed text-rose-700 dark:text-rose-300 text-[0.6875rem]">
               Jovens faltando há 2+ semanas. Toque para verificar os motivos cadastrados e registrar contato pastoral.
             </p>
             {motivosFrequentes.length > 0 && (
               <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
-                <span className="text-[9px] font-bold text-rose-800 dark:text-rose-300">Motivos informados:</span>
+                <span className="text-[0.5625rem] font-bold text-rose-800 dark:text-rose-300">Motivos informados:</span>
                 {Array.from(new Set(motivosFrequentes)).slice(0, 3).map((motivo, idx) => (
-                  <span key={idx} className="text-[8.5px] bg-rose-100 dark:bg-rose-900/50 text-rose-800 dark:text-rose-200 px-1.5 py-0.5 rounded font-bold">
+                  <span key={idx} className="text-[0.5313rem] bg-rose-100 dark:bg-rose-900/50 text-rose-800 dark:text-rose-200 px-1.5 py-0.5 rounded font-bold">
                     {motivo}
                   </span>
                 ))}
@@ -410,11 +410,11 @@ export default function Inicio({ onSelectTab, liderId }: InicioProps) {
             <h3 className="text-xs font-bold uppercase tracking-wider text-teal-800 dark:text-teal-400 font-sans flex items-center gap-1.5">
               <span>Aniversariante da Semana! 🎉</span>
             </h3>
-            <p className="text-[11.5px] font-bold text-slate-900 dark:text-zinc-100">
+            <p className="text-[0.7188rem] font-bold text-slate-900 dark:text-zinc-100">
               {aniversariantes[0].nome} ({formatarAniversario(aniversariantes[0].aniversario)})
             </p>
             {aniversariantes[0].ga && (
-              <p className="text-[9.5px] text-teal-700 dark:text-teal-400 font-bold">
+              <p className="text-[0.5938rem] text-teal-700 dark:text-teal-400 font-bold">
                 G.A: {aniversariantes[0].ga}
               </p>
             )}
@@ -424,7 +424,7 @@ export default function Inicio({ onSelectTab, liderId }: InicioProps) {
 
       {/* GRID DE ACESSO RÁPIDO */}
       <section className="space-y-2.5 font-sans">
-        <h2 className="text-[11px] font-black uppercase text-gray-400 dark:text-zinc-500 tracking-widest text-left">Navegação Expressa</h2>
+        <h2 className="text-[0.6875rem] font-black uppercase text-gray-400 dark:text-zinc-500 tracking-widest text-left">Navegação Expressa</h2>
         <div className="grid grid-cols-2 gap-3">
           
           <button
@@ -436,7 +436,7 @@ export default function Inicio({ onSelectTab, liderId }: InicioProps) {
             </div>
             <div>
               <h4 className="text-xs font-bold text-slate-900 dark:text-white font-sans">Transição J1 ➔ J2</h4>
-              <p className="text-[9.5px] text-gray-500 dark:text-zinc-400 font-sans">Acolhimento de 17 a 18 anos</p>
+              <p className="text-[0.5938rem] text-gray-500 dark:text-zinc-400 font-sans">Acolhimento de 17 a 18 anos</p>
             </div>
           </button>
 
@@ -449,7 +449,7 @@ export default function Inicio({ onSelectTab, liderId }: InicioProps) {
             </div>
             <div>
               <h4 className="text-xs font-bold text-slate-900 dark:text-white font-sans">Jovens & G.A</h4>
-              <p className="text-[9.5px] text-gray-500 dark:text-zinc-400 font-sans">Presença e fichas pastorais</p>
+              <p className="text-[0.5938rem] text-gray-500 dark:text-zinc-400 font-sans">Presença e fichas pastorais</p>
             </div>
           </button>
 
@@ -462,7 +462,7 @@ export default function Inicio({ onSelectTab, liderId }: InicioProps) {
             </div>
             <div>
               <h4 className="text-xs font-bold text-slate-900 dark:text-white font-sans">Chamada do G.A</h4>
-              <p className="text-[9.5px] text-gray-500 dark:text-zinc-400 font-sans">Presenças dos sábados</p>
+              <p className="text-[0.5938rem] text-gray-500 dark:text-zinc-400 font-sans">Presenças dos sábados</p>
             </div>
           </button>
 
@@ -475,7 +475,7 @@ export default function Inicio({ onSelectTab, liderId }: InicioProps) {
             </div>
             <div>
               <h4 className="text-xs font-bold text-slate-950 dark:text-white font-sans">Eventos & Cultos</h4>
-              <p className="text-[9.5px] text-gray-500 dark:text-zinc-400 font-sans">Checklist e segurança</p>
+              <p className="text-[0.5938rem] text-gray-500 dark:text-zinc-400 font-sans">Checklist e segurança</p>
             </div>
           </button>
 
@@ -488,7 +488,7 @@ export default function Inicio({ onSelectTab, liderId }: InicioProps) {
             </div>
             <div>
               <h4 className="text-xs font-bold text-slate-900 dark:text-white font-sans">Oração Pastoral</h4>
-              <p className="text-[9.5px] text-gray-500 dark:text-zinc-400 font-sans">Intercessão pelos jovens</p>
+              <p className="text-[0.5938rem] text-gray-500 dark:text-zinc-400 font-sans">Intercessão pelos jovens</p>
             </div>
           </button>
 
@@ -501,7 +501,7 @@ export default function Inicio({ onSelectTab, liderId }: InicioProps) {
             </div>
             <div>
               <h4 className="text-xs font-bold text-slate-900 dark:text-white font-sans leading-none">Banco do Líder</h4>
-              <p className="text-[9.5px] text-gray-500 dark:text-zinc-400 font-sans mt-0.5">Roteiros e dinâmicas</p>
+              <p className="text-[0.5938rem] text-gray-500 dark:text-zinc-400 font-sans mt-0.5">Roteiros e dinâmicas</p>
             </div>
           </button>
 
@@ -509,7 +509,7 @@ export default function Inicio({ onSelectTab, liderId }: InicioProps) {
       </section>
 
       {/* COMPANION INFOBAR */}
-      <footer className="text-center font-sans text-gray-400 text-[8.5px] font-black uppercase tracking-widest pt-1.5 opacity-40 select-none">
+      <footer className="text-center font-sans text-gray-400 text-[0.5313rem] font-black uppercase tracking-widest pt-1.5 opacity-40 select-none">
         ✝ Pastoreio • Jovens 1 ➔ Jovens 2
       </footer>
 

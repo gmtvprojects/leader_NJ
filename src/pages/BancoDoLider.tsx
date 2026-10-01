@@ -1276,7 +1276,7 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
         <div className="fixed inset-0 bg-white/60 dark:bg-zinc-950/60 flex items-center justify-center z-[100]">
           <div className="flex flex-col items-center gap-2">
             <Loader2 className="w-8 h-8 animate-spin text-[#0f766e]" />
-            <p className="text-[10px] uppercase font-black tracking-wider text-[#0f766e]">Processando Biblioteca...</p>
+            <p className="text-[0.625rem] uppercase font-black tracking-wider text-[#0f766e]">Processando Biblioteca...</p>
           </div>
         </div>
       )}
@@ -1294,11 +1294,11 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
             </button>
           )}
           <div>
-            <span className="text-[9px] font-black tracking-widest text-teal-600 dark:text-teal-400 uppercase">BANCO DE DADOS DO LIDER</span>
+            <span className="text-[0.5625rem] font-black tracking-widest text-teal-600 dark:text-teal-400 uppercase">BANCO DE DADOS DO LIDER</span>
             <h1 className="text-base font-semibold text-slate-950 dark:text-white leading-none mt-0.5">
               Banco do Líder
             </h1>
-            <p className="text-[10px] text-gray-500 dark:text-zinc-400 italic mt-0.5">
+            <p className="text-[0.625rem] text-gray-500 dark:text-zinc-400 italic mt-0.5">
               Firme na Palavra e no Amor
             </p>
           </div>
@@ -1344,7 +1344,7 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
           {searchTerm && (
             <button
               onClick={() => setSearchTerm("")}
-              className="text-[10px] text-gray-400 hover:text-gray-600 font-bold uppercase shrink-0"
+              className="text-[0.625rem] text-gray-400 hover:text-gray-600 font-bold uppercase shrink-0"
             >
               limpar
             </button>
@@ -1424,7 +1424,7 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
 
       {/* INDICADOR DE FILTROS ATIVOS */}
       {(activeTipo !== null || appliedTemas.length > 0) && (
-        <div className="flex items-center justify-between py-1.5 px-2 bg-slate-50/40 dark:bg-zinc-950/20 border-b border-gray-100 dark:border-zinc-800 text-[10px] text-gray-400 dark:text-zinc-500 font-sans tracking-wide">
+        <div className="flex items-center justify-between py-1.5 px-2 bg-slate-50/40 dark:bg-zinc-950/20 border-b border-gray-100 dark:border-zinc-800 text-[0.625rem] text-gray-400 dark:text-zinc-500 font-sans tracking-wide">
           <span className="truncate">
             Exibindo: <span className="font-bold text-teal-600 dark:text-teal-400 uppercase">
               {activeTipo === "versiculo" && "Versículos"}
@@ -1461,7 +1461,7 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
       )}
 
       {/* CONTADOR BARRA ATUALIZADA */}
-      <div className="flex justify-between items-center text-[10px] text-gray-400 dark:text-zinc-500 uppercase tracking-widest font-black select-none pl-1">
+      <div className="flex justify-between items-center text-[0.625rem] text-gray-400 dark:text-zinc-500 uppercase tracking-widest font-black select-none pl-1">
         <span>Contagem Geral</span>
         <span>
           {countVersiculos} V &middot;{" "}
@@ -1488,7 +1488,7 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
                   ? "Nenhum recurso de meditações cadastrado"
                   : "Nenhum recurso pastoriano cadastrado"}
               </p>
-              <p className="text-[10px] text-gray-400 uppercase mt-1">
+              <p className="text-[0.625rem] text-gray-400 uppercase mt-1">
                 {activeTipo === "versiculo"
                   ? "Adicione passagens bíblicas estratégicas para guiar seus líderes."
                   : activeTipo === "atividade"
@@ -1521,27 +1521,27 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
               <div className="flex justify-between items-start gap-1">
                 <div className="flex items-center gap-2 flex-wrap">
                   {recurso.tipo === "versiculo" && (
-                    <span className="text-[9px] font-black uppercase tracking-wider bg-teal-50 dark:bg-teal-950/20 text-teal-700 dark:text-teal-400 border border-teal-500/10 px-2 py-0.5 rounded-lg flex items-center gap-1 leading-none select-none">
+                    <span className="text-[0.5625rem] font-black uppercase tracking-wider bg-teal-50 dark:bg-teal-950/20 text-teal-700 dark:text-teal-400 border border-teal-500/10 px-2 py-0.5 rounded-lg flex items-center gap-1 leading-none select-none">
                       <BookOpen className="w-2.5 h-2.5" /> Versículo
                     </span>
                   )}
                   {recurso.tipo === "atividade" && (
-                    <span className="text-[9px] font-black uppercase tracking-wider bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400 border border-amber-500/10 px-2 py-0.5 rounded-lg flex items-center gap-1 leading-none select-none">
+                    <span className="text-[0.5625rem] font-black uppercase tracking-wider bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400 border border-amber-500/10 px-2 py-0.5 rounded-lg flex items-center gap-1 leading-none select-none">
                       <Target className="w-2.5 h-2.5" /> Atividade
                     </span>
                   )}
                   {recurso.tipo === "nota" && (
-                    <span className="text-[9px] font-black uppercase tracking-wider bg-zinc-100 dark:bg-[#1f1f23] text-gray-700 dark:text-zinc-400 border border-gray-200 dark:border-zinc-800 px-2 py-0.5 rounded-lg flex items-center gap-1 leading-none select-none">
+                    <span className="text-[0.5625rem] font-black uppercase tracking-wider bg-zinc-100 dark:bg-[#1f1f23] text-gray-700 dark:text-zinc-400 border border-gray-200 dark:border-zinc-800 px-2 py-0.5 rounded-lg flex items-center gap-1 leading-none select-none">
                       <FileText className="w-2.5 h-2.5" /> Nota
                     </span>
                   )}
                   {recurso.tipo === "meditacao" && (
-                    <span className="text-[9px] font-black uppercase tracking-wider bg-rose-50 dark:bg-rose-950/20 text-rose-700 dark:text-rose-400 border border-rose-500/10 px-2 py-0.5 rounded-lg flex items-center gap-1 leading-none select-none">
+                    <span className="text-[0.5625rem] font-black uppercase tracking-wider bg-rose-50 dark:bg-rose-950/20 text-rose-700 dark:text-rose-400 border border-rose-500/10 px-2 py-0.5 rounded-lg flex items-center gap-1 leading-none select-none">
                       📄 Meditação {recurso.semana && `· ${recurso.semana}`}
                     </span>
                   )}
 
-                  <span className="text-[8.5px] font-mono text-gray-400 uppercase select-none">
+                  <span className="text-[0.5313rem] font-mono text-gray-400 uppercase select-none">
                     {formatarDataLocal(recurso.criadoEm)}
                   </span>
                 </div>
@@ -1565,7 +1565,7 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
                     <h3 className="text-xs font-bold text-slate-900 dark:text-white leading-none">
                       {highlightSearchMatch(recurso.referencia, searchTerm)}
                     </h3>
-                    <p className="text-[11.5px] text-gray-600 dark:text-zinc-400 leading-relaxed italic pr-2 pt-1 font-sans">
+                    <p className="text-[0.7188rem] text-gray-600 dark:text-zinc-400 leading-relaxed italic pr-2 pt-1 font-sans">
                       "{highlightSearchMatch(recurso.conteudo, searchTerm)}"
                     </p>
                   </>
@@ -1575,7 +1575,7 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
                       {highlightSearchMatch(recurso.titulo || "", searchTerm)}
                     </h3>
                     
-                    <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[10px] text-gray-500 dark:text-zinc-400 font-medium">
+                    <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[0.625rem] text-gray-500 dark:text-zinc-400 font-medium">
                       {recurso.versiculoBase && (
                         <button
                           type="button"
@@ -1588,33 +1588,33 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
                       )}
                       
                       {recurso.periodoSemanas && (
-                        <span className="bg-gray-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded text-[9px]">
+                        <span className="bg-gray-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded text-[0.5625rem]">
                           Período: {recurso.periodoSemanas} {recurso.periodoSemanas === 1 ? "semana" : "semanas"}
                         </span>
                       )}
                     </div>
 
-                    <p className="text-[11px] text-gray-500 dark:text-zinc-400 italic line-clamp-2 pr-2">
+                    <p className="text-[0.6875rem] text-gray-500 dark:text-zinc-400 italic line-clamp-2 pr-2">
                       {highlightSearchMatch(recurso.conteudo || "Carregando conteúdo...", searchTerm)}
                     </p>
 
                     <div className="flex items-center gap-2 pt-1 flex-wrap">
                       <button
                         onClick={() => handleVisualizarMeditacao(recurso)}
-                        className="inline-flex items-center gap-1.5 text-[10px] uppercase font-bold text-teal-700 dark:text-teal-400 hover:bg-teal-50 dark:hover:bg-teal-950/20 px-2 py-1 rounded transition cursor-pointer"
+                        className="inline-flex items-center gap-1.5 text-[0.625rem] uppercase font-bold text-teal-700 dark:text-teal-400 hover:bg-teal-50 dark:hover:bg-teal-950/20 px-2 py-1 rounded transition cursor-pointer"
                       >
                         <Eye className="w-3.5 h-3.5" /> Visualizar
                       </button>
                       <button
                         onClick={() => handleDownloadArquivo(recurso)}
-                        className="inline-flex items-center gap-1.5 text-[10px] uppercase font-bold text-indigo-700 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/20 px-2 py-1 rounded transition cursor-pointer"
+                        className="inline-flex items-center gap-1.5 text-[0.625rem] uppercase font-bold text-indigo-700 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/20 px-2 py-1 rounded transition cursor-pointer"
                       >
                         <Download className="w-3.5 h-3.5" /> Baixar Original
                       </button>
                     </div>
                   </div>
                 ) : (
-                  <p className="text-[11.5px] text-slate-800 dark:text-zinc-300 leading-relaxed font-medium">
+                  <p className="text-[0.7188rem] text-slate-800 dark:text-zinc-300 leading-relaxed font-medium">
                     {highlightSearchMatch(recurso.conteudo, searchTerm)}
                   </p>
                 )}
@@ -1634,7 +1634,7 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
                         setAppliedTemas([tid]);
                         setSelectedTemas([tid]);
                       }}
-                      className={`text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded-md transition ${cfg.badge} hover:scale-102 flex items-center gap-0.5 ${
+                      className={`text-[0.5rem] font-black uppercase tracking-widest px-1.5 py-0.5 rounded-md transition ${cfg.badge} hover:scale-102 flex items-center gap-0.5 ${
                         isFiltered ? "ring-1 ring-teal-500" : ""
                       }`}
                     >
@@ -1664,7 +1664,7 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
                   onClick={() => {
                     setSelectedTemas([]);
                   }}
-                  className="text-[10px] font-black uppercase text-teal-600 dark:text-teal-400 hover:scale-101 transition cursor-pointer"
+                  className="text-[0.625rem] font-black uppercase text-teal-600 dark:text-teal-400 hover:scale-101 transition cursor-pointer"
                 >
                   Limpar tudo
                 </button>
@@ -1713,7 +1713,7 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
                       <span className="text-xl shrink-0">{tema.emoji}</span>
                       <div className="min-w-0 flex-1">
                         <p className={`text-xs font-bold truncate ${isSelected ? "text-white" : ""}`}>{tema.titulo}</p>
-                        <p className={`text-[10px] ${isSelected ? "text-white/80" : "text-gray-400 dark:text-zinc-500"}`}>
+                        <p className={`text-[0.625rem] ${isSelected ? "text-white/80" : "text-gray-400 dark:text-zinc-500"}`}>
                           {totalAssociated} {totalAssociated === 1 ? "recurso" : "recursos"}
                         </p>
                       </div>
@@ -1794,12 +1794,12 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
             <form onSubmit={handleSalvarRecurso} className="p-4 space-y-4 overflow-y-auto no-scrollbar flex-1 pb-6 text-left">
               
               <div className="space-y-1">
-                <span className="block text-[8px] font-black uppercase text-gray-400 tracking-wider">Categoria de Registro *</span>
+                <span className="block text-[0.5rem] font-black uppercase text-gray-400 tracking-wider">Categoria de Registro *</span>
                 <div className="grid grid-cols-4 gap-1 pt-0.5 bg-slate-50 dark:bg-zinc-950 p-1 rounded-2xl">
                   <button
                     type="button"
                     onClick={() => setRecursoFormTipo("versiculo")}
-                    className={`h-9 rounded-xl text-[9px] font-bold uppercase tracking-tight transition ${
+                    className={`h-9 rounded-xl text-[0.5625rem] font-bold uppercase tracking-tight transition ${
                       recursoFormTipo === "versiculo"
                         ? "bg-teal-700 text-white shadow-sm"
                         : "text-slate-705 dark:text-zinc-400 hover:bg-gray-100"
@@ -1810,7 +1810,7 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
                   <button
                     type="button"
                     onClick={() => setRecursoFormTipo("atividade")}
-                    className={`h-9 rounded-xl text-[9px] font-bold uppercase tracking-tight transition ${
+                    className={`h-9 rounded-xl text-[0.5625rem] font-bold uppercase tracking-tight transition ${
                       recursoFormTipo === "atividade"
                         ? "bg-amber-600 text-white shadow-sm"
                         : "text-slate-705 dark:text-zinc-400 hover:bg-gray-100"
@@ -1821,7 +1821,7 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
                   <button
                     type="button"
                     onClick={() => setRecursoFormTipo("nota")}
-                    className={`h-9 rounded-xl text-[9px] font-bold uppercase tracking-tight transition ${
+                    className={`h-9 rounded-xl text-[0.5625rem] font-bold uppercase tracking-tight transition ${
                       recursoFormTipo === "nota"
                         ? "bg-slate-700 text-white shadow-sm"
                         : "text-slate-705 dark:text-zinc-400 hover:bg-gray-100"
@@ -1832,7 +1832,7 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
                   <button
                     type="button"
                     onClick={() => setRecursoFormTipo("meditacao")}
-                    className={`h-9 rounded-xl text-[9px] font-bold uppercase tracking-tight transition ${
+                    className={`h-9 rounded-xl text-[0.5625rem] font-bold uppercase tracking-tight transition ${
                       recursoFormTipo === "meditacao"
                         ? "bg-rose-600 text-white shadow-sm"
                         : "text-slate-705 dark:text-zinc-400 hover:bg-gray-100"
@@ -1846,7 +1846,7 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
               {recursoFormTipo === "versiculo" && (
                 <div className="space-y-3.5 animate-fadeIn">
                   <div className="space-y-1">
-                    <label htmlFor="form-ref" className="block text-[8px] font-black uppercase text-gray-400 tracking-wider">Referência Bíblica *</label>
+                    <label htmlFor="form-ref" className="block text-[0.5rem] font-black uppercase text-gray-400 tracking-wider">Referência Bíblica *</label>
                     <input
                       id="form-ref"
                       type="text"
@@ -1859,7 +1859,7 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
                   </div>
 
                   <div className="space-y-1">
-                    <label htmlFor="form-cont-ver" className="block text-[8px] font-black uppercase text-gray-400 tracking-wider">O que o versículo diz? *</label>
+                    <label htmlFor="form-cont-ver" className="block text-[0.5rem] font-black uppercase text-gray-400 tracking-wider">O que o versículo diz? *</label>
                     <textarea
                       id="form-cont-ver"
                       required
@@ -1875,7 +1875,7 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
 
               {recursoFormTipo === "atividade" && (
                 <div className="space-y-1 animate-fadeIn">
-                  <label htmlFor="form-cont-ati" className="block text-[8px] font-black uppercase text-gray-400 tracking-wider">Descrição Prática / Roteiro da Atividade *</label>
+                  <label htmlFor="form-cont-ati" className="block text-[0.5rem] font-black uppercase text-gray-400 tracking-wider">Descrição Prática / Roteiro da Atividade *</label>
                   <textarea
                     id="form-cont-ati"
                     required
@@ -1890,7 +1890,7 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
 
               {recursoFormTipo === "nota" && (
                 <div className="space-y-1 animate-fadeIn">
-                  <label htmlFor="form-cont-not" className="block text-[8px] font-black uppercase text-gray-400 tracking-wider">Anotações do Insight ou Alertas Pastorais *</label>
+                  <label htmlFor="form-cont-not" className="block text-[0.5rem] font-black uppercase text-gray-400 tracking-wider">Anotações do Insight ou Alertas Pastorais *</label>
                   <textarea
                     id="form-cont-not"
                     required
@@ -1906,7 +1906,7 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
               {recursoFormTipo === "meditacao" && (
                 <div className="space-y-3.5 animate-fadeIn text-left">
                   <div className="space-y-1">
-                    <span className="block text-[8px] font-black uppercase text-gray-400 tracking-wider">Documento da Meditação * (PDF ou DOCX)</span>
+                    <span className="block text-[0.5rem] font-black uppercase text-gray-400 tracking-wider">Documento da Meditação * (PDF ou DOCX)</span>
                     <input
                       id="file-upload-input"
                       type="file"
@@ -1929,7 +1929,7 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
                             <p className="text-xs font-bold text-slate-900 dark:text-white truncate">
                               {recursoFormNomeArquivo}
                             </p>
-                            <span className="text-[9px] uppercase tracking-wide px-1 py-0.5 rounded bg-teal-100 dark:bg-teal-900 text-teal-800 dark:text-teal-300 font-black">
+                            <span className="text-[0.5625rem] uppercase tracking-wide px-1 py-0.5 rounded bg-teal-100 dark:bg-teal-900 text-teal-800 dark:text-teal-300 font-black">
                               {recursoFormTipoArquivo}
                             </span>
                           </div>
@@ -1937,7 +1937,7 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
                         <button
                           type="button"
                           onClick={() => document.getElementById("file-upload-input")?.click()}
-                          className="text-[10px] uppercase font-black text-teal-700 dark:text-teal-400 hover:underline shrink-0"
+                          className="text-[0.625rem] uppercase font-black text-teal-700 dark:text-teal-400 hover:underline shrink-0"
                         >
                           Alterar
                         </button>
@@ -1967,7 +1967,7 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
                         <p className="text-xs font-bold text-slate-800 dark:text-zinc-350">
                           Arraste e solte o arquivo aqui
                         </p>
-                        <p className="text-[10px] text-gray-400 mt-0.5">
+                        <p className="text-[0.625rem] text-gray-400 mt-0.5">
                           Suporta arquivos PDF ou DOCX em nuvem
                         </p>
                       </div>
@@ -1982,7 +1982,7 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
 
                   <div className="space-y-2.5">
                     <div className="space-y-1">
-                      <label htmlFor="form-med-titulo" className="block text-[8px] font-black uppercase text-gray-400 tracking-wider">Título da Meditação *</label>
+                      <label htmlFor="form-med-titulo" className="block text-[0.5rem] font-black uppercase text-gray-400 tracking-wider">Título da Meditação *</label>
                       <input
                         id="form-med-titulo"
                         type="text"
@@ -1996,7 +1996,7 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
 
                     <div className="grid grid-cols-2 gap-2.5">
                       <div className="space-y-1">
-                        <label htmlFor="form-med-semana" className="block text-[8px] font-black uppercase text-gray-400 tracking-wider">Semana (Ex: Semana 1)</label>
+                        <label htmlFor="form-med-semana" className="block text-[0.5rem] font-black uppercase text-gray-400 tracking-wider">Semana (Ex: Semana 1)</label>
                         <input
                           id="form-med-semana"
                           type="text"
@@ -2008,7 +2008,7 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
                       </div>
 
                       <div className="space-y-1">
-                        <label htmlFor="form-med-vbase" className="block text-[8px] font-black uppercase text-gray-400 tracking-wider">Versículo-Base</label>
+                        <label htmlFor="form-med-vbase" className="block text-[0.5rem] font-black uppercase text-gray-400 tracking-wider">Versículo-Base</label>
                         <input
                           id="form-med-vbase"
                           type="text"
@@ -2021,7 +2021,7 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
                     </div>
 
                     <div className="space-y-1">
-                      <label htmlFor="form-med-periodo" className="block text-[8px] font-black uppercase text-gray-400 tracking-wider">Período de Duração (Semanas): {recursoFormPeriodo}</label>
+                      <label htmlFor="form-med-periodo" className="block text-[0.5rem] font-black uppercase text-gray-400 tracking-wider">Período de Duração (Semanas): {recursoFormPeriodo}</label>
                       <input
                         id="form-med-periodo"
                         type="range"
@@ -2035,7 +2035,7 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
                     </div>
 
                     <div className="space-y-1">
-                      <label htmlFor="form-med-texto" className="block text-[8px] font-black uppercase text-gray-400 tracking-wider">Texto Extraído (Editável para Busca)</label>
+                      <label htmlFor="form-med-texto" className="block text-[0.5rem] font-black uppercase text-gray-400 tracking-wider">Texto Extraído (Editável para Busca)</label>
                       <textarea
                         id="form-med-texto"
                         rows={3}
@@ -2051,7 +2051,7 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
 
               {/* VINCULADOR DE TEMAS MULTI SELECT */}
               <div className="space-y-1.5 text-left font-sans">
-                <div className="flex justify-between items-center select-none text-[8px] font-black text-gray-400 uppercase tracking-wider">
+                <div className="flex justify-between items-center select-none text-[0.5rem] font-black text-gray-400 uppercase tracking-wider">
                   <span>Vincular a Temas *</span>
                   <button
                     type="button"
@@ -2135,7 +2135,7 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
             <form onSubmit={handleSalvarTema} className="p-4 space-y-4 text-left">
               
               <div className="space-y-1 bg-transparent">
-                <label htmlFor="form-tema-titulo" className="block text-[8px] font-black uppercase text-gray-400 tracking-wider">Nome Completo do Tema *</label>
+                <label htmlFor="form-tema-titulo" className="block text-[0.5rem] font-black uppercase text-gray-400 tracking-wider">Nome Completo do Tema *</label>
                 <input
                   id="form-tema-titulo"
                   type="text"
@@ -2148,7 +2148,7 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
               </div>
 
               <div className="space-y-1 select-none">
-                <span className="block text-[8px] font-black uppercase text-gray-400 tracking-wider">Emoji Representativo</span>
+                <span className="block text-[0.5rem] font-black uppercase text-gray-400 tracking-wider">Emoji Representativo</span>
                 <div className="grid grid-cols-5 gap-2 p-2.5 bg-slate-50 dark:bg-zinc-955/80 rounded-xl border border-gray-200 dark:border-zinc-800 max-h-[140px] overflow-y-auto no-scrollbar">
                   {EMOJI_OPTIONS.map(em => (
                     <button
@@ -2168,7 +2168,7 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
               </div>
 
               <div className="space-y-1 select-none font-sans">
-                <span className="block text-[8px] font-black uppercase text-gray-400 tracking-wider">Cor Decoradora</span>
+                <span className="block text-[0.5rem] font-black uppercase text-gray-400 tracking-wider">Cor Decoradora</span>
                 <div className="flex justify-between items-center p-2 rounded-xl bg-slate-50 dark:bg-zinc-955 border border-gray-100 dark:border-zinc-800">
                   {COLOR_OPTIONS.map(co => {
                     const mapped = COLOR_MAP[co] || COLOR_MAP.teal;
@@ -2216,7 +2216,7 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
           <div className="bg-white dark:bg-zinc-900 w-full max-w-sm rounded-t-3xl sm:rounded-2xl overflow-hidden shadow-xl z-20 animate-slideUp text-left">
             <div className="p-4 bg-gray-50 dark:bg-zinc-950 border-b border-gray-100 dark:border-zinc-800 flex justify-between items-center">
               <div>
-                <span className="text-[8px] font-black uppercase text-gray-400 tracking-wider font-mono">Ações do Item</span>
+                <span className="text-[0.5rem] font-black uppercase text-gray-400 tracking-wider font-mono">Ações do Item</span>
                 <h4 className="text-xs font-bold text-slate-900 dark:text-white leading-none mt-0.5">
                   {selectedRecursoForAction.tipo === "versiculo" ? selectedRecursoForAction.referencia : "Recurso Prático"}
                 </h4>
@@ -2264,7 +2264,7 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
           <div className="bg-white dark:bg-zinc-900 w-full max-w-sm rounded-t-3xl sm:rounded-2xl overflow-hidden shadow-xl z-20 animate-slideUp text-left">
             <div className="p-4 bg-gray-50 dark:bg-zinc-950 border-b border-gray-100 dark:border-zinc-800 flex justify-between items-center">
               <div>
-                <span className="text-[8px] font-black uppercase text-gray-400 tracking-wider">Ações de Temas</span>
+                <span className="text-[0.5rem] font-black uppercase text-gray-400 tracking-wider">Ações de Temas</span>
                 <h4 className="text-xs font-bold text-slate-900 dark:text-white leading-none mt-0.5 font-sans">
                   Tema: {selectedTemaForAction.emoji} {selectedTemaForAction.titulo}
                 </h4>
@@ -2310,7 +2310,7 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
             
             <div className="p-4 border-b border-gray-150 dark:border-zinc-800/80 flex justify-between items-center bg-gray-50/50 dark:bg-zinc-955/20">
               <div>
-                <span className="text-[8px] font-black uppercase text-gray-400 tracking-wider">
+                <span className="text-[0.5rem] font-black uppercase text-gray-400 tracking-wider">
                   Estudo de Meditação {activeMeditacao.semana && `· ${activeMeditacao.semana}`}
                 </span>
                 <h3 className="text-sm font-bold text-slate-909 dark:text-white leading-none mt-0.5">
@@ -2328,7 +2328,7 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
             <div className="border-b border-gray-100 dark:border-zinc-800 px-4 flex gap-4 bg-white dark:bg-zinc-900">
               <button
                 onClick={() => setMedDetailTab("visualizar")}
-                className={`py-3 text-[10px] uppercase font-black tracking-wider border-b-2 transition cursor-pointer ${
+                className={`py-3 text-[0.625rem] uppercase font-black tracking-wider border-b-2 transition cursor-pointer ${
                   medDetailTab === "visualizar"
                     ? "border-rose-600 text-rose-600 dark:text-rose-400"
                     : "border-transparent text-gray-400 hover:text-gray-650"
@@ -2338,7 +2338,7 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
               </button>
               <button
                 onClick={() => setMedDetailTab("texto")}
-                className={`py-3 text-[10px] uppercase font-black tracking-wider border-b-2 transition cursor-pointer ${
+                className={`py-3 text-[0.625rem] uppercase font-black tracking-wider border-b-2 transition cursor-pointer ${
                   medDetailTab === "texto"
                     ? "border-rose-600 text-rose-600 dark:text-rose-400"
                     : "border-transparent text-gray-400 hover:text-gray-605"
@@ -2407,7 +2407,7 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
                     {searchTermInMedia && (
                       <button
                         onClick={() => setSearchTermInMedia("")}
-                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-[10px] font-black text-gray-400 hover:text-gray-600 uppercase"
+                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-[0.625rem] font-black text-gray-400 hover:text-gray-600 uppercase"
                       >
                         limpar
                       </button>
@@ -2418,7 +2418,7 @@ export default function BancoDoLider({ onVoltar, liderId }: BancoDoLiderProps) {
                     {highlightSearchMatch(activeMeditacaoTexto, searchTermInMedia)}
                   </div>
 
-                  <div className="p-3 bg-zinc-50 dark:bg-zinc-955 border border-zinc-200 dark:border-zinc-800 rounded-xl text-[10px] text-gray-500 font-medium leading-normal flex items-center gap-2">
+                  <div className="p-3 bg-zinc-50 dark:bg-zinc-955 border border-zinc-200 dark:border-zinc-800 rounded-xl text-[0.625rem] text-gray-500 font-medium leading-normal flex items-center gap-2">
                     <span>💡</span>
                     <span>Anote insights ao ler os roteiros e as meditações de GA.</span>
                   </div>

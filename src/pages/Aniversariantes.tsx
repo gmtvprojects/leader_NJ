@@ -254,9 +254,9 @@ export default function Aniversariantes({ liderId, onVoltar }: AniversariantesPr
             <h1 className="text-base font-black uppercase tracking-wider">Aniversariantes</h1>
             <Cake className="w-4 h-4 text-teal-600 dark:text-teal-400" />
           </div>
-          <p className="text-[10px] italic text-[#0f766e]">Firme na Palavra e no Amor</p>
+          <p className="text-[0.625rem] italic text-[#0f766e]">Firme na Palavra e no Amor</p>
         </div>
-        <span className="text-[10px] font-black uppercase tracking-wider bg-teal-50 dark:bg-teal-950/40 text-[#0f766e] dark:text-teal-300 px-3 py-1.5 rounded-xl border border-teal-200/40">
+        <span className="text-[0.625rem] font-black uppercase tracking-wider bg-teal-50 dark:bg-teal-950/40 text-[#0f766e] dark:text-teal-300 px-3 py-1.5 rounded-xl border border-teal-200/40">
           {obterNomeMesAtual()}
         </span>
       </header>
@@ -336,7 +336,7 @@ export default function Aniversariantes({ liderId, onVoltar }: AniversariantesPr
                             <span>{meta.emoji}</span>
                             <span>{meta.label}</span>
                           </div>
-                          <p className="text-[10.5px] text-gray-500 dark:text-zinc-400 font-medium mt-1">
+                          <p className="text-[0.6563rem] text-gray-500 dark:text-zinc-400 font-medium mt-1">
                             {meta.dica}
                           </p>
                         </div>
@@ -348,7 +348,7 @@ export default function Aniversariantes({ liderId, onVoltar }: AniversariantesPr
                               href={linkWa}
                               target="_blank"
                               rel="noreferrer"
-                              className="flex-1 h-9 bg-[#25d366] hover:bg-[#20ba56] text-white font-bold text-[10.5px] uppercase tracking-wider rounded-xl transition flex items-center justify-center gap-1.5"
+                              className="flex-1 h-9 bg-[#25d366] hover:bg-[#20ba56] text-white font-bold text-[0.6563rem] uppercase tracking-wider rounded-xl transition flex items-center justify-center gap-1.5"
                             >
                               <MessageCircle className="w-4 h-4" />
                               <span>WhatsApp</span>
@@ -357,7 +357,7 @@ export default function Aniversariantes({ liderId, onVoltar }: AniversariantesPr
                           {linkTel && (
                             <a
                               href={linkTel}
-                              className="flex-1 h-9 bg-teal-700 hover:bg-teal-800 text-white font-bold text-[10.5px] uppercase tracking-wider rounded-xl transition flex items-center justify-center gap-1.5"
+                              className="flex-1 h-9 bg-teal-700 hover:bg-teal-800 text-white font-bold text-[0.6563rem] uppercase tracking-wider rounded-xl transition flex items-center justify-center gap-1.5"
                             >
                               <Phone className="w-4 h-4" />
                               <span>Ligar</span>
@@ -365,7 +365,7 @@ export default function Aniversariantes({ liderId, onVoltar }: AniversariantesPr
                           )}
                           <button
                             onClick={() => handleToggleCelebrado(m.id)}
-                            className={`h-9 px-3 font-bold text-[10.5px] uppercase tracking-wider rounded-xl transition flex items-center justify-center gap-1.5 shrink-0 select-none ${
+                            className={`h-9 px-3 font-bold text-[0.6563rem] uppercase tracking-wider rounded-xl transition flex items-center justify-center gap-1.5 shrink-0 select-none ${
                               isCel 
                                 ? "bg-emerald-600 hover:bg-emerald-700 text-white" 
                                 : "bg-teal-50 dark:bg-teal-950/40 text-teal-800 dark:text-teal-300 border border-teal-200 dark:border-teal-850 hover:bg-teal-100"
@@ -411,14 +411,14 @@ export default function Aniversariantes({ liderId, onVoltar }: AniversariantesPr
                               <h4 className="font-bold text-xs text-slate-900 dark:text-white truncate max-w-[140px]">
                                 {m.nome}
                               </h4>
-                              <p className="text-[10px] text-gray-400 uppercase font-semibold font-sans mt-0.5">
+                              <p className="text-[0.625rem] text-gray-400 uppercase font-semibold font-sans mt-0.5">
                                 {formatarDataLocal(m.mesNiver, m.diaNiver)}
                               </p>
                             </div>
                           </div>
 
                           <div className="flex items-center gap-2">
-                            <span className="text-[9px] font-black uppercase tracking-wider bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 px-2.5 py-1 rounded-lg">
+                            <span className="text-[0.5625rem] font-black uppercase tracking-wider bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 px-2.5 py-1 rounded-lg">
                               Em {m.diffDays} {m.diffDays === 1 ? "dia" : "dias"}
                             </span>
                             {linkWa && (
@@ -448,18 +448,18 @@ export default function Aniversariantes({ liderId, onVoltar }: AniversariantesPr
                         {/* EXPANSÃO INLINE */}
                         {isExpanded && (
                           <div className="border-t border-gray-100 dark:border-zinc-800/80 pt-3 flex flex-col gap-2 bg-slate-50/50 dark:bg-zinc-950/20 px-3.5 py-2.5 rounded-xl animate-fadeIn text-left">
-                            <div className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wide text-amber-800 dark:text-amber-400">
+                            <div className="flex items-center gap-1.5 text-[0.625rem] font-black uppercase tracking-wide text-amber-800 dark:text-amber-400">
                               <span>{meta.emoji}</span>
                               <span>Dica: {meta.label}</span>
                             </div>
-                            <p className="text-[11px] text-gray-600 dark:text-zinc-400 font-medium">
+                            <p className="text-[0.6875rem] text-gray-600 dark:text-zinc-400 font-medium">
                               "{meta.dica}"
                             </p>
                             {linkTel && (
                               <a
                                 href={linkTel}
                                 onClick={(e) => e.stopPropagation()}
-                                className="mt-2 h-8 w-full bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-800 dark:text-gray-100 font-bold text-[10px] uppercase tracking-wider rounded-xl transition flex items-center justify-center gap-1.5"
+                                className="mt-2 h-8 w-full bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-800 dark:text-gray-100 font-bold text-[0.625rem] uppercase tracking-wider rounded-xl transition flex items-center justify-center gap-1.5"
                               >
                                 <Phone className="w-3.5 h-3.5 text-teal-600" />
                                 <span>Ligar para Líderado</span>
@@ -503,14 +503,14 @@ export default function Aniversariantes({ liderId, onVoltar }: AniversariantesPr
                               <h4 className="font-bold text-xs text-slate-900 dark:text-white truncate max-w-[140px]">
                                 {m.nome}
                               </h4>
-                              <p className="text-[10px] text-gray-400 uppercase font-semibold font-sans mt-0.5">
+                              <p className="text-[0.625rem] text-gray-400 uppercase font-semibold font-sans mt-0.5">
                                 {formatarDataLocal(m.mesNiver, m.diaNiver)}
                               </p>
                             </div>
                           </div>
 
                           <div className="flex items-center gap-2">
-                            <span className="text-[9px] font-black uppercase tracking-wider bg-blue-50 dark:bg-blue-950/40 text-blue-800 dark:text-blue-300 px-2.5 py-1 rounded-lg">
+                            <span className="text-[0.5625rem] font-black uppercase tracking-wider bg-blue-50 dark:bg-blue-950/40 text-blue-800 dark:text-blue-300 px-2.5 py-1 rounded-lg">
                               Em {m.diffDays} dias
                             </span>
                             {linkWa && (
@@ -540,18 +540,18 @@ export default function Aniversariantes({ liderId, onVoltar }: AniversariantesPr
                         {/* EXPANSÃO INLINE */}
                         {isExpanded && (
                           <div className="border-t border-gray-100 dark:border-zinc-800/80 pt-3 flex flex-col gap-2 bg-slate-50/50 dark:bg-zinc-950/20 px-3.5 py-2.5 rounded-xl animate-fadeIn text-left">
-                            <div className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wide text-blue-800 dark:text-blue-400">
+                            <div className="flex items-center gap-1.5 text-[0.625rem] font-black uppercase tracking-wide text-blue-800 dark:text-blue-400">
                               <span>{meta.emoji}</span>
                               <span>Dica: {meta.label}</span>
                             </div>
-                            <p className="text-[11px] text-gray-600 dark:text-zinc-400 font-medium">
+                            <p className="text-[0.6875rem] text-gray-600 dark:text-zinc-400 font-medium">
                               "{meta.dica}"
                             </p>
                             {linkTel && (
                               <a
                                 href={linkTel}
                                 onClick={(e) => e.stopPropagation()}
-                                className="mt-2 h-8 w-full bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-800 dark:text-gray-100 font-bold text-[10px] uppercase tracking-wider rounded-xl transition flex items-center justify-center gap-1.5"
+                                className="mt-2 h-8 w-full bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-800 dark:text-gray-100 font-bold text-[0.625rem] uppercase tracking-wider rounded-xl transition flex items-center justify-center gap-1.5"
                               >
                                 <Phone className="w-3.5 h-3.5 text-teal-600" />
                                 <span>Ligar para Líderado</span>
@@ -595,14 +595,14 @@ export default function Aniversariantes({ liderId, onVoltar }: AniversariantesPr
                               <h4 className="font-bold text-xs text-slate-900 dark:text-white truncate max-w-[140px]">
                                 {m.nome}
                               </h4>
-                              <p className="text-[10px] text-gray-400 uppercase font-semibold font-sans mt-0.5">
+                              <p className="text-[0.625rem] text-gray-400 uppercase font-semibold font-sans mt-0.5">
                                 {formatarDataLocal(m.mesNiver, m.diaNiver)}
                               </p>
                             </div>
                           </div>
 
                           <div className="flex items-center gap-2">
-                            <span className="text-[9px] font-black uppercase tracking-wider bg-gray-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 px-2.5 py-1 rounded-lg">
+                            <span className="text-[0.5625rem] font-black uppercase tracking-wider bg-gray-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 px-2.5 py-1 rounded-lg">
                               Em {m.diffDays} dias
                             </span>
                             {linkWa && (
@@ -632,18 +632,18 @@ export default function Aniversariantes({ liderId, onVoltar }: AniversariantesPr
                         {/* EXPANSÃO INLINE */}
                         {isExpanded && (
                           <div className="border-t border-gray-100 dark:border-zinc-800/80 pt-3 flex flex-col gap-2 bg-slate-50/50 dark:bg-zinc-950/20 px-3.5 py-2.5 rounded-xl animate-fadeIn text-left">
-                            <div className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wide text-slate-600 dark:text-zinc-400">
+                            <div className="flex items-center gap-1.5 text-[0.625rem] font-black uppercase tracking-wide text-slate-600 dark:text-zinc-400">
                               <span>{meta.emoji}</span>
                               <span>Dica: {meta.label}</span>
                             </div>
-                            <p className="text-[11px] text-gray-600 dark:text-zinc-400 font-medium">
+                            <p className="text-[0.6875rem] text-gray-600 dark:text-zinc-400 font-medium">
                               "{meta.dica}"
                             </p>
                             {linkTel && (
                               <a
                                 href={linkTel}
                                 onClick={(e) => e.stopPropagation()}
-                                className="mt-2 h-8 w-full bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-800 dark:text-gray-100 font-bold text-[10px] uppercase tracking-wider rounded-xl transition flex items-center justify-center gap-1.5"
+                                className="mt-2 h-8 w-full bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-800 dark:text-gray-100 font-bold text-[0.625rem] uppercase tracking-wider rounded-xl transition flex items-center justify-center gap-1.5"
                               >
                                 <Phone className="w-3.5 h-3.5 text-teal-600" />
                                 <span>Ligar para Líderado</span>

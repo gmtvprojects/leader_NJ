@@ -493,7 +493,7 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
         <div className="fixed inset-0 bg-white/60 dark:bg-zinc-950/60 flex items-center justify-center z-50">
           <div className="flex flex-col items-center gap-2">
             <Loader2 className="w-8 h-8 animate-spin text-[#0f766e]" />
-            <p className="text-[10px] uppercase font-black tracking-wider text-[#0f766e]">Sincronizando Jovens e GAs...</p>
+            <p className="text-[0.625rem] uppercase font-black tracking-wider text-[#0f766e]">Sincronizando Jovens e GAs...</p>
           </div>
         </div>
       )}
@@ -508,7 +508,7 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
               <h1 className="text-xl font-bold text-slate-950 dark:text-white tracking-tight leading-none flex items-center gap-1.5 font-sans">
                 <Users className="w-5 h-5 text-teal-700 dark:text-teal-400" /> Acompanhamento de Jovens
               </h1>
-              <p className="text-[10px] uppercase font-black text-gray-400 mt-1 tracking-wider">
+              <p className="text-[0.625rem] uppercase font-black text-gray-400 mt-1 tracking-wider">
                 Presença, Alocação em G.A e Motivos de Ausência
               </p>
             </div>
@@ -530,13 +530,13 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
                   <Sparkles className="w-4 h-4" />
                 </span>
                 <div>
-                  <span className="text-[9px] font-black uppercase tracking-widest text-teal-300">Integração Pastoral</span>
+                  <span className="text-[0.5625rem] font-black uppercase tracking-widest text-teal-300">Integração Pastoral</span>
                   <h3 className="text-xs font-bold leading-tight">Transição Jovens 1 (17 anos) ➔ Jovens 2 (18 a 30)</h3>
                 </div>
               </div>
               <button
                 onClick={() => handleNovoMembro(true)}
-                className="text-[10px] font-bold bg-white text-teal-900 px-2.5 py-1 rounded-xl hover:bg-teal-50 transition cursor-pointer shrink-0"
+                className="text-[0.625rem] font-bold bg-white text-teal-900 px-2.5 py-1 rounded-xl hover:bg-teal-50 transition cursor-pointer shrink-0"
               >
                 + Novo Jovem J1
               </button>
@@ -547,7 +547,7 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
                 onClick={() => setFiltroStatus("Transição J1 ➔ J2")}
                 className="bg-white/5 hover:bg-white/10 p-1.5 rounded-xl text-left transition cursor-pointer"
               >
-                <span className="block text-[8px] text-teal-200 uppercase font-black">Em Transição</span>
+                <span className="block text-[0.5rem] text-teal-200 uppercase font-black">Em Transição</span>
                 <span className="text-sm font-bold">{jovensTransicao.length} jovens</span>
               </button>
 
@@ -555,7 +555,7 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
                 onClick={() => setFiltroStatus("Sem GA")}
                 className="bg-white/5 hover:bg-white/10 p-1.5 rounded-xl text-left transition cursor-pointer"
               >
-                <span className="block text-[8px] text-amber-300 uppercase font-black">Sem G.A</span>
+                <span className="block text-[0.5rem] text-amber-300 uppercase font-black">Sem G.A</span>
                 <span className="text-sm font-bold text-amber-200">{jovensSemGa.length} jovens</span>
               </button>
 
@@ -563,7 +563,7 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
                 onClick={() => setFiltroStatus("Ausente")}
                 className="bg-white/5 hover:bg-white/10 p-1.5 rounded-xl text-left transition cursor-pointer"
               >
-                <span className="block text-[8px] text-rose-300 uppercase font-black">Ausentes</span>
+                <span className="block text-[0.5rem] text-rose-300 uppercase font-black">Ausentes</span>
                 <span className="text-sm font-bold text-rose-200">{jovensAusentes.length} alerta</span>
               </button>
             </div>
@@ -596,7 +596,7 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
                 <button
                   key={tab.id}
                   onClick={() => setFiltroStatus(tab.id)}
-                  className={`text-[10px] font-bold px-2.5 py-1.5 uppercase tracking-wider rounded-xl border shrink-0 transition cursor-pointer ${
+                  className={`text-[0.625rem] font-bold px-2.5 py-1.5 uppercase tracking-wider rounded-xl border shrink-0 transition cursor-pointer ${
                     filtroStatus === tab.id
                       ? "bg-teal-50 dark:bg-teal-950/40 text-teal-700 dark:text-teal-300 border-teal-300 dark:border-teal-800 shadow-xs"
                       : "bg-white dark:bg-zinc-900 text-slate-600 dark:text-gray-400 border-gray-200 dark:border-zinc-800"
@@ -610,12 +610,12 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
             {/* FILTRO SECUNDÁRIO POR G.A */}
             {listaGas.length > 0 && (
               <div className="flex items-center gap-2 overflow-x-auto pb-1 text-xs">
-                <span className="text-[9px] font-black text-gray-400 uppercase tracking-wider shrink-0 flex items-center gap-1">
+                <span className="text-[0.5625rem] font-black text-gray-400 uppercase tracking-wider shrink-0 flex items-center gap-1">
                   <Compass className="w-3 h-3 text-teal-600" /> Filtrar G.A:
                 </span>
                 <button
                   onClick={() => setFiltroGa("Todos")}
-                  className={`text-[9.5px] px-2 py-0.5 rounded-lg border shrink-0 transition cursor-pointer font-bold ${
+                  className={`text-[0.5938rem] px-2 py-0.5 rounded-lg border shrink-0 transition cursor-pointer font-bold ${
                     filtroGa === "Todos"
                       ? "bg-slate-800 dark:bg-slate-200 text-white dark:text-slate-900 border-transparent"
                       : "bg-white dark:bg-zinc-900 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-zinc-800"
@@ -627,7 +627,7 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
                   <button
                     key={gaNome}
                     onClick={() => setFiltroGa(gaNome)}
-                    className={`text-[9.5px] px-2 py-0.5 rounded-lg border shrink-0 transition cursor-pointer font-bold ${
+                    className={`text-[0.5938rem] px-2 py-0.5 rounded-lg border shrink-0 transition cursor-pointer font-bold ${
                       filtroGa === gaNome
                         ? "bg-teal-700 text-white border-transparent"
                         : "bg-white dark:bg-zinc-900 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-zinc-800"
@@ -641,12 +641,12 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
           </div>
 
           {/* QUANTIDADE DE REGISTROS */}
-          <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest leading-none flex justify-between items-center">
+          <div className="text-[0.625rem] font-semibold text-gray-400 uppercase tracking-widest leading-none flex justify-between items-center">
             <span>{membrosFiltrados.length} jovens encontrados</span>
             {filtroStatus !== "Todos" && (
               <button 
                 onClick={() => { setFiltroStatus("Todos"); setFiltroGa("Todos"); }}
-                className="text-teal-600 dark:text-teal-400 hover:underline font-bold text-[9px] cursor-pointer"
+                className="text-teal-600 dark:text-teal-400 hover:underline font-bold text-[0.5625rem] cursor-pointer"
               >
                 Limpar filtros
               </button>
@@ -658,7 +658,7 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
             <div className="text-center py-10 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-2xl text-gray-400 dark:text-zinc-500 space-y-2">
               <Users className="w-8 h-8 mx-auto opacity-40 text-teal-600" />
               <p className="text-xs font-semibold">Nenhum jovem encontrado nesta categoria.</p>
-              <p className="text-[10px] max-w-xs mx-auto text-gray-400">
+              <p className="text-[0.625rem] max-w-xs mx-auto text-gray-400">
                 Ajuste os filtros ou clique no botão acima para cadastrar novos participantes.
               </p>
             </div>
@@ -700,33 +700,33 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
                               {m.nome}
                             </h4>
                             {idade !== null && (
-                              <span className="text-[9px] font-bold text-gray-500 dark:text-zinc-400 bg-gray-100 dark:bg-zinc-800 px-1.5 py-0.2 rounded-md shrink-0">
+                              <span className="text-[0.5625rem] font-bold text-gray-500 dark:text-zinc-400 bg-gray-100 dark:bg-zinc-800 px-1.5 py-0.2 rounded-md shrink-0">
                                 {idade} anos
                               </span>
                             )}
                             {isNiver && (
-                              <span className="bg-rose-500/15 text-rose-600 dark:text-rose-400 text-[8px] font-bold px-1 rounded uppercase tracking-wide shrink-0">
+                              <span className="bg-rose-500/15 text-rose-600 dark:text-rose-400 text-[0.5rem] font-bold px-1 rounded uppercase tracking-wide shrink-0">
                                 Niver 🎉
                               </span>
                             )}
                           </div>
 
                           {/* TAG DE TRANSIÇÃO E GA */}
-                          <div className="flex items-center gap-1.5 flex-wrap text-[9.5px]">
+                          <div className="flex items-center gap-1.5 flex-wrap text-[0.5938rem]">
                             {/* Tag do GA */}
                             {isSemGa ? (
-                              <span className="text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30 px-1.5 py-0.5 rounded-md font-black uppercase text-[8.5px] border border-amber-200 dark:border-amber-900/40">
+                              <span className="text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30 px-1.5 py-0.5 rounded-md font-black uppercase text-[0.5313rem] border border-amber-200 dark:border-amber-900/40">
                                 ⚠️ Sem G.A
                               </span>
                             ) : (
-                              <span className="text-teal-700 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/30 px-1.5 py-0.5 rounded-md font-bold text-[8.5px] border border-teal-100 dark:border-teal-900/30">
+                              <span className="text-teal-700 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/30 px-1.5 py-0.5 rounded-md font-bold text-[0.5313rem] border border-teal-100 dark:border-teal-900/30">
                                 📍 {m.ga}
                               </span>
                             )}
 
                             {/* Tag de Transição Jovens 1 -> Jovens 2 */}
                             {isTransicao && (
-                              <span className="text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 px-1.5 py-0.5 rounded-md font-black text-[8px] uppercase tracking-wider border border-emerald-200 dark:border-emerald-900/40 flex items-center gap-0.5">
+                              <span className="text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 px-1.5 py-0.5 rounded-md font-black text-[0.5rem] uppercase tracking-wider border border-emerald-200 dark:border-emerald-900/40 flex items-center gap-0.5">
                                 <Sparkles className="w-2.5 h-2.5" /> Transição J1 ➔ J2
                               </span>
                             )}
@@ -736,7 +736,7 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
 
                       {/* Status Pill */}
                       <div className="flex flex-col items-end gap-1 shrink-0">
-                        <span className={`text-[8.5px] font-black uppercase px-2 py-0.5 rounded-lg border tracking-wider shrink-0 ${
+                        <span className={`text-[0.5313rem] font-black uppercase px-2 py-0.5 rounded-lg border tracking-wider shrink-0 ${
                           m.status === "Ativo"
                             ? "bg-teal-50 dark:bg-teal-950/30 text-teal-700 dark:text-teal-400 border-teal-200 dark:border-teal-900/40"
                             : m.status === "Esporádico"
@@ -753,7 +753,7 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
                     {/* ALERTA DE MOTIVO DA AUSÊNCIA SE ESTIVER AUSENTE OU ESPORÁDICO */}
                     {(isAusente || m.status === "Esporádico" || m.motivoAusencia) && (
                       <div className="bg-amber-50/70 dark:bg-amber-950/20 border border-amber-200/60 dark:border-amber-900/30 p-2 rounded-xl text-left space-y-1">
-                        <div className="flex items-center justify-between text-[9px] font-black uppercase tracking-wider text-amber-800 dark:text-amber-400">
+                        <div className="flex items-center justify-between text-[0.5625rem] font-black uppercase tracking-wider text-amber-800 dark:text-amber-400">
                           <span className="flex items-center gap-1">
                             <AlertTriangle className="w-3 h-3 text-amber-600" /> Motivo da Ausência:
                           </span>
@@ -763,11 +763,11 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
                             </span>
                           )}
                         </div>
-                        <p className="text-[10.5px] font-semibold text-slate-800 dark:text-zinc-200">
+                        <p className="text-[0.6563rem] font-semibold text-slate-800 dark:text-zinc-200">
                           {m.motivoAusencia || "Sem resposta / Motivo ainda não apurado"}
                         </p>
                         {m.detalheAusencia && (
-                          <p className="text-[9.5px] text-gray-500 dark:text-zinc-400 italic">
+                          <p className="text-[0.5938rem] text-gray-500 dark:text-zinc-400 italic">
                             "{m.detalheAusencia}"
                           </p>
                         )}
@@ -775,7 +775,7 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
                     )}
 
                     {/* BOTÕES RÁPIDOS DE CONTATO PASTORAL */}
-                    <div className="flex items-center justify-between pt-1 border-t border-gray-100 dark:border-zinc-800/80 text-[10px]">
+                    <div className="flex items-center justify-between pt-1 border-t border-gray-100 dark:border-zinc-800/80 text-[0.625rem]">
                       <button
                         onClick={(e) => abrirModalContato(m, e)}
                         className="text-teal-700 dark:text-teal-400 font-bold hover:underline flex items-center gap-1 cursor-pointer"
@@ -797,7 +797,7 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
                               href={gerarLinkWhatsApp(m, isAusente ? 'falta' : isTransicao ? 'acolhimento' : 'contato')}
                               target="_blank"
                               rel="noreferrer"
-                              className="px-2 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold text-[9px] flex items-center gap-1 transition"
+                              className="px-2 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold text-[0.5625rem] flex items-center gap-1 transition"
                               title="Enviar WhatsApp Pastoral"
                             >
                               <MessageCircle className="w-3 h-3" /> WhatsApp
@@ -817,7 +817,7 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
 
       {/* VISTA 2 — DETALHE DA FICHA DO JOVEM */}
       {view === "detalhe" && membroSelecionado && (
-        <div className="space-y-4 animate-slideUp">
+        <div className="w-full max-w-2xl mx-auto space-y-4 animate-slideUp">
           <header className="flex items-center gap-3">
             <button
               onClick={() => setView("lista")}
@@ -845,7 +845,7 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
                 </div>
                 <div>
                   <div className="flex items-center gap-1.5">
-                    <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-lg border tracking-wider shrink-0 ${
+                    <span className={`text-[0.625rem] font-black uppercase px-2 py-0.5 rounded-lg border tracking-wider shrink-0 ${
                       membroSelecionado.status === "Ativo"
                         ? "bg-teal-50 dark:bg-teal-950/20 text-teal-700 dark:text-teal-400 border-teal-200/40"
                         : "bg-rose-50 dark:bg-rose-950/20 text-rose-700 dark:text-rose-400 border-rose-200/40"
@@ -853,12 +853,12 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
                       {membroSelecionado.status}
                     </span>
                     {calcularIdade(membroSelecionado.aniversario) !== null && (
-                      <span className="text-[10px] font-bold text-gray-500 bg-gray-100 dark:bg-zinc-800 px-2 py-0.5 rounded-lg">
+                      <span className="text-[0.625rem] font-bold text-gray-500 bg-gray-100 dark:bg-zinc-800 px-2 py-0.5 rounded-lg">
                         {calcularIdade(membroSelecionado.aniversario)} anos
                       </span>
                     )}
                   </div>
-                  <p className="text-[10px] text-gray-500 dark:text-zinc-400 mt-1 font-mono">
+                  <p className="text-[0.625rem] text-gray-500 dark:text-zinc-400 mt-1 font-mono">
                     G.A: <span className="font-bold text-slate-800 dark:text-zinc-200">{membroSelecionado.ga || "Sem G.A"}</span>
                   </p>
                 </div>
@@ -890,7 +890,7 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
 
             {/* DESTAQUE TRANSIÇÃO JOVENS 1 -> JOVENS 2 */}
             <div className="bg-teal-50/50 dark:bg-teal-950/20 border border-teal-100 dark:border-teal-900/30 p-3 rounded-xl space-y-1.5">
-              <div className="flex justify-between items-center text-[9px] font-black uppercase tracking-wider text-teal-800 dark:text-teal-300">
+              <div className="flex justify-between items-center text-[0.5625rem] font-black uppercase tracking-wider text-teal-800 dark:text-teal-300">
                 <span className="flex items-center gap-1">
                   <Sparkles className="w-3.5 h-3.5 text-teal-600" /> Acompanhamento de Integração
                 </span>
@@ -899,13 +899,13 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
                 </span>
               </div>
 
-              <div className="grid grid-cols-2 gap-2 text-[10.5px]">
+              <div className="grid grid-cols-2 gap-2 text-[0.6563rem]">
                 <div>
-                  <span className="text-gray-400 text-[8.5px] uppercase font-bold block">Grupo de Amigos (G.A):</span>
+                  <span className="text-gray-400 text-[0.5313rem] uppercase font-bold block">Grupo de Amigos (G.A):</span>
                   <span className="font-bold text-slate-800 dark:text-white">📍 {membroSelecionado.ga || "Ainda sem G.A (Definir)"}</span>
                 </div>
                 <div>
-                  <span className="text-gray-400 text-[8.5px] uppercase font-bold block">Faixa Etária / Manual:</span>
+                  <span className="text-gray-400 text-[0.5313rem] uppercase font-bold block">Faixa Etária / Manual:</span>
                   <span className="font-bold text-slate-800 dark:text-white">Faixa {membroSelecionado.faixa || "J2"}</span>
                 </div>
               </div>
@@ -913,11 +913,11 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
 
             {/* SEÇÃO MOTIVO DA AUSÊNCIA (SE HOUVER) */}
             <div className="bg-amber-50/40 dark:bg-amber-950/10 border border-amber-200/50 dark:border-amber-900/30 p-3 rounded-xl space-y-1">
-              <div className="flex justify-between items-center text-[9px] font-black uppercase text-amber-800 dark:text-amber-400">
+              <div className="flex justify-between items-center text-[0.5625rem] font-black uppercase text-amber-800 dark:text-amber-400">
                 <span>Motivo da Ausência / Situação na Igreja:</span>
                 <button
                   onClick={() => abrirModalContato(membroSelecionado)}
-                  className="text-teal-700 dark:text-teal-400 hover:underline font-bold text-[8.5px] cursor-pointer"
+                  className="text-teal-700 dark:text-teal-400 hover:underline font-bold text-[0.5313rem] cursor-pointer"
                 >
                   Editar Motivo
                 </button>
@@ -926,12 +926,12 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
                 {membroSelecionado.motivoAusencia || "Frequência normal / Sem ausências registradas"}
               </p>
               {membroSelecionado.detalheAusencia && (
-                <p className="text-[10px] text-gray-600 dark:text-zinc-300 italic">
+                <p className="text-[0.625rem] text-gray-600 dark:text-zinc-300 italic">
                   "{membroSelecionado.detalheAusencia}"
                 </p>
               )}
               {membroSelecionado.ultimoContato && (
-                <p className="text-[9px] text-gray-400 pt-0.5">
+                <p className="text-[0.5625rem] text-gray-400 pt-0.5">
                   Último contato pastoral registrado em: <strong>{new Date(membroSelecionado.ultimoContato + "T12:00:00").toLocaleDateString("pt-BR")}</strong>
                   {membroSelecionado.responsavelContato && ` por ${membroSelecionado.responsavelContato}`}
                 </p>
@@ -940,7 +940,7 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
 
             {/* HISTÓRICO DE PRESENÇA (ÚLTIMAS 8 REUNIÕES) */}
             <div className="space-y-1.5 pb-2">
-              <div className="flex justify-between items-center text-[9px] font-black text-gray-400 uppercase tracking-wide font-sans">
+              <div className="flex justify-between items-center text-[0.5625rem] font-black text-gray-400 uppercase tracking-wide font-sans">
                 <span>Presença Linear nas Reuniões de GA (8 Encontros)</span>
                 <span className="text-gray-400 font-bold">Esquerda para Direita →</span>
               </div>
@@ -958,7 +958,7 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
                         ? "bg-rose-400 border-rose-500"
                         : "bg-white dark:bg-zinc-900 border-gray-200 dark:border-zinc-800"
                     }`} />
-                    <span className="text-[7.5px] font-mono text-gray-400">R{idx + 1}</span>
+                    <span className="text-[0.4688rem] font-mono text-gray-400">R{idx + 1}</span>
                   </div>
                 ))}
               </div>
@@ -967,15 +967,15 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
             {/* CAMPOS EM FORMATO GRID */}
             <div className="grid grid-cols-2 gap-3 pb-3 border-b border-gray-100 dark:border-zinc-800/80">
               <div>
-                <span className="block text-[9px] font-black text-gray-400 uppercase tracking-wide">Celular WhatsApp</span>
+                <span className="block text-[0.5625rem] font-black text-gray-400 uppercase tracking-wide">Celular WhatsApp</span>
                 <span className="font-bold text-slate-800 dark:text-zinc-200">{membroSelecionado.contato1 || "Nenhum"}</span>
               </div>
               <div>
-                <span className="block text-[9px] font-black text-gray-400 uppercase tracking-wide">Celular Alternativo</span>
+                <span className="block text-[0.5625rem] font-black text-gray-400 uppercase tracking-wide">Celular Alternativo</span>
                 <span className="font-bold text-slate-800 dark:text-zinc-200">{membroSelecionado.contato2 || "Nenhum"}</span>
               </div>
               <div>
-                <span className="block text-[9px] font-black text-gray-400 uppercase tracking-wide">Dia do Aniversário</span>
+                <span className="block text-[0.5625rem] font-black text-gray-400 uppercase tracking-wide">Dia do Aniversário</span>
                 <span className="font-bold text-slate-800 dark:text-zinc-200">
                   {membroSelecionado.aniversario 
                     ? new Date(membroSelecionado.aniversario + "T12:00:00").toLocaleDateString("pt-BR") 
@@ -983,7 +983,7 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
                 </span>
               </div>
               <div>
-                <span className="block text-[9px] font-black text-gray-400 uppercase tracking-wide">Linguagem de Amor</span>
+                <span className="block text-[0.5625rem] font-black text-gray-400 uppercase tracking-wide">Linguagem de Amor</span>
                 <span className="font-bold text-indigo-700 dark:text-indigo-400 flex items-center gap-0.5">
                   <Heart className="w-3 h-3 fill-indigo-500 inline text-indigo-500 shrink-0" /> 
                   <span className="line-clamp-1">{membroSelecionado.linguagemAmor || "Não informada"}</span>
@@ -993,7 +993,7 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
 
             {/* CONTATO DOS PAIS / RESPONSÁVEIS */}
             <div className="pb-3 border-b border-gray-100 dark:border-zinc-800/80">
-              <span className="block text-[9px] font-black text-gray-400 uppercase tracking-wide">Contato dos Pais ou Responsáveis</span>
+              <span className="block text-[0.5625rem] font-black text-gray-400 uppercase tracking-wide">Contato dos Pais ou Responsáveis</span>
               <p className="font-bold text-slate-800 dark:text-zinc-200 mt-0.5">
                 {membroSelecionado.contatoPais || "Não cadastrado"}
               </p>
@@ -1001,10 +1001,10 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
 
             {/* NOTAS PASTORAIS LIVRES */}
             <div className="space-y-1 bg-yellow-50/20 dark:bg-amber-950/5 border border-yellow-100 dark:border-amber-900/30 p-2.5 rounded-2xl">
-              <span className="block text-[9px] font-black text-amber-800 dark:text-amber-400 uppercase tracking-wide flex items-center gap-1">
+              <span className="block text-[0.5625rem] font-black text-amber-800 dark:text-amber-400 uppercase tracking-wide flex items-center gap-1">
                 <AlertCircle className="w-3 h-3 text-amber-500 fill-amber-500" /> Notas Pastorais & Pedidos de Oração
               </span>
-              <p className="text-[11px] leading-relaxed text-slate-700 dark:text-zinc-300 italic whitespace-pre-line">
+              <p className="text-[0.6875rem] leading-relaxed text-slate-700 dark:text-zinc-300 italic whitespace-pre-line">
                 {membroSelecionado.notas || "Nenhuma nota pastoral cadastrada. Você pode editar para adicionar lembretes."}
               </p>
             </div>
@@ -1045,7 +1045,7 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
 
       {/* VISTA 3 — FORMULÁRIO DE CADASTRO OU EDIÇÃO */}
       {(view === "cadastro" || view === "edicao") && (
-        <form onSubmit={handleSalvarMembro} className="space-y-4 animate-slideUp">
+        <form onSubmit={handleSalvarMembro} className="w-full max-w-2xl mx-auto space-y-4 animate-slideUp">
           <header className="flex items-center gap-3">
             <button
               type="button"
@@ -1097,14 +1097,14 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
                   <Sparkles className="w-3.5 h-3.5 text-teal-600" /> Jovem vindo do Jovens 1 (até 17 anos) para o Jovens 2 (18 a 30)
                 </span>
               </label>
-              <p className="text-[10px] text-teal-700 dark:text-teal-400 pl-6 leading-tight">
+              <p className="text-[0.625rem] text-teal-700 dark:text-teal-400 pl-6 leading-tight">
                 Marque para acompanhar a integração, frequência nas primeiras semanas e alocação no G.A.
               </p>
             </div>
 
             {/* Nome Completo */}
             <div className="space-y-1">
-              <label htmlFor="form-nome" className="block text-[10px] font-black text-gray-400 uppercase tracking-widest font-sans">
+              <label htmlFor="form-nome" className="block text-[0.625rem] font-black text-gray-400 uppercase tracking-widest font-sans">
                 Nome do Jovem *
               </label>
               <input
@@ -1121,7 +1121,7 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
             {/* QUAL G.A ESTÁ E STATUS */}
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label htmlFor="form-ga" className="block text-[10px] font-black text-teal-700 dark:text-teal-400 uppercase tracking-widest font-sans">
+                <label htmlFor="form-ga" className="block text-[0.625rem] font-black text-teal-700 dark:text-teal-400 uppercase tracking-widest font-sans">
                   Qual G.A está? *
                 </label>
                 <input
@@ -1136,7 +1136,7 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
               </div>
 
               <div className="space-y-1">
-                <label htmlFor="form-status" className="block text-[10px] font-black text-gray-400 uppercase tracking-widest font-sans">
+                <label htmlFor="form-status" className="block text-[0.625rem] font-black text-gray-400 uppercase tracking-widest font-sans">
                   Status de Presença
                 </label>
                 <select
@@ -1162,12 +1162,12 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
             {/* SE ESTIVER AUSENTE OU ESPORÁDICO: QUAL O MOTIVO? */}
             {(formStatus === "Ausente" || formStatus === "Esporádico" || formMotivoAusencia) && (
               <div className="p-3.5 bg-rose-50/50 dark:bg-rose-950/20 border border-rose-200 dark:border-rose-900/40 rounded-2xl space-y-3">
-                <div className="flex items-center gap-1 text-[10px] font-black uppercase tracking-wider text-rose-800 dark:text-rose-400">
+                <div className="flex items-center gap-1 text-[0.625rem] font-black uppercase tracking-wider text-rose-800 dark:text-rose-400">
                   <AlertTriangle className="w-3.5 h-3.5 text-rose-600" /> Motivo da Ausência Pastoral
                 </div>
 
                 <div className="space-y-1">
-                  <label htmlFor="form-motivo" className="block text-[9.5px] font-bold text-gray-600 dark:text-gray-300">
+                  <label htmlFor="form-motivo" className="block text-[0.5938rem] font-bold text-gray-600 dark:text-gray-300">
                     Se não está vindo, qual o motivo principal?
                   </label>
                   <select
@@ -1184,7 +1184,7 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
                 </div>
 
                 <div className="space-y-1">
-                  <label htmlFor="form-detalhe-ausencia" className="block text-[9.5px] font-bold text-gray-600 dark:text-gray-300">
+                  <label htmlFor="form-detalhe-ausencia" className="block text-[0.5938rem] font-bold text-gray-600 dark:text-gray-300">
                     Detalhes do Motivo / Situação Atual:
                   </label>
                   <input
@@ -1199,7 +1199,7 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
 
                 <div className="grid grid-cols-2 gap-2">
                   <div className="space-y-1">
-                    <label htmlFor="form-ultimo-contato" className="block text-[9.5px] font-bold text-gray-600 dark:text-gray-300">
+                    <label htmlFor="form-ultimo-contato" className="block text-[0.5938rem] font-bold text-gray-600 dark:text-gray-300">
                       Data do Último Contato
                     </label>
                     <input
@@ -1211,7 +1211,7 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
                     />
                   </div>
                   <div className="space-y-1">
-                    <label htmlFor="form-resp-contato" className="block text-[9.5px] font-bold text-gray-600 dark:text-gray-300">
+                    <label htmlFor="form-resp-contato" className="block text-[0.5938rem] font-bold text-gray-600 dark:text-gray-300">
                       Quem contatou?
                     </label>
                     <input
@@ -1230,7 +1230,7 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
             {/* TELEFONES */}
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label htmlFor="form-contato1" className="block text-[10px] font-black text-gray-400 uppercase tracking-widest font-sans">
+                <label htmlFor="form-contato1" className="block text-[0.625rem] font-black text-gray-400 uppercase tracking-widest font-sans">
                   Celular Whatsapp
                 </label>
                 <input
@@ -1244,7 +1244,7 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
               </div>
 
               <div className="space-y-1">
-                <label htmlFor="form-contato2" className="block text-[10px] font-black text-gray-400 uppercase tracking-widest font-sans">
+                <label htmlFor="form-contato2" className="block text-[0.625rem] font-black text-gray-400 uppercase tracking-widest font-sans">
                   Fixo ou Alternativo
                 </label>
                 <input
@@ -1261,7 +1261,7 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
             {/* ANIVERSÁRIO E LINGUAGEM DE AMOR */}
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label htmlFor="form-aniversario" className="block text-[10px] font-black text-gray-400 uppercase tracking-widest font-sans">
+                <label htmlFor="form-aniversario" className="block text-[0.625rem] font-black text-gray-400 uppercase tracking-widest font-sans">
                   Data de Nascimento (Idade)
                 </label>
                 <input
@@ -1274,7 +1274,7 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
               </div>
 
               <div className="space-y-1">
-                <label htmlFor="form-linguagem" className="block text-[10px] font-black text-gray-400 uppercase tracking-widest font-sans">
+                <label htmlFor="form-linguagem" className="block text-[0.625rem] font-black text-gray-400 uppercase tracking-widest font-sans">
                   Linguagem de Amor
                 </label>
                 <select
@@ -1296,7 +1296,7 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
             {/* MINISTÉRIO E FAIXA */}
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label htmlFor="form-ministerio" className="block text-[10px] font-black text-gray-400 uppercase tracking-widest font-sans">
+                <label htmlFor="form-ministerio" className="block text-[0.625rem] font-black text-gray-400 uppercase tracking-widest font-sans">
                   Ministério
                 </label>
                 <input
@@ -1310,7 +1310,7 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
               </div>
 
               <div className="space-y-1">
-                <label htmlFor="form-faixa" className="block text-[10px] font-black text-gray-400 uppercase tracking-widest font-sans">
+                <label htmlFor="form-faixa" className="block text-[0.625rem] font-black text-gray-400 uppercase tracking-widest font-sans">
                   Faixa
                 </label>
                 <select
@@ -1328,7 +1328,7 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
 
             {/* Contato Pais / Guardião */}
             <div className="space-y-1">
-              <label htmlFor="form-pais" className="block text-[10px] font-black text-gray-400 uppercase tracking-widest font-sans">
+              <label htmlFor="form-pais" className="block text-[0.625rem] font-black text-gray-400 uppercase tracking-widest font-sans">
                 Contato dos Pais ou Responsáveis (Nome + Fone)
               </label>
               <input
@@ -1343,7 +1343,7 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
 
             {/* Notas pastorais privadas */}
             <div className="space-y-1">
-              <label htmlFor="form-notas" className="block text-[10px] font-black text-amber-600 dark:text-amber-500 uppercase tracking-widest font-sans flex items-center gap-1">
+              <label htmlFor="form-notas" className="block text-[0.625rem] font-black text-amber-600 dark:text-amber-500 uppercase tracking-widest font-sans flex items-center gap-1">
                 Acompanhamento Pastoral Privado
               </label>
               <textarea
@@ -1376,9 +1376,9 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
           <div className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-3xl p-5 max-w-sm w-full space-y-4 shadow-xl text-left animate-slideUp">
             <div className="flex justify-between items-start">
               <div>
-                <span className="text-[9px] font-black uppercase tracking-widest text-teal-600">Cuidado Pastoral</span>
+                <span className="text-[0.5625rem] font-black uppercase tracking-widest text-teal-600">Cuidado Pastoral</span>
                 <h3 className="text-sm font-bold text-slate-900 dark:text-white">{membroParaContato.nome}</h3>
-                <p className="text-[10px] text-gray-500">G.A: {membroParaContato.ga || "Sem G.A"}</p>
+                <p className="text-[0.625rem] text-gray-500">G.A: {membroParaContato.ga || "Sem G.A"}</p>
               </div>
               <button
                 onClick={() => setModalContatoAberto(false)}
@@ -1390,7 +1390,7 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
 
             <div className="space-y-3 text-xs">
               <div className="space-y-1">
-                <label className="block text-[10px] font-black text-gray-500 uppercase tracking-wider">
+                <label className="block text-[0.625rem] font-black text-gray-500 uppercase tracking-wider">
                   Status Atual de Frequência:
                 </label>
                 <select
@@ -1406,7 +1406,7 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
               </div>
 
               <div className="space-y-1">
-                <label className="block text-[10px] font-black text-gray-500 uppercase tracking-wider">
+                <label className="block text-[0.625rem] font-black text-gray-500 uppercase tracking-wider">
                   Qual o motivo da ausência / situação?
                 </label>
                 <select
@@ -1422,7 +1422,7 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
               </div>
 
               <div className="space-y-1">
-                <label className="block text-[10px] font-black text-gray-500 uppercase tracking-wider">
+                <label className="block text-[0.625rem] font-black text-gray-500 uppercase tracking-wider">
                   O que o jovem relatou no contato?
                 </label>
                 <textarea
@@ -1435,7 +1435,7 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
               </div>
 
               <div className="space-y-1">
-                <label className="block text-[10px] font-black text-gray-500 uppercase tracking-wider">
+                <label className="block text-[0.625rem] font-black text-gray-500 uppercase tracking-wider">
                   Data do Contato:
                 </label>
                 <input

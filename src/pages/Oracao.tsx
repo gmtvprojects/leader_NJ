@@ -217,7 +217,7 @@ export default function Oracao({ onVoltar, liderId }: OracaoProps) {
         <div className="fixed inset-0 bg-white/60 dark:bg-zinc-950/60 flex items-center justify-center z-50">
           <div className="flex flex-col items-center gap-2">
             <Loader2 className="w-8 h-8 animate-spin text-[#0f766e]" />
-            <p className="text-[10px] uppercase font-black tracking-wider text-[#0f766e]">Intercedendo e salvando...</p>
+            <p className="text-[0.625rem] uppercase font-black tracking-wider text-[#0f766e]">Intercedendo e salvando...</p>
           </div>
         </div>
       )}
@@ -235,7 +235,7 @@ export default function Oracao({ onVoltar, liderId }: OracaoProps) {
             </button>
           )}
           <div className="text-left">
-            <span className="text-[10px] uppercase font-black tracking-widest text-[#0f766e] dark:text-teal-400">Intercessão Individual</span>
+            <span className="text-[0.625rem] uppercase font-black tracking-widest text-[#0f766e] dark:text-teal-400">Intercessão Individual</span>
             <h1 className="text-lg font-bold text-slate-950 dark:text-white tracking-tight leading-none mt-0.5 flex items-center gap-1.5 font-sans">
               Clamores do Rebanho
             </h1>
@@ -264,7 +264,7 @@ export default function Oracao({ onVoltar, liderId }: OracaoProps) {
           <div className="space-y-3 font-sans">
             {/* Membro Dropdown */}
             <div className="space-y-1">
-              <label htmlFor="form-ora-membro" className="block text-[8px] font-bold uppercase text-gray-400">Membro do Grupo de Amigos *</label>
+              <label htmlFor="form-ora-membro" className="block text-[0.5rem] font-bold uppercase text-gray-400">Membro do Grupo de Amigos *</label>
               <div className="relative">
                 <select
                   id="form-ora-membro"
@@ -287,7 +287,7 @@ export default function Oracao({ onVoltar, liderId }: OracaoProps) {
 
             {/* Texto do Pedido */}
             <div className="space-y-1">
-              <label htmlFor="form-ora-texto" className="block text-[8px] font-bold uppercase text-gray-400">Descrição do Clamor / Motivo *</label>
+              <label htmlFor="form-ora-texto" className="block text-[0.5rem] font-bold uppercase text-gray-400">Descrição do Clamor / Motivo *</label>
               <textarea
                 id="form-ora-texto"
                 required
@@ -301,7 +301,7 @@ export default function Oracao({ onVoltar, liderId }: OracaoProps) {
 
             {/* Data de Registro */}
             <div className="space-y-1">
-              <label htmlFor="form-ora-data" className="block text-[8px] font-bold uppercase text-gray-400">Data de Anotação *</label>
+              <label htmlFor="form-ora-data" className="block text-[0.5rem] font-bold uppercase text-gray-400">Data de Anotação *</label>
               <input
                 id="form-ora-data"
                 type="date"
@@ -329,14 +329,14 @@ export default function Oracao({ onVoltar, liderId }: OracaoProps) {
 
       {/* FILTROS NO TOPO DAS ORAÇÕES */}
       <div className="bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 p-2 rounded-2xl flex justify-between items-center shadow-sm">
-        <span className="text-[9.5px] font-extrabold uppercase text-gray-400 pl-2">Filtrar Pedidos</span>
+        <span className="text-[0.5938rem] font-extrabold uppercase text-gray-400 pl-2">Filtrar Pedidos</span>
         
         <div className="flex gap-1 font-sans">
           {(["todos", "pendentes", "respondidos"] as const).map(f => (
             <button
                key={f}
               onClick={() => setFiltro(f)}
-              className={`px-3 py-1.5 rounded-lg text-[9.5px] font-extrabold uppercase tracking-wider transition-all cursor-pointer ${
+              className={`px-3 py-1.5 rounded-lg text-[0.5938rem] font-extrabold uppercase tracking-wider transition-all cursor-pointer ${
                 filtro === f
                    ? "bg-teal-700 text-white shadow-sm font-bold"
                   : "bg-gray-50 hover:bg-gray-100 dark:bg-zinc-955 dark:hover:bg-zinc-800 text-slate-700 dark:text-zinc-400"
@@ -354,7 +354,7 @@ export default function Oracao({ onVoltar, liderId }: OracaoProps) {
           <div className="lg:col-span-2 bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 py-12 rounded-2xl text-center space-y-1.5">
             <Heart className="w-8 h-8 text-rose-500 fill-rose-500/10 mx-auto animate-pulse" />
             <p className="text-xs font-bold text-slate-900 dark:text-white">Nenhum pedido encontrado</p>
-            <p className="text-[10px] text-gray-400 uppercase font-medium">Use do filtro acima ou crie um novo pedido no botão "+"</p>
+            <p className="text-[0.625rem] text-gray-400 uppercase font-medium">Use do filtro acima ou crie um novo pedido no botão "+"</p>
           </div>
         ) : (
           filtradas.map(ora => (
@@ -375,7 +375,7 @@ export default function Oracao({ onVoltar, liderId }: OracaoProps) {
                   </div>
                   <div>
                     <h3 className="text-xs font-bold text-slate-900 dark:text-white leading-none font-sans">{ora.membroNome}</h3>
-                    <p className="text-[9px] text-gray-400 font-mono mt-1 uppercase flex items-center gap-1.5 select-none text-left">
+                    <p className="text-[0.5625rem] text-gray-400 font-mono mt-1 uppercase flex items-center gap-1.5 select-none text-left">
                       <Calendar className="w-3 h-3 shrink-0" />
                       Anotado em: {new Date(ora.data + "T12:00:00").toLocaleDateString("pt-BR")}
                     </p>
@@ -392,7 +392,7 @@ export default function Oracao({ onVoltar, liderId }: OracaoProps) {
 
               {/* Corpo do pedido adaptado */}
               <div className="p-3 bg-slate-50 dark:bg-zinc-950 rounded-2xl border border-gray-105 dark:border-zinc-800/80">
-                <p className={`text-[11.5px] leading-relaxed font-semibold italic text-left ${
+                <p className={`text-[0.7188rem] leading-relaxed font-semibold italic text-left ${
                   ora.respondido 
                     ? "line-through text-gray-400 dark:text-zinc-500 shrink-0" 
                     : "text-slate-800 dark:text-slate-200"
@@ -405,7 +405,7 @@ export default function Oracao({ onVoltar, liderId }: OracaoProps) {
               <div className="flex justify-end pt-1">
                 <button
                   onClick={() => alternarRespondida(ora.id)}
-                  className={`py-1.5 px-3 rounded-lg text-[9px] font-black uppercase tracking-wider transition cursor-pointer ${
+                  className={`py-1.5 px-3 rounded-lg text-[0.5625rem] font-black uppercase tracking-wider transition cursor-pointer ${
                     ora.respondido
                       ? "bg-emerald-50 text-emerald-700 border border-emerald-300 dark:bg-emerald-950/20 dark:border-emerald-900/60"
                       : "bg-white dark:bg-zinc-900 border border-gray-250 dark:border-zinc-800 hover:border-teal-500 text-slate-700 hover:text-teal-700 dark:text-zinc-350"

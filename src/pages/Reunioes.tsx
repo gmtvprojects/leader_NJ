@@ -263,7 +263,7 @@ export default function Reunioes({ liderId }: ReunioesProps) {
         <div className="fixed inset-0 bg-white/60 dark:bg-zinc-950/60 flex items-center justify-center z-50">
           <div className="flex flex-col items-center gap-2">
             <Loader2 className="w-8 h-8 animate-spin text-[#0f766e]" />
-            <p className="text-[10px] uppercase font-black tracking-wider text-[#0f766e]">Gravando com segurança...</p>
+            <p className="text-[0.625rem] uppercase font-black tracking-wider text-[#0f766e]">Gravando com segurança...</p>
           </div>
         </div>
       )}
@@ -273,7 +273,7 @@ export default function Reunioes({ liderId }: ReunioesProps) {
         <h1 className="text-xl font-bold text-slate-950 dark:text-white tracking-tight leading-none flex items-center gap-1.5 font-sans">
           <BookOpen className="w-5 h-5 text-teal-700 dark:text-teal-400" /> Presença e Roteiros
         </h1>
-        <p className="text-[10px] uppercase font-black text-gray-400 mt-1 tracking-wider">Ata de reuniões e relatórios</p>
+        <p className="text-[0.625rem] uppercase font-black text-gray-400 mt-1 tracking-wider">Ata de reuniões e relatórios</p>
       </div>
 
       {mensagemSucesso && (
@@ -294,7 +294,7 @@ export default function Reunioes({ liderId }: ReunioesProps) {
             type="date"
             value={dataReuniao}
             onChange={(e) => setDataReuniao(e.target.value)}
-            className="text-[10.5px] font-bold px-2 py-1 bg-slate-50 dark:bg-zinc-950 border border-gray-100 dark:border-zinc-805 rounded-lg text-slate-900 dark:text-white outline-none cursor-pointer"
+            className="text-[0.6563rem] font-bold px-2 py-1 bg-slate-50 dark:bg-zinc-950 border border-gray-100 dark:border-zinc-805 rounded-lg text-slate-900 dark:text-white outline-none cursor-pointer"
           />
         </div>
 
@@ -303,10 +303,10 @@ export default function Reunioes({ liderId }: ReunioesProps) {
           {/* LANÇAMENTO CHAMADA BUTTON */}
           <div className="space-y-1.5 text-left">
             <div className="flex justify-between items-center">
-              <span className="text-[10px] font-black uppercase text-gray-400 dark:text-zinc-500 tracking-widest font-sans">
+              <span className="text-[0.625rem] font-black uppercase text-gray-400 dark:text-zinc-500 tracking-widest font-sans">
                 QUEM FOI PARA O G.A?
               </span>
-              <span className="text-[9.5px] font-bold text-teal-700 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/30 px-2 py-0.5 rounded-full font-sans">
+              <span className="text-[0.5938rem] font-bold text-teal-700 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/30 px-2 py-0.5 rounded-full font-sans">
                 {presentesIds.length} presentes
               </span>
             </div>
@@ -316,25 +316,25 @@ export default function Reunioes({ liderId }: ReunioesProps) {
                 id="btn-abrir-chamada"
                 type="button"
                 onClick={() => setIsFazerChamada(true)}
-                className="w-full py-3 border border-dashed border-gray-200 dark:border-zinc-800 hover:border-teal-500 bg-slate-50/40 dark:bg-zinc-900 text-slate-800 dark:text-slate-300 rounded-xl transition flex items-center justify-center gap-1.5 cursor-pointer text-center font-extrabold uppercase tracking-wider text-[10px]"
+                className="w-full py-3 border border-dashed border-gray-200 dark:border-zinc-800 hover:border-teal-500 bg-slate-50/40 dark:bg-zinc-900 text-slate-800 dark:text-slate-300 rounded-xl transition flex items-center justify-center gap-1.5 cursor-pointer text-center font-extrabold uppercase tracking-wider text-[0.625rem]"
               >
                 <Users className="w-4 h-4 text-teal-600" /> PRESENÇA DO SABADO
               </button>
             ) : (
               <div className="bg-slate-50 dark:bg-[#161618] border border-gray-100 dark:border-zinc-800 p-3.5 rounded-2xl space-y-3 max-h-56 overflow-y-auto animate-fadeIn">
                 <div className="flex justify-between items-center border-b border-gray-100 dark:border-zinc-800 pb-1.5">
-                  <span className="text-[9px] font-black text-gray-400 uppercase">Selecione os Presentes</span>
+                  <span className="text-[0.5625rem] font-black text-gray-400 uppercase">Selecione os Presentes</span>
                   <button
                     type="button"
                     onClick={() => setIsFazerChamada(false)}
-                    className="text-[9.5px] font-extrabold text-teal-700 dark:text-teal-400 uppercase hover:underline"
+                    className="text-[0.5938rem] font-extrabold text-teal-700 dark:text-teal-400 uppercase hover:underline"
                   >
                     Fechar Chamada
                   </button>
                 </div>
                 
                 {membros.length === 0 ? (
-                  <p className="text-center text-[10px] text-gray-400 py-3">Adicione membros na aba Membros para chamá-los.</p>
+                  <p className="text-center text-[0.625rem] text-gray-400 py-3">Adicione membros na aba Membros para chamá-los.</p>
                 ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1.5">
                     {membros.map(m => {
@@ -344,7 +344,7 @@ export default function Reunioes({ liderId }: ReunioesProps) {
                           key={m.id}
                           type="button"
                           onClick={() => togglePresenca(m.id)}
-                          className={`p-2.5 rounded-xl border text-[11px] font-bold text-left flex justify-between items-center cursor-pointer transition ${
+                          className={`p-2.5 rounded-xl border text-[0.6875rem] font-bold text-left flex justify-between items-center cursor-pointer transition ${
                             isPresent
                               ? "bg-teal-50/60 dark:bg-teal-950/20 border-teal-500 text-teal-800 dark:text-teal-400"
                               : "bg-white dark:bg-zinc-900 border-gray-200 dark:border-zinc-800 text-slate-700 dark:text-gray-400 opacity-80"
@@ -354,12 +354,12 @@ export default function Reunioes({ liderId }: ReunioesProps) {
                             <div className="flex items-center gap-1.5">
                               <span className="font-sans font-semibold">{m.nome}</span>
                               {m.origemTransicao && (
-                                <span className="text-[7.5px] font-black uppercase px-1 py-0.2 bg-teal-100 dark:bg-teal-900/40 text-teal-800 dark:text-teal-300 rounded">
+                                <span className="text-[0.4688rem] font-black uppercase px-1 py-0.2 bg-teal-100 dark:bg-teal-900/40 text-teal-800 dark:text-teal-300 rounded">
                                   J1 ➔ J2
                                 </span>
                               )}
                             </div>
-                            <span className="text-[8.5px] text-gray-400 block">
+                            <span className="text-[0.5313rem] text-gray-400 block">
                               📍 {m.ga || "Sem G.A"} • {m.status}
                             </span>
                           </div>
@@ -379,7 +379,7 @@ export default function Reunioes({ liderId }: ReunioesProps) {
 
           {/* Tema / Roteiro da Reunião (Textarea) */}
           <div className="space-y-1">
-            <label htmlFor="tema-reuniao" className="block text-[10px] font-black text-gray-400 dark:text-zinc-500 uppercase tracking-widest font-sans">
+            <label htmlFor="tema-reuniao" className="block text-[0.625rem] font-black text-gray-400 dark:text-zinc-500 uppercase tracking-widest font-sans">
               TEVE ALGUM TEMA IMPORTANTE OU DINÂMICA? *
             </label>
             <textarea
@@ -395,7 +395,7 @@ export default function Reunioes({ liderId }: ReunioesProps) {
 
           {/* Quem Trouxe o lanche (Input) */}
           <div className="space-y-1">
-            <label htmlFor="lanche-reuniao" className="block text-[10px] font-black text-gray-400 dark:text-zinc-500 uppercase tracking-widest font-sans flex items-center gap-1">
+            <label htmlFor="lanche-reuniao" className="block text-[0.625rem] font-black text-gray-400 dark:text-zinc-500 uppercase tracking-widest font-sans flex items-center gap-1">
               <Coffee className="w-3.5 h-3.5 text-amber-500" /> QUAL EQUIPE DE LANCHE?
             </label>
             <input
@@ -410,7 +410,7 @@ export default function Reunioes({ liderId }: ReunioesProps) {
 
           {/* Pedidos de oração do dia */}
           <div className="space-y-1">
-            <label htmlFor="oracao-reuniao" className="block text-[10px] font-black text-gray-400 dark:text-zinc-500 uppercase tracking-widest font-sans flex items-center gap-1">
+            <label htmlFor="oracao-reuniao" className="block text-[0.625rem] font-black text-gray-400 dark:text-zinc-500 uppercase tracking-widest font-sans flex items-center gap-1">
                <Heart className="w-3.5 h-3.5 text-rose-500" /> PEDIDOS DE ORAÇÃO DO G.A
             </label>
             <textarea
@@ -440,18 +440,18 @@ export default function Reunioes({ liderId }: ReunioesProps) {
         <section className="bg-amber-50/50 dark:bg-[#1c1917]/25 border border-amber-200 dark:border-amber-900/40 p-4.5 rounded-3xl space-y-3 animate-fadeIn text-left">
           <div className="flex items-center gap-1.5 pb-1">
             <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
-            <span className="text-[10px] font-black uppercase text-amber-800 dark:text-amber-400 tracking-wider">
+            <span className="text-[0.625rem] font-black uppercase text-amber-800 dark:text-amber-400 tracking-wider">
               Segurança e Manual: NADA ACONTECEU!
             </span>
           </div>
-          <p className="text-[10.5px] leading-relaxed text-amber-700 dark:text-amber-400/90 font-medium font-sans">
+          <p className="text-[0.6563rem] leading-relaxed text-amber-700 dark:text-amber-400/90 font-medium font-sans">
             Para a integridade e excelente testemunho do local, complete o protocolo obrigatório de saída de templo/casa:
           </p>
 
           <div className="space-y-2.5 mt-2">
             <button
               onClick={() => setLimpeza(!limpeza)}
-              className="w-full p-2.5 bg-white dark:bg-zinc-900/60 border border-amber-100 dark:border-zinc-800 rounded-xl flex items-center gap-2.5 text-[11px] font-semibold text-left cursor-pointer"
+              className="w-full p-2.5 bg-white dark:bg-zinc-900/60 border border-amber-100 dark:border-zinc-800 rounded-xl flex items-center gap-2.5 text-[0.6875rem] font-semibold text-left cursor-pointer"
             >
               <div className={`w-4 h-4 rounded-md border flex items-center justify-center ${
                 limpeza ? "bg-amber-600 border-amber-700 text-white" : "border-gray-300 dark:border-zinc-700"
@@ -463,7 +463,7 @@ export default function Reunioes({ liderId }: ReunioesProps) {
 
             <button
               onClick={() => setMobiliario(!mobiliario)}
-              className="w-full p-2.5 bg-white dark:bg-zinc-900/60 border border-amber-100 dark:border-zinc-800 rounded-xl flex items-center gap-2.5 text-[11px] font-semibold text-left cursor-pointer"
+              className="w-full p-2.5 bg-white dark:bg-zinc-900/60 border border-amber-100 dark:border-zinc-800 rounded-xl flex items-center gap-2.5 text-[0.6875rem] font-semibold text-left cursor-pointer"
             >
               <div className={`w-4 h-4 rounded-md border flex items-center justify-center ${
                 mobiliario ? "bg-amber-600 border-amber-700 text-white" : "border-gray-300 dark:border-zinc-700"
@@ -475,7 +475,7 @@ export default function Reunioes({ liderId }: ReunioesProps) {
 
             <button
               onClick={() => setFotoEnviada(!fotoEnviada)}
-              className="w-full p-2.5 bg-white dark:bg-zinc-900/60 border border-amber-100 dark:border-zinc-800 rounded-xl flex items-center gap-2.5 text-[11px] font-semibold text-left cursor-pointer"
+              className="w-full p-2.5 bg-white dark:bg-zinc-900/60 border border-amber-100 dark:border-zinc-800 rounded-xl flex items-center gap-2.5 text-[0.6875rem] font-semibold text-left cursor-pointer"
             >
               <div className={`w-4 h-4 rounded-md border flex items-center justify-center ${
                 fotoEnviada ? "bg-amber-600 border-amber-700 text-white" : "border-gray-300 dark:border-zinc-700"
@@ -487,7 +487,7 @@ export default function Reunioes({ liderId }: ReunioesProps) {
 
             <button
               onClick={() => setComidaRecolhida(!comidaRecolhida)}
-              className="w-full p-2.5 bg-white dark:bg-zinc-900/60 border border-amber-100 dark:border-zinc-800 rounded-xl flex items-center gap-2.5 text-[11px] font-semibold text-left cursor-pointer"
+              className="w-full p-2.5 bg-white dark:bg-zinc-900/60 border border-amber-100 dark:border-zinc-800 rounded-xl flex items-center gap-2.5 text-[0.6875rem] font-semibold text-left cursor-pointer"
             >
               <div className={`w-4 h-4 rounded-md border flex items-center justify-center ${
                 comidaRecolhida ? "bg-amber-600 border-amber-700 text-white" : "border-gray-300 dark:border-zinc-700"
@@ -501,7 +501,7 @@ export default function Reunioes({ liderId }: ReunioesProps) {
           <button
             onClick={concluirSeguranca}
             disabled={!(limpeza && mobiliario && fotoEnviada && comidaRecolhida)}
-            className={`w-full py-2 bg-amber-600 hover:bg-amber-500 font-bold uppercase text-[10px] tracking-widest rounded-xl text-white transition-all mt-4 cursor-pointer text-center ${
+            className={`w-full py-2 bg-amber-600 hover:bg-amber-500 font-bold uppercase text-[0.625rem] tracking-widest rounded-xl text-white transition-all mt-4 cursor-pointer text-center ${
               limpeza && mobiliario && fotoEnviada && comidaRecolhida ? "opacity-100" : "opacity-40 cursor-not-allowed"
             }`}
           >
@@ -512,7 +512,7 @@ export default function Reunioes({ liderId }: ReunioesProps) {
 
       {/* HISTÓRICO DE REUNIÕES PASSADAS */}
       <section className="space-y-2.5 pb-6">
-        <h2 className="text-[11px] font-black uppercase text-gray-400 dark:text-zinc-500 tracking-widest font-sans">Histórico de Atas</h2>
+        <h2 className="text-[0.6875rem] font-black uppercase text-gray-400 dark:text-zinc-500 tracking-widest font-sans">Histórico de Atas</h2>
         
         {reunioes.length === 0 ? (
           <div className="text-center py-10 bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 rounded-2xl text-gray-400 font-sans">
@@ -527,10 +527,10 @@ export default function Reunioes({ liderId }: ReunioesProps) {
                 className="bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800/85 p-3.5 rounded-2xl flex items-center justify-between hover:border-teal-500 cursor-pointer transition shadow-sm"
               >
                 <div className="space-y-1 pr-4 max-w-[240px]">
-                  <div className="flex items-center gap-1 text-[10px] text-gray-400 font-mono">
+                  <div className="flex items-center gap-1 text-[0.625rem] text-gray-400 font-mono">
                     <Calendar className="w-3.5 h-3.5 text-teal-600 shrink-0" />
                     <span>{new Date(r.data + "T12:00:00").toLocaleDateString("pt-BR")}</span>
-                    <span className="bg-teal-50 dark:bg-teal-950/25 px-1.5 py-0.5 rounded text-teal-700 dark:text-teal-400 font-bold shrink-0 ml-1.5 uppercase text-[8px] font-sans">
+                    <span className="bg-teal-50 dark:bg-teal-950/25 px-1.5 py-0.5 rounded text-teal-700 dark:text-teal-400 font-bold shrink-0 ml-1.5 uppercase text-[0.5rem] font-sans">
                       {r.presentes ? r.presentes.length : 0} PRESENTES
                     </span>
                   </div>
@@ -573,48 +573,48 @@ export default function Reunioes({ liderId }: ReunioesProps) {
             <div className="space-y-3.5 text-xs text-left text-slate-800 dark:text-zinc-200 font-sans">
               
               <div>
-                <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest block mb-0.5">Data da Reunião</span>
+                <span className="text-[0.5625rem] font-black text-gray-400 uppercase tracking-widest block mb-0.5">Data da Reunião</span>
                 <p className="font-bold text-slate-900 dark:text-white">
                   {new Date(reuniaoDetalhada.data + "T12:00:00").toLocaleDateString("pt-BR")}
                 </p>
               </div>
 
               <div>
-                <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest block mb-0.5">Tema / Roteiro</span>
+                <span className="text-[0.5625rem] font-black text-gray-400 uppercase tracking-widest block mb-0.5">Tema / Roteiro</span>
                 <p className="font-medium p-3 bg-slate-50 dark:bg-zinc-950 border border-gray-100 dark:border-zinc-800 rounded-xl italic leading-relaxed">
                   "{reuniaoDetalhada.tema}"
                 </p>
               </div>
 
               <div>
-                <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest block mb-0.5">Comunhão e Lanche</span>
+                <span className="text-[0.5625rem] font-black text-gray-400 uppercase tracking-widest block mb-0.5">Comunhão e Lanche</span>
                 <p className="font-bold text-slate-800 dark:text-white">
                   {reuniaoDetalhada.lanche || "Nenhum cadastrado"}
                 </p>
               </div>
 
               <div>
-                <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest block mb-0.5">Pedidos de Intercessão</span>
+                <span className="text-[0.5625rem] font-black text-gray-400 uppercase tracking-widest block mb-0.5">Pedidos de Intercessão</span>
                 <p className="font-medium p-3 bg-red-50/10 dark:bg-zinc-950 border border-rose-100/30 dark:border-zinc-850 rounded-xl italic leading-relaxed">
                   {reuniaoDetalhada.oracoes || "Nenhum registrado"}
                 </p>
               </div>
 
               <div>
-                <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest block mb-0.5">Participantes Presentes ({reuniaoDetalhada.presentes ? reuniaoDetalhada.presentes.length : 0})</span>
+                <span className="text-[0.5625rem] font-black text-gray-400 uppercase tracking-widest block mb-0.5">Participantes Presentes ({reuniaoDetalhada.presentes ? reuniaoDetalhada.presentes.length : 0})</span>
                 {reuniaoDetalhada.presentes && reuniaoDetalhada.presentes.length > 0 ? (
                   <div className="flex flex-wrap gap-1 mt-1">
                     {reuniaoDetalhada.presentes.map(pId => {
                       const mInfo = membros.find(m => m.id === pId);
                       return (
-                        <span key={pId} className="bg-teal-50 dark:bg-teal-950/30 text-teal-800 dark:text-teal-400 border border-teal-200/50 dark:border-teal-900/40 text-[9.5px] font-bold px-2 py-0.5 rounded-lg">
+                        <span key={pId} className="bg-teal-50 dark:bg-teal-950/30 text-teal-800 dark:text-teal-400 border border-teal-200/50 dark:border-teal-900/40 text-[0.5938rem] font-bold px-2 py-0.5 rounded-lg">
                           {mInfo ? mInfo.nome : "Participante"}
                         </span>
                       );
                     })}
                   </div>
                 ) : (
-                  <p className="italic text-gray-400 text-[10px]">Sem registros de presenças nesta ata.</p>
+                  <p className="italic text-gray-400 text-[0.625rem]">Sem registros de presenças nesta ata.</p>
                 )}
               </div>
 

@@ -283,7 +283,7 @@ export default function Eventos({ liderId }: EventosProps) {
         <div className="fixed inset-0 bg-white/60 dark:bg-zinc-950/60 flex items-center justify-center z-50">
           <div className="flex flex-col items-center gap-2">
             <Loader2 className="w-8 h-8 animate-spin text-[#0f766e]" />
-            <p className="text-[10px] uppercase font-black tracking-wider text-[#0f766e]">Sincronizando Atividade...</p>
+            <p className="text-[0.625rem] uppercase font-black tracking-wider text-[#0f766e]">Sincronizando Atividade...</p>
           </div>
         </div>
       )}
@@ -296,7 +296,7 @@ export default function Eventos({ liderId }: EventosProps) {
               <h1 className="text-xl font-bold text-slate-950 dark:text-white tracking-tight leading-none flex items-center gap-1.5 font-sans">
                 <MapPin className="w-5 h-5 text-teal-700 dark:text-teal-400" /> Eventos & Atividades
               </h1>
-              <p className="text-[10px] uppercase font-black text-gray-400 mt-1 tracking-wider">Formulação de Logística e Segurança</p>
+              <p className="text-[0.625rem] uppercase font-black text-gray-400 mt-1 tracking-wider">Formulação de Logística e Segurança</p>
             </div>
             
             <button
@@ -316,7 +316,7 @@ export default function Eventos({ liderId }: EventosProps) {
             </button>
           </div>
 
-          <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none/0">
+          <div className="text-[0.625rem] font-bold text-gray-400 uppercase tracking-widest leading-none/0">
             {eventos.length} Eventos Cadastrados
           </div>
 
@@ -326,7 +326,7 @@ export default function Eventos({ liderId }: EventosProps) {
               <p className="text-xs font-semibold">Sem eventos agendados.</p>
               <button
                 onClick={() => setView("cadastro")}
-                className="text-[10px] font-bold uppercase text-teal-700 dark:text-teal-400 hover:underline"
+                className="text-[0.625rem] font-bold uppercase text-teal-700 dark:text-teal-400 hover:underline"
               >
                 Cadastrar o primeiro agora
               </button>
@@ -352,7 +352,7 @@ export default function Eventos({ liderId }: EventosProps) {
                   >
                     <div className="flex justify-between items-start gap-2">
                       <div className="space-y-1">
-                        <div className="flex items-center gap-1 text-[9px] text-gray-400 font-mono">
+                        <div className="flex items-center gap-1 text-[0.5625rem] text-gray-400 font-mono">
                           <Calendar className="w-3.5 h-3.5 text-teal-600 shrink-0" />
                           <span>{new Date(evt.data + "T12:00:00").toLocaleDateString("pt-BR")}</span>
                           <span className="h-2 w-2 rounded-full bg-gray-300 mx-1"></span>
@@ -361,7 +361,7 @@ export default function Eventos({ liderId }: EventosProps) {
                         <h3 className="text-xs font-bold text-slate-900 dark:text-white leading-tight font-sans">
                           {evt.titulo}
                         </h3>
-                        <p className="text-[10px] text-gray-500 dark:text-zinc-400 flex items-center gap-1">
+                        <p className="text-[0.625rem] text-gray-500 dark:text-zinc-400 flex items-center gap-1">
                           <MapPin className="w-3 h-3 text-gray-400" /> {evt.local}
                         </p>
                       </div>
@@ -369,7 +369,7 @@ export default function Eventos({ liderId }: EventosProps) {
 
                     {/* Progress Checklist bar */}
                     <div className="space-y-1 pt-1 border-t border-gray-100 dark:border-zinc-800/60">
-                      <div className="flex justify-between items-center text-[8.5px] font-black uppercase text-gray-400">
+                      <div className="flex justify-between items-center text-[0.5313rem] font-black uppercase text-gray-400">
                         <span>Checklist de Segurança</span>
                         <span className={completouObrigatorios ? "text-emerald-600" : "text-amber-600"}>
                           Regras Obrigatórias: {marcadosObrigatorios}/{totalObrigatorios}
@@ -394,7 +394,7 @@ export default function Eventos({ liderId }: EventosProps) {
 
       {/* SEÇÃO 2: DETALHES DO EVENTO & CHECKLIST DE 22 REGRAS */}
       {view === "detalhe" && eventoSelecionado && (
-        <div className="space-y-4 animate-slideUp">
+        <div className="w-full max-w-2xl mx-auto space-y-4 animate-slideUp">
           <header className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <button
@@ -405,7 +405,7 @@ export default function Eventos({ liderId }: EventosProps) {
                 <ArrowLeft className="w-4 h-4" />
               </button>
               <div>
-                <span className="text-[9px] font-black uppercase text-gray-400 tracking-wider">Acompanhamento e Segurança</span>
+                <span className="text-[0.5625rem] font-black uppercase text-gray-400 tracking-wider">Acompanhamento e Segurança</span>
                 <h1 className="text-sm font-bold text-slate-900 dark:text-white truncate max-w-[210px] font-sans">
                   {eventoSelecionado.titulo}
                 </h1>
@@ -425,11 +425,11 @@ export default function Eventos({ liderId }: EventosProps) {
           <div className="bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 p-4 space-y-3.5 text-xs font-sans">
             <div className="grid grid-cols-2 gap-3 pb-3 border-b border-gray-100 dark:border-zinc-800/80">
               <div>
-                <span className="block text-[8.5px] font-bold text-gray-400 uppercase">Local do Evento</span>
+                <span className="block text-[0.5313rem] font-bold text-gray-400 uppercase">Local do Evento</span>
                 <span className="font-semibold text-slate-800 dark:text-zinc-200">{eventoSelecionado.local}</span>
               </div>
               <div>
-                <span className="block text-[8.5px] font-bold text-gray-400 uppercase">Data Marcada</span>
+                <span className="block text-[0.5313rem] font-bold text-gray-400 uppercase">Data Marcada</span>
                 <span className="font-semibold text-slate-800 dark:text-zinc-200 font-mono">
                   {new Date(eventoSelecionado.data + "T12:00:00").toLocaleDateString("pt-BR")}
                 </span>
@@ -438,15 +438,15 @@ export default function Eventos({ liderId }: EventosProps) {
 
             <div className="grid grid-cols-3 gap-2">
               <div className="bg-slate-50 dark:bg-zinc-950 p-2.5 rounded-xl border border-gray-100 dark:border-zinc-800">
-                <span className="block text-[8px] font-semibold text-gray-400 uppercase">Tipo</span>
-                <span className="font-bold text-slate-800 dark:text-zinc-200 uppercase text-[10px]">{eventoSelecionado.tipo}</span>
+                <span className="block text-[0.5rem] font-semibold text-gray-400 uppercase">Tipo</span>
+                <span className="font-bold text-slate-800 dark:text-zinc-200 uppercase text-[0.625rem]">{eventoSelecionado.tipo}</span>
               </div>
               <div className="bg-slate-50 dark:bg-zinc-950 p-2.5 rounded-xl border border-gray-100 dark:border-zinc-800 text-center">
-                <span className="block text-[8px] font-semibold text-gray-400 uppercase">Participantes</span>
+                <span className="block text-[0.5rem] font-semibold text-gray-400 uppercase">Participantes</span>
                 <span className="font-bold text-slate-900 dark:text-white text-xs">{eventoSelecionado.participantes}</span>
               </div>
               <div className="bg-slate-50 dark:bg-zinc-950 p-2.5 rounded-xl border border-gray-100 dark:border-zinc-800 text-center">
-                <span className="block text-[8px] font-semibold text-gray-400 uppercase">Líderes Conf.</span>
+                <span className="block text-[0.5rem] font-semibold text-gray-400 uppercase">Líderes Conf.</span>
                 <span className="font-bold text-slate-900 dark:text-white text-xs">{eventoSelecionado.lideresConfirmados}</span>
               </div>
             </div>
@@ -456,10 +456,10 @@ export default function Eventos({ liderId }: EventosProps) {
           {/* CHECKLIST DAS 22 REGRAS */}
           <div className="bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 rounded-2xl p-4 space-y-3.5 text-xs">
             <div>
-              <h3 className="font-bold text-slate-900 dark:text-white uppercase text-[9.5px] tracking-wider flex items-center gap-1 leading-none font-sans">
+              <h3 className="font-bold text-slate-900 dark:text-white uppercase text-[0.5938rem] tracking-wider flex items-center gap-1 leading-none font-sans">
                 <CheckSquare className="w-4 h-4 text-teal-600" /> Checklist Geral das 22 Regras
               </h3>
-              <p className="text-[10px] text-gray-400 mt-1 pb-1">Marque cada regra à medida que for completada.</p>
+              <p className="text-[0.625rem] text-gray-400 mt-1 pb-1">Marque cada regra à medida que for completada.</p>
             </div>
 
             <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1">
@@ -509,7 +509,7 @@ export default function Eventos({ liderId }: EventosProps) {
 
       {/* SEÇÃO 3: FORMULÁRIO DE CADASTRO */}
       {view === "cadastro" && (
-        <form onSubmit={handlesNovoEvento} className="space-y-4 animate-slideUp">
+        <form onSubmit={handlesNovoEvento} className="w-full max-w-2xl mx-auto space-y-4 animate-slideUp">
           <header className="flex items-center gap-3">
             <button
               type="button"
@@ -520,7 +520,7 @@ export default function Eventos({ liderId }: EventosProps) {
               <ArrowLeft className="w-4 h-4" />
             </button>
             <div>
-              <span className="text-[10px] uppercase font-black text-gray-400 tracking-wider">Apoio de Liderança</span>
+              <span className="text-[0.625rem] uppercase font-black text-gray-400 tracking-wider">Apoio de Liderança</span>
               <h1 className="text-base font-bold text-slate-900 dark:text-white font-sans">
                 Planejar Atividade / Social
               </h1>
@@ -531,7 +531,7 @@ export default function Eventos({ liderId }: EventosProps) {
             
             {/* Título */}
             <div className="space-y-1">
-              <label htmlFor="evt-titulo" className="block text-[9px] font-black text-gray-400 uppercase tracking-widest">
+              <label htmlFor="evt-titulo" className="block text-[0.5625rem] font-black text-gray-400 uppercase tracking-widest">
                 Título do Evento *
               </label>
               <input
@@ -548,7 +548,7 @@ export default function Eventos({ liderId }: EventosProps) {
             {/* Local & Data */}
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label htmlFor="evt-local" className="block text-[9px] font-black text-gray-400 uppercase tracking-widest">
+                <label htmlFor="evt-local" className="block text-[0.5625rem] font-black text-gray-400 uppercase tracking-widest">
                   Local do Evento *
                 </label>
                 <input
@@ -563,7 +563,7 @@ export default function Eventos({ liderId }: EventosProps) {
               </div>
 
               <div className="space-y-1">
-                <label htmlFor="evt-data" className="block text-[9px] font-black text-gray-400 uppercase tracking-widest">
+                <label htmlFor="evt-data" className="block text-[0.5625rem] font-black text-gray-400 uppercase tracking-widest">
                   Data Prevista
                 </label>
                 <input
@@ -579,7 +579,7 @@ export default function Eventos({ liderId }: EventosProps) {
 
             {/* Tipo */}
             <div className="space-y-1">
-              <label htmlFor="evt-tipo" className="block text-[9px] font-black text-gray-400 uppercase tracking-widest">
+              <label htmlFor="evt-tipo" className="block text-[0.5625rem] font-black text-gray-400 uppercase tracking-widest">
                 Tipo do Evento
               </label>
               <select
@@ -597,7 +597,7 @@ export default function Eventos({ liderId }: EventosProps) {
             {/* Participantes & Líderes */}
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label htmlFor="evt-part" className="block text-[9px] font-black text-gray-400 uppercase tracking-widest">
+                <label htmlFor="evt-part" className="block text-[0.5625rem] font-black text-gray-400 uppercase tracking-widest">
                   Participantes Previstos
                 </label>
                 <input
@@ -612,7 +612,7 @@ export default function Eventos({ liderId }: EventosProps) {
               </div>
 
               <div className="space-y-1">
-                <label htmlFor="evt-lideres" className="block text-[9px] font-black text-gray-400 uppercase tracking-widest">
+                <label htmlFor="evt-lideres" className="block text-[0.5625rem] font-black text-gray-400 uppercase tracking-widest">
                   Líderes Confirmados
                 </label>
                 <input
@@ -629,7 +629,7 @@ export default function Eventos({ liderId }: EventosProps) {
 
             {/* Comprovante Pastoral Descrição */}
             <div className="space-y-1">
-              <label htmlFor="evt-comp" className="block text-[9px] font-black text-gray-400 uppercase tracking-widest">
+              <label htmlFor="evt-comp" className="block text-[0.5625rem] font-black text-gray-400 uppercase tracking-widest">
                 Precisa de aprovação pastoral se sim ja fez?
               </label>
               <textarea
@@ -643,7 +643,7 @@ export default function Eventos({ liderId }: EventosProps) {
             </div>
 
             {/* Checklist Info */}
-            <div className="text-[10px] text-gray-400 leading-normal flex items-start gap-1 pb-1">
+            <div className="text-[0.625rem] text-gray-400 leading-normal flex items-start gap-1 pb-1">
               <Info className="w-3.5 h-3.5 text-teal-600 shrink-0 mt-0.5 animate-pulse" />
               <span>O checklist completo com as <strong>22 regras oficiais de segurança</strong> será anexado automaticamente a esta atividade para marcação.</span>
             </div>

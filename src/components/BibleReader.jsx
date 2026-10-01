@@ -495,7 +495,7 @@ export default function BibleReader({ onClose, initialReference = null }) {
                 setTranslationKey(e.target.value);
                 setSelectedVerses([]);
               }}
-              className="w-full text-[11px] font-semibold px-2 py-1.5 bg-white dark:bg-[#252525] border border-gray-200 dark:border-zinc-800 rounded-lg text-slate-800 dark:text-zinc-200 focus:outline-none focus:ring-1 focus:ring-teal-500"
+              className="w-full text-[0.6875rem] font-semibold px-2 py-1.5 bg-white dark:bg-[#252525] border border-gray-200 dark:border-zinc-800 rounded-lg text-slate-800 dark:text-zinc-200 focus:outline-none focus:ring-1 focus:ring-teal-500"
             >
               <optgroup label="Português">
                 <option value="pt_almeida">Almeida Revista e Corrigida</option>
@@ -515,7 +515,7 @@ export default function BibleReader({ onClose, initialReference = null }) {
                 setHighlightedVerse(null);
                 setSelectedVerses([]);
               }}
-              className="w-full text-[11px] font-semibold px-2 py-1.5 bg-white dark:bg-[#252525] border border-gray-200 dark:border-zinc-800 rounded-lg text-slate-800 dark:text-zinc-200 focus:outline-none focus:ring-1 focus:ring-teal-500 truncate"
+              className="w-full text-[0.6875rem] font-semibold px-2 py-1.5 bg-white dark:bg-[#252525] border border-gray-200 dark:border-zinc-800 rounded-lg text-slate-800 dark:text-zinc-200 focus:outline-none focus:ring-1 focus:ring-teal-500 truncate"
             >
               <optgroup label="Novo Testamento">
                 {ALL_BOOKS.filter(b => b.testamento === "NT").map(b => (
@@ -539,7 +539,7 @@ export default function BibleReader({ onClose, initialReference = null }) {
                 setHighlightedVerse(null);
                 setSelectedVerses([]);
               }}
-              className="w-full text-[11px] font-bold text-center px-1 py-1.5 bg-white dark:bg-[#252525] border border-gray-200 dark:border-zinc-800 rounded-lg text-slate-800 dark:text-zinc-200 focus:outline-none focus:ring-1 focus:ring-teal-500"
+              className="w-full text-[0.6875rem] font-bold text-center px-1 py-1.5 bg-white dark:bg-[#252525] border border-gray-200 dark:border-zinc-800 rounded-lg text-slate-800 dark:text-zinc-200 focus:outline-none focus:ring-1 focus:ring-teal-500"
             >
               {Array.from({ length: selectedBook.chapters }, (_, i) => i + 1).map(c => (
                 <option key={c} value={c}>{c}</option>
@@ -558,7 +558,7 @@ export default function BibleReader({ onClose, initialReference = null }) {
               placeholder="Buscar no capítulo..."
               value={searchFilter}
               onChange={(e) => setSearchFilter(e.target.value)}
-              className="w-full text-[10px] pl-7 pr-7 py-1.5 bg-white dark:bg-[#252525] border border-gray-200 dark:border-zinc-800 rounded-lg text-slate-800 dark:text-zinc-200 focus:outline-none focus:border-teal-500 font-medium"
+              className="w-full text-[0.625rem] pl-7 pr-7 py-1.5 bg-white dark:bg-[#252525] border border-gray-200 dark:border-zinc-800 rounded-lg text-slate-800 dark:text-zinc-200 focus:outline-none focus:border-teal-500 font-medium"
             />
             {searchFilter && (
               <button
@@ -574,18 +574,18 @@ export default function BibleReader({ onClose, initialReference = null }) {
           <div className="flex items-center gap-1 bg-white dark:bg-[#252525] border border-gray-200 dark:border-zinc-800 rounded-lg px-1 py-0.5 select-none text-slate-500 dark:text-zinc-400 shrink-0">
             <button
               onClick={() => setFontSize(prev => Math.max(11, prev - 1))}
-              className="px-1.5 py-0.5 text-[10px] font-bold hover:bg-neutral-100 dark:hover:bg-zinc-800 rounded transition"
+              className="px-1.5 py-0.5 text-[0.625rem] font-bold hover:bg-neutral-100 dark:hover:bg-zinc-800 rounded transition"
               title="Diminuir tamanho do texto"
               aria-label="Diminuir texto"
             >
               A-
             </button>
-            <span className="text-[9px] font-mono font-bold text-slate-400 dark:text-zinc-500 opacity-80 min-w-[20px] text-center">
+            <span className="text-[0.5625rem] font-mono font-bold text-slate-400 dark:text-zinc-500 opacity-80 min-w-[20px] text-center">
               {fontSize}px
             </span>
             <button
               onClick={() => setFontSize(prev => Math.min(22, prev + 1))}
-              className="px-1.5 py-0.5 text-[10px] font-bold hover:bg-neutral-100 dark:hover:bg-zinc-800 rounded transition"
+              className="px-1.5 py-0.5 text-[0.625rem] font-bold hover:bg-neutral-100 dark:hover:bg-zinc-800 rounded transition"
               title="Aumentar tamanho do texto"
               aria-label="Aumentar texto"
             >
@@ -604,7 +604,7 @@ export default function BibleReader({ onClose, initialReference = null }) {
         {isLoading && (
           <div className="flex flex-col items-center justify-center py-20 text-center space-y-3.5 select-none">
             <div className="w-7 h-7 border-2 border-teal-500/20 border-t-teal-600 dark:border-t-teal-400 rounded-full animate-spin"></div>
-            <p className="text-[11px] font-semibold text-slate-400 dark:text-zinc-500">Buscando versículos sagrados...</p>
+            <p className="text-[0.6875rem] font-semibold text-slate-400 dark:text-zinc-500">Buscando versículos sagrados...</p>
           </div>
         )}
 
@@ -615,10 +615,10 @@ export default function BibleReader({ onClose, initialReference = null }) {
               <AlertCircle className="w-5 h-5 text-amber-600 dark:text-amber-400 mt-0.5 shrink-0" />
               <div>
                 <h3 className="text-xs font-bold text-amber-900 dark:text-amber-300 uppercase tracking-wide">VT não disponível nesta tradução</h3>
-                <p className="text-[11px] text-amber-800 dark:text-amber-400 mt-1.5 leading-relaxed">
+                <p className="text-[0.6875rem] text-amber-800 dark:text-amber-400 mt-1.5 leading-relaxed">
                   A tradução <strong>Bíblia Livre para Todos (BLT)</strong> atualmente tem apenas recursos para os livros do Novo Testamento no servidor.
                 </p>
-                <p className="text-[11px] text-amber-700 dark:text-amber-400 mt-1 leading-relaxed">
+                <p className="text-[0.6875rem] text-amber-700 dark:text-amber-400 mt-1 leading-relaxed">
                   Deseja ler o livro de <strong>{selectedBook.pt}</strong> na versão clássica e completa de <strong>Almeida Revista e Corrigida</strong>?
                 </p>
               </div>
@@ -627,7 +627,7 @@ export default function BibleReader({ onClose, initialReference = null }) {
             <div className="pt-1">
               <button
                 onClick={handleFallbackToAlmeida}
-                className="w-full h-9 bg-teal-700 hover:bg-teal-600 text-white text-[11px] font-bold rounded-xl shadow transition"
+                className="w-full h-9 bg-teal-700 hover:bg-teal-600 text-white text-[0.6875rem] font-bold rounded-xl shadow transition"
               >
                 Alternar para Versão Almeida (Completa em Português)
               </button>
@@ -641,7 +641,7 @@ export default function BibleReader({ onClose, initialReference = null }) {
             <AlertCircle className="w-5 h-5 text-red-650 dark:text-red-400 mt-0.5 shrink-0" />
             <div>
               <h3 className="text-xs font-bold text-red-800 dark:text-red-350">Erro de Servidor</h3>
-              <p className="text-[11px] text-red-700 dark:text-red-450 mt-1 leading-relaxed">{errorMsg}</p>
+              <p className="text-[0.6875rem] text-red-700 dark:text-red-450 mt-1 leading-relaxed">{errorMsg}</p>
             </div>
           </div>
         )}
@@ -651,14 +651,14 @@ export default function BibleReader({ onClose, initialReference = null }) {
           <div className="space-y-3 pb-8">
             {/* Título do Livro no Topo da Leitura */}
             <div className="text-center py-4 select-none mb-3 border-b border-gray-100 dark:border-zinc-800/40">
-              <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#0F6E56] dark:text-teal-400 block font-sans">
+              <span className="text-[0.625rem] font-extrabold uppercase tracking-widest text-[#0F6E56] dark:text-teal-400 block font-sans">
                 {selectedBook.testamento === "VT" ? "Antigo Testamento" : "Novo Testamento"}
               </span>
               <h2 className="text-lg font-extrabold text-slate-900 dark:text-white tracking-tight mt-1">
                 {selectedBook.pt} {chapter}
               </h2>
               {searchFilter && (
-                <span className="inline-block px-2.5 py-0.5 text-[9px] font-bold bg-teal-50 dark:bg-teal-950/30 text-teal-800 dark:text-teal-400 rounded-full mt-2 border border-teal-100/30">
+                <span className="inline-block px-2.5 py-0.5 text-[0.5625rem] font-bold bg-teal-50 dark:bg-teal-950/30 text-teal-800 dark:text-teal-400 rounded-full mt-2 border border-teal-100/30">
                   Refinados {filteredVerses.length} de {verses.length} versículos
                 </span>
               )}
@@ -687,7 +687,7 @@ export default function BibleReader({ onClose, initialReference = null }) {
                   >
                     <div className="flex items-start w-full">
                       {/* Número do Versículo */}
-                      <span className="text-[10px] font-mono font-black text-slate-400 dark:text-zinc-500 w-5 text-right shrink-0 pr-1.5 mt-1 select-none font-sans">
+                      <span className="text-[0.625rem] font-mono font-black text-slate-400 dark:text-zinc-500 w-5 text-right shrink-0 pr-1.5 mt-1 select-none font-sans">
                         {v.verse}
                       </span>
 
@@ -704,26 +704,26 @@ export default function BibleReader({ onClose, initialReference = null }) {
 
                     {/* Exibir traduções alternativas reais do Manual GA se disponíveis */}
                     {otherVersions && (
-                      <div className="mt-2.5 ml-5 pl-3 py-2 border-l-2 border-teal-600/70 dark:border-teal-400/80 bg-teal-500/5 dark:bg-teal-400/5 rounded-r-xl space-y-1.5 text-left text-[11px] leading-relaxed">
-                        <div className="font-extrabold text-[9px] uppercase tracking-wider text-[#0e6851] dark:text-teal-400 flex items-center gap-1">
+                      <div className="mt-2.5 ml-5 pl-3 py-2 border-l-2 border-teal-600/70 dark:border-teal-400/80 bg-teal-500/5 dark:bg-teal-400/5 rounded-r-xl space-y-1.5 text-left text-[0.6875rem] leading-relaxed">
+                        <div className="font-extrabold text-[0.5625rem] uppercase tracking-wider text-[#0e6851] dark:text-teal-400 flex items-center gap-1">
                           <BookOpen className="w-3 h-3 text-[#0e6851] dark:text-teal-400" />
                           Compare Versões Oficiais GA:
                         </div>
                         {otherVersions.NVI && (
                           <div className="text-slate-650 dark:text-zinc-300">
-                            <span className="font-semibold text-[8px] tracking-wide text-teal-800 dark:text-teal-300 bg-teal-50/65 dark:bg-teal-950/40 border border-teal-200/35 px-1 py-0.5 rounded shadow-sm mr-1.5 font-sans">NVI</span>
+                            <span className="font-semibold text-[0.5rem] tracking-wide text-teal-800 dark:text-teal-300 bg-teal-50/65 dark:bg-teal-950/40 border border-teal-200/35 px-1 py-0.5 rounded shadow-sm mr-1.5 font-sans">NVI</span>
                             <span>{otherVersions.NVI}</span>
                           </div>
                         )}
                         {otherVersions.ARA && (
                           <div className="text-slate-650 dark:text-zinc-300">
-                            <span className="font-semibold text-[8px] tracking-wide text-teal-800 dark:text-teal-300 bg-teal-50/65 dark:bg-teal-950/40 border border-teal-200/35 px-1 py-0.5 rounded shadow-sm mr-1.5 font-sans">ARA</span>
+                            <span className="font-semibold text-[0.5rem] tracking-wide text-teal-800 dark:text-teal-300 bg-teal-50/65 dark:bg-teal-950/40 border border-teal-200/35 px-1 py-0.5 rounded shadow-sm mr-1.5 font-sans">ARA</span>
                             <span>{otherVersions.ARA}</span>
                           </div>
                         )}
                         {otherVersions.NTLH && (
                           <div className="text-slate-650 dark:text-zinc-300">
-                            <span className="font-semibold text-[8px] tracking-wide text-teal-800 dark:text-teal-300 bg-teal-50/65 dark:bg-teal-950/40 border border-teal-200/35 px-1 py-0.5 rounded shadow-sm mr-1.5 font-sans">NTLH</span>
+                            <span className="font-semibold text-[0.5rem] tracking-wide text-teal-800 dark:text-teal-300 bg-teal-50/65 dark:bg-teal-950/40 border border-teal-200/35 px-1 py-0.5 rounded shadow-sm mr-1.5 font-sans">NTLH</span>
                             <span>{otherVersions.NTLH}</span>
                           </div>
                         )}
@@ -747,7 +747,7 @@ export default function BibleReader({ onClose, initialReference = null }) {
       {selectedVerses.length > 0 && (
         <div className="px-5 py-3.5 bg-neutral-900 text-white border-t border-zinc-800 flex items-center justify-between shrink-0 select-none shadow-2xl animate-slideUp">
           <div className="text-left">
-            <div className="text-[9px] font-bold text-gray-400 uppercase tracking-widest font-sans">
+            <div className="text-[0.5625rem] font-bold text-gray-400 uppercase tracking-widest font-sans">
               Selecionados
             </div>
             <div className="text-xs font-black text-teal-400 tracking-tight">
@@ -759,7 +759,7 @@ export default function BibleReader({ onClose, initialReference = null }) {
             {/* Botão de Copiar */}
             <button
               onClick={copySelectedVerses}
-              className="px-3.5 h-8.5 bg-[#0F6E56] hover:bg-[#1D9E75] rounded-xl flex items-center justify-center gap-1.5 text-[11px] font-extrabold uppercase tracking-wide text-white transition-all shadow-md cursor-pointer"
+              className="px-3.5 h-8.5 bg-[#0F6E56] hover:bg-[#1D9E75] rounded-xl flex items-center justify-center gap-1.5 text-[0.6875rem] font-extrabold uppercase tracking-wide text-white transition-all shadow-md cursor-pointer"
             >
               {copiedSuccess ? (
                 <>
@@ -791,20 +791,20 @@ export default function BibleReader({ onClose, initialReference = null }) {
       <footer className="px-5 py-3.5 bg-white dark:bg-[#1e1e1e] border-t border-gray-100 dark:border-zinc-800 flex items-center justify-between shrink-0 select-none">
         <button
           onClick={() => changeChapterIdx(-1)}
-          className="px-3.5 h-10 border border-gray-200 dark:border-zinc-800 hover:bg-neutral-50 dark:hover:bg-zinc-800 text-[11px] font-bold rounded-xl text-slate-700 dark:text-zinc-300 flex items-center gap-1 outline-none transition cursor-pointer"
+          className="px-3.5 h-10 border border-gray-200 dark:border-zinc-800 hover:bg-neutral-50 dark:hover:bg-zinc-800 text-[0.6875rem] font-bold rounded-xl text-slate-700 dark:text-zinc-300 flex items-center gap-1 outline-none transition cursor-pointer"
           aria-label="Ir para o capítulo anterior"
         >
           <ChevronLeft className="w-4 h-4 shrink-0 text-slate-400" />
           Anterior
         </button>
 
-        <div className="text-[11px] font-extrabold font-mono text-slate-400 dark:text-zinc-500 bg-neutral-50 dark:bg-zinc-800/40 px-3.5 py-1.5 rounded-full border border-gray-100 dark:border-zinc-800">
+        <div className="text-[0.6875rem] font-extrabold font-mono text-slate-400 dark:text-zinc-500 bg-neutral-50 dark:bg-zinc-800/40 px-3.5 py-1.5 rounded-full border border-gray-100 dark:border-zinc-800">
           Ref. {selectedBook.abbrev || selectedBook.pt} {chapter}
         </div>
 
         <button
           onClick={() => changeChapterIdx(1)}
-          className="px-3.5 h-10 border border-gray-200 dark:border-zinc-800 hover:bg-neutral-50 dark:hover:bg-zinc-800 text-[11px] font-bold rounded-xl text-slate-700 dark:text-zinc-300 flex items-center gap-1 outline-none transition cursor-pointer"
+          className="px-3.5 h-10 border border-gray-200 dark:border-zinc-800 hover:bg-neutral-50 dark:hover:bg-zinc-800 text-[0.6875rem] font-bold rounded-xl text-slate-700 dark:text-zinc-300 flex items-center gap-1 outline-none transition cursor-pointer"
           aria-label="Ir para o próximo capítulo"
         >
           Próximo
