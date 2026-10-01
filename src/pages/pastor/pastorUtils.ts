@@ -103,7 +103,7 @@ function mapear(raw: any): DadosPastor {
   const lideres: LiderP[] = (raw.lideres || []).map((l: any) => ({
     id: l.id,
     email: l.email,
-    nome: l.nome_lider || l.nome_grupo || l.email,
+    nome: l.nome_lider || l.nome_grupo || (l.codigo ? `Código ${l.codigo}` : "Líder"),
     nomeGrupo: l.nome_grupo || "",
     codigo: l.codigo || "",
     celular: l.celular || "",

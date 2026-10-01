@@ -54,6 +54,7 @@ export default function PastorLideres() {
         dados={dados}
         lider={liderSelecionado}
         onVoltar={() => setLiderSelecionadoId(null)}
+        onRecarregar={recarregar}
         onExcluir={async () => {
           const { error } = await api.pastor.excluirLider(liderSelecionado.id);
           if (error) return error.message;

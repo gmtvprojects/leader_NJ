@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Users, Search, Phone, MessageCircle, ChevronDown, ChevronUp } from "lucide-react";
+import { Users, Search, Phone, MessageCircle, ChevronRight, ArrowLeft } from "lucide-react";
 import { useDadosPastor, nomeDoLider, formatarData, idadeDe, iniciais, CATEGORIAS_MEMBRO, MembroP } from "./pastorUtils";
 import { Cabecalho, EstadoCarga, campoClasse, cardClasse } from "./PastorUi";
+import FichaMembro from "./FichaMembro";
 
 const limpar = (f: string) => f.replace(/\D/g, "");
 const wa = (f: string) => {
@@ -29,7 +30,7 @@ export default function PastorMembros({ categoriaInicial = "todos" }: { categori
   useEffect(() => { setCategoria(categoriaInicial); }, [categoriaInicial]);
   const [liderFiltro, setLiderFiltro] = useState("todos");
   const [busca, setBusca] = useState("");
-  const [abertos, setAbertos] = useState<string[]>([]);
+  const [selecionadoId, setSelecionadoId] = useState<string | null>(null);
 
   const cat = CATEGORIAS_MEMBRO.find((c) => c.id === categoria) || CATEGORIAS_MEMBRO[0];
   const termo = busca.trim().toLowerCase();
@@ -40,23 +41,13 @@ export default function PastorMembros({ categoriaInicial = "todos" }: { categori
     .filter((m) => !termo || m.nome.toLowerCase().includes(termo) || (m.ga || "").toLowerCase().includes(termo) || nomeDoLider(lideres, m.liderId).toLowerCase().includes(termo))
     .sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR"));
 
-  const alternar = (id: string) => setAbertos((a) => (a.includes(id) ? a.filter((x) => x !== id) : [...a, id]));
-
-  const detalhe = (rotulo: string, valor: React.ReactNode) => (
-    <div>
-      <span className="block text-[0.5rem] font-black text-gray-400 uppercase tracking-wide">{rotulo}</span>
-      <span className="text-[0.6875rem] font-semibold text-slate-800 dark:text-zinc-200">{valor || "—"}</span>
-    </div>
-  );
-
   const cartao = (m: MembroP) => {
     const idade = idadeDe(m.aniversario);
-    const aberto = abertos.includes(m.id);
     const ausente = m.status === "Ausente" || m.faltas >= 2;
     const transicao = m.origemTransicao || m.status === "Transição" || m.faixa === "J1";
 
     return (
-      <div key={m.id} className={`${cardClasse} border-l-4 p-3.5 space-y-2.5 ${ausente ? "border-l-rose-300" : transicao ? "border-l-emerald-300" : m.status === "Esporádico" ? "border-l-amber-300" : "border-l-teal-300"}`}>
+      <div key={m.id} onClick={() => setSelecionadoId(m.id)} className={`${cardClasse} border-l-4 p-3.5 space-y-2.5 cursor-pointer hover:shadow-lg transition ${ausente ? "border-l-rose-300" : transicao ? "border-l-emerald-300" : m.status === "Esporádico" ? "border-l-amber-300" : "border-l-teal-300"}`}>
         <div className="flex items-start justify-between gap-2">
           <div className="flex items-center gap-3 min-w-0">
             <div className="w-11 h-11 rounded-full bg-teal-50 text-teal-700 border border-teal-200 flex items-center justify-center font-bold text-xs shrink-0 shadow-sm">{iniciais(m.nome)}</div>
@@ -67,7 +58,7 @@ export default function PastorMembros({ categoriaInicial = "todos" }: { categori
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-1.5 shrink-0">
+          <div className="flex items-center gap-1.5 shrink-0" onClick={(e) => e.stopPropagation()}>
             {m.contato1 && (
               <>
                 <a href={`tel:${limpar(m.contato1)}`} className="p-1.5 bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-200 rounded-lg" aria-label="Ligar">
@@ -91,32 +82,29 @@ export default function PastorMembros({ categoriaInicial = "todos" }: { categori
           <Chip cor={m.umComDeus ? "teal" : "amber"}>{m.umComDeus ? "Um com Deus" : "Sem Um com Deus"}</Chip>
         </div>
 
-        <button onClick={() => alternar(m.id)} className="w-full flex items-center justify-between text-[0.625rem] font-extrabold uppercase text-teal-700 dark:text-teal-400 cursor-pointer">
-          <span>{aberto ? "Ocultar informações" : "Ver informações"}</span>
-          {aberto ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-        </button>
-
-        {aberto && (
-          <div className="grid grid-cols-2 gap-x-3 gap-y-2.5 pt-2 border-t border-gray-100 dark:border-zinc-800 animate-fadeIn">
-            {detalhe("Faixa", m.faixa)}
-            {detalhe("Admissão", formatarData(m.dataEntrada))}
-            {detalhe("Aniversário", formatarData(m.aniversario))}
-            {detalhe("Ministério", m.ministerio)}
-            {detalhe("Culto", m.culto)}
-            {detalhe("SENIB", m.senib)}
-            {detalhe("Celular", m.contato1)}
-            {detalhe("Alternativo", m.contato2)}
-            {detalhe("Linguagem de amor", m.linguagemAmor)}
-            {detalhe("Pais / responsáveis", m.contatoPais)}
-            {(m.motivoAusencia || m.detalheAusencia) && (
-              <div className="col-span-2">{detalhe("Situação de ausência", `${m.motivoAusencia}${m.detalheAusencia ? ` — ${m.detalheAusencia}` : ""}`)}</div>
-            )}
-            {m.observacoes && <div className="col-span-2">{detalhe("Acompanhamento pastoral", m.observacoes)}</div>}
-          </div>
-        )}
+        <div className="flex items-center justify-between text-[0.625rem] font-extrabold uppercase text-teal-700 dark:text-teal-400">
+          <span>Abrir ficha e acompanhamento</span>
+          <ChevronRight className="w-4 h-4" />
+        </div>
       </div>
     );
   };
+
+  const selecionado = membros.find((m) => m.id === selecionadoId) || null;
+  if (selecionado) {
+    return (
+      <div className="flex-1 flex flex-col space-y-4 px-4 py-4 animate-fadeIn text-left font-sans">
+        <nav aria-label="Navegação" className="flex items-center gap-1.5 text-[0.6875rem] font-bold">
+          <button type="button" onClick={() => setSelecionadoId(null)} className="flex items-center gap-1 text-teal-700 dark:text-teal-400 hover:underline cursor-pointer">
+            <ArrowLeft className="w-3.5 h-3.5" /> Membros
+          </button>
+          <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
+          <span className="text-slate-900 dark:text-white">{selecionado.nome}</span>
+        </nav>
+        <FichaMembro dados={dados} membro={selecionado} onSalvo={recarregar} />
+      </div>
+    );
+  }
 
   return (
     <div className="flex-1 flex flex-col space-y-4 px-4 py-4 animate-fadeIn text-left font-sans">

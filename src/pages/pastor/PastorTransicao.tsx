@@ -39,7 +39,7 @@ export default function PastorTransicao() {
           <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
           <span className="text-slate-900 dark:text-white">{selecionado.nome}</span>
         </nav>
-        <FichaMembro dados={dados} membro={selecionado} />
+        <FichaMembro dados={dados} membro={selecionado} onSalvo={recarregar} />
       </div>
     );
   }

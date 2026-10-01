@@ -13,7 +13,7 @@ const wa = (f: string) => {
 type Aba = "membros" | "reunioes" | "eventos";
 
 // Página do líder: lista de membros, registro de reuniões e eventos
-export default function PastorLiderDetalhe({ dados, lider, onVoltar, onExcluir }: { dados: DadosPastor; lider: LiderP; onVoltar: () => void; onExcluir: () => Promise<string | null> }) {
+export default function PastorLiderDetalhe({ dados, lider, onVoltar, onExcluir, onRecarregar }: { dados: DadosPastor; lider: LiderP; onVoltar: () => void; onExcluir: () => Promise<string | null>; onRecarregar: () => void | Promise<void> }) {
   const [aba, setAba] = useState<Aba>("membros");
   const [excluindo, setExcluindo] = useState(false);
   const [confirmacao, setConfirmacao] = useState("");
@@ -56,7 +56,7 @@ export default function PastorLiderDetalhe({ dados, lider, onVoltar, onExcluir }
     return (
       <div className="flex-1 flex flex-col space-y-4 px-4 py-4 animate-fadeIn text-left font-sans">
         {migalhas}
-        <FichaMembro dados={dados} membro={membro} />
+        <FichaMembro dados={dados} membro={membro} onSalvo={onRecarregar} />
       </div>
     );
   }

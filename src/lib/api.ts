@@ -208,6 +208,7 @@ export const api = {
     dados: () => chamar<any>('/api/pastor/dados'),
     cadastrarLider: (dados: { nome_lider: string; email?: string; senha: string; nome_grupo?: string; celular?: string }) =>
       chamar<any>('/api/pastor/lideres', 'POST', dados),
+    salvarAcompanhamento: (membroId: string, texto: string) => chamar<any>(`/api/pastor/membros/${membroId}/acompanhamento`, 'PUT', { texto }),
     excluirLider: (id: string) => chamar<any>(`/api/pastor/lideres/${id}`, 'DELETE'),
     decidirEvento: (id: string, decisao: 'aprovado' | 'reprovado' | 'pendente', obs?: string) =>
       chamar<any>(`/api/pastor/eventos/${id}/aprovacao`, 'POST', { decisao, obs }),

@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import { Phone, MessageCircle, Heart } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { Phone, MessageCircle, Heart, Check, Loader2 } from "lucide-react";
+import { api } from "../../lib/api";
 import { DadosPastor, MembroP, nomeDoLider, formatarData, idadeDe, iniciais, registroDoMembro, ehTransicao } from "./pastorUtils";
 import { cardClasse } from "./PastorUi";
 
@@ -17,8 +18,30 @@ const Info = ({ rotulo, valor }: { rotulo: string; valor?: React.ReactNode }) =>
 );
 
 // Ficha completa de um membro para o Pastor (somente leitura)
-export default function FichaMembro({ dados, membro }: { dados: DadosPastor; membro: MembroP }) {
+export default function FichaMembro({ dados, membro, onSalvo }: { dados: DadosPastor; membro: MembroP; onSalvo?: () => void | Promise<void> }) {
   const [aba, setAba] = useState<"presenca" | "ausencias">("presenca");
+  const [texto, setTexto] = useState(membro.observacoes);
+  const [salvando, setSalvando] = useState(false);
+  const [salvoMsg, setSalvoMsg] = useState("");
+  const [erroSalvar, setErroSalvar] = useState("");
+
+  useEffect(() => {
+    setTexto(membro.observacoes);
+  }, [membro.id, membro.observacoes]);
+
+  const salvar = async () => {
+    setSalvando(true);
+    setErroSalvar("");
+    const { error } = await api.pastor.salvarAcompanhamento(membro.id, texto);
+    setSalvando(false);
+    if (error) {
+      setErroSalvar(error.message);
+      return;
+    }
+    setSalvoMsg("Acompanhamento salvo. O líder já vê esse texto na ficha do membro.");
+    setTimeout(() => setSalvoMsg(""), 4000);
+    await onSalvo?.();
+  };
 
   const registro = registroDoMembro(dados, membro);
   const ultimas = registro.slice(0, 8);
@@ -158,12 +181,29 @@ export default function FichaMembro({ dados, membro }: { dados: DadosPastor; mem
         )}
       </div>
 
-      {/* ACOMPANHAMENTO PASTORAL */}
-      <div className="space-y-1.5 bg-yellow-50/20 dark:bg-amber-950/5 border border-yellow-100 dark:border-amber-900/30 p-3.5 rounded-2xl">
-        <span className="block text-[0.5625rem] font-black text-amber-800 dark:text-amber-400 uppercase tracking-wide">Acompanhamento Pastoral</span>
-        <p className="text-[0.6875rem] leading-relaxed text-slate-700 dark:text-zinc-300 italic whitespace-pre-line">
-          {membro.observacoes || "Nenhum registro de acompanhamento pelo líder."}
-        </p>
+      {/* ACOMPANHAMENTO PASTORAL (editável; compartilhado com o líder) */}
+      <div className="space-y-2 bg-yellow-50/20 dark:bg-amber-950/5 border border-yellow-100 dark:border-amber-900/30 p-3.5 rounded-2xl">
+        <label htmlFor="acomp-pastoral" className="block text-[0.5625rem] font-black text-amber-800 dark:text-amber-400 uppercase tracking-wide">Acompanhamento Pastoral</label>
+        <textarea
+          id="acomp-pastoral"
+          rows={5}
+          value={texto}
+          onChange={(e) => setTexto(e.target.value)}
+          placeholder="Registre aqui o acompanhamento pastoral deste membro. O líder também verá este texto."
+          className="w-full text-xs p-3 bg-white dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-xl focus:outline-none focus:border-teal-500 text-slate-900 dark:text-white leading-relaxed resize-y"
+        />
+        {erroSalvar && <p className="text-xs font-semibold text-rose-600">{erroSalvar}</p>}
+        {salvoMsg && <p className="text-xs font-semibold text-emerald-700 dark:text-emerald-400">{salvoMsg}</p>}
+        {texto.trim() !== membro.observacoes.trim() && (
+          <button
+            type="button"
+            onClick={salvar}
+            disabled={salvando}
+            className="w-full h-10 bg-teal-50 hover:bg-teal-100 text-teal-800 border border-teal-200 font-bold text-[0.6563rem] uppercase tracking-wider rounded-xl cursor-pointer flex items-center justify-center gap-1.5 shadow-sm disabled:opacity-60"
+          >
+            {salvando ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />} Salvar Acompanhamento
+          </button>
+        )}
       </div>
     </div>
   );

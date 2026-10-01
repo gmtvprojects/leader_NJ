@@ -123,6 +123,46 @@ export function rotasPastor() {
     }
   });
 
+  // Atualiza o acompanhamento pastoral de um membro. O texto fica no mesmo campo que o líder edita na ficha
+  // (campo "notas" guarda um JSON com os metadados do membro; só "observacoes" é alterado).
+  router.put('/membros/:id/acompanhamento', jsonBody, async (req, res) => {
+    const texto = String(req.body?.texto ?? '').trim();
+    try {
+      const { rows } = await pool.query(
+        `SELECT m.notas, m.faixa, m.status FROM membros m JOIN usuarios u ON u.id = m.lider_id
+          WHERE m.id = $1 AND u.papel = 'lider'`,
+        [req.params.id]
+      );
+      if (rows.length === 0) return erro(res, 404, 'Membro não encontrado.');
+
+      const { notas, faixa, status } = rows[0];
+      let meta = null;
+      const bruto = (notas || '').trim();
+      if (bruto.startsWith('{') && bruto.endsWith('}')) {
+        try { meta = JSON.parse(bruto); } catch { meta = null; }
+      }
+      if (!meta || typeof meta !== 'object') {
+        // Texto antigo (sem JSON): preserva como ponto de partida e monta os metadados padrão.
+        meta = {
+          _meta: true,
+          ga: 'GA Principal',
+          origemTransicao: faixa === 'J1' || status === 'Transição',
+          motivoAusencia: status === 'Ausente' ? 'Sem Resposta / Não Informado' : '',
+          detalheAusencia: '',
+          ultimoContato: '',
+          responsavelContato: '',
+        };
+      }
+      meta.observacoes = texto;
+
+      await pool.query('UPDATE membros SET notas = $2 WHERE id = $1', [req.params.id, JSON.stringify(meta)]);
+      res.json({ data: { texto }, error: null });
+    } catch (err) {
+      console.error('Erro ao salvar acompanhamento:', err);
+      erro(res, 500, 'Não foi possível salvar o acompanhamento.');
+    }
+  });
+
   // Exclui o líder e a conta dele. Todos os dados do líder (membros, reuniões, eventos, pedidos...) são
   // apagados em cascata pelo banco. Só contas com papel 'lider' podem ser excluídas por aqui.
   router.delete('/lideres/:id', async (req, res) => {
