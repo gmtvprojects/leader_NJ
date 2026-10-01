@@ -36,6 +36,7 @@ import PastorEventos from "./pages/pastor/PastorEventos";
 import PastorPedidos from "./pages/pastor/PastorPedidos";
 import PastorManual from "./pages/pastor/PastorManual";
 import PastorConfig from "./pages/pastor/PastorConfig";
+import { fundoPastor } from "./pages/pastor/PastorUi";
 
 // Menu do perfil Líder
 const NAV_LIDER: ItemNav[] = [
@@ -149,11 +150,11 @@ export default function App() {
 
   if (ehPastor) {
     return (
-      <Shell nav={NAV_PASTOR} activeTab={activeTab} onSelect={handleSelectTab} titulo="Painel do Pastor" larguraMax="max-w-6xl">
+      <Shell nav={NAV_PASTOR} activeTab={activeTab} onSelect={handleSelectTab} titulo="Painel do Pastor" larguraMax="max-w-6xl" fundo={fundoPastor}>
         {activeTab === "geral" && <PastorGeral onSelectTab={handleSelectTab} />}
         {activeTab === "transicao" && <PastorTransicao />}
         {activeTab === "lideres" && <PastorLideres />}
-        {activeTab === "membros" && <PastorMembros categoriaInicial={membrosFiltro === "ausentes" ? "ausentes" : "todos"} />}
+        {activeTab === "membros" && <PastorMembros />}
         {activeTab === "eventos" && <PastorEventos />}
         {activeTab === "pedidos" && <PastorPedidos />}
         {activeTab === "manual" && <PastorManual />}

@@ -258,12 +258,6 @@ export const CATEGORIAS_MEMBRO: CategoriaMembro[] = [
   },
   { id: "treinandos", label: "Treinandos", descricao: "Membros em formação para liderança", filtro: (m) => m.treinando },
   {
-    id: "ausentes",
-    label: "Ausentes",
-    descricao: "Ausentes ou com 2+ faltas seguidas",
-    filtro: (m) => m.status === "Ausente" || m.faltas >= 2
-  },
-  {
     id: "semga",
     label: "Sem G.A",
     descricao: "Sem grupo definido",

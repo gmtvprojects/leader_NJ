@@ -29,10 +29,10 @@ export default function FichaMembro({ dados, membro }: { dados: DadosPastor; mem
 
   return (
     <div className="space-y-4 w-full max-w-3xl">
-      <div className={`${cardClasse} p-4 space-y-4`}>
+      <div className={`${cardClasse} border-l-4 border-l-teal-500 p-4 space-y-4`}>
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-3 min-w-0">
-            <div className="w-12 h-12 rounded-full bg-teal-700 text-white flex items-center justify-center font-bold text-sm shrink-0">{iniciais(membro.nome)}</div>
+            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-teal-600 to-emerald-500 text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-md shadow-teal-600/30">{iniciais(membro.nome)}</div>
             <div className="min-w-0">
               <h2 className="text-base font-bold text-slate-900 dark:text-white truncate">{membro.nome}</h2>
               <p className="text-[0.6875rem] text-gray-500 dark:text-zinc-400 truncate">
@@ -68,7 +68,7 @@ export default function FichaMembro({ dados, membro }: { dados: DadosPastor; mem
                 type="button"
                 onClick={() => setAba(id)}
                 className={`flex-1 py-1.5 rounded-lg text-[0.625rem] font-extrabold uppercase tracking-wider transition cursor-pointer ${
-                  aba === id ? "bg-teal-700 text-white shadow-sm" : "text-slate-600 dark:text-zinc-400 hover:bg-white dark:hover:bg-zinc-900"
+                  aba === id ? "bg-gradient-to-r from-teal-600 to-emerald-500 text-white shadow-md" : "text-slate-600 dark:text-zinc-400 hover:bg-white dark:hover:bg-zinc-900"
                 }`}
               >
                 {label}

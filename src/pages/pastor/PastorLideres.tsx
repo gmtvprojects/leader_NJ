@@ -1,20 +1,15 @@
 import React, { useState } from "react";
-import { UserCog, ArrowLeft, ChevronRight, ChevronDown, ChevronUp, Phone, MessageCircle, Check, Loader2 } from "lucide-react";
+import { UserCog, ArrowLeft, ChevronRight, Check, Loader2 } from "lucide-react";
 import { api } from "../../lib/api";
-import { useDadosPastor, formatarData } from "./pastorUtils";
+import { useDadosPastor } from "./pastorUtils";
+import PastorLiderDetalhe from "./PastorLiderDetalhe";
 import { Cabecalho, EstadoCarga, BotaoFlutuante, campoClasse, cardClasse } from "./PastorUi";
-
-const limparFone = (f: string) => f.replace(/\D/g, "");
-const linkWhatsapp = (f: string) => {
-  const n = limparFone(f);
-  return n ? `https://wa.me/${n.length <= 11 ? "55" + n : n}` : "";
-};
 
 export default function PastorLideres() {
   const { dados, loading, erro, recarregar } = useDadosPastor();
-  const { lideres, membros, reunioes } = dados;
+  const { lideres, membros } = dados;
+  const [liderSelecionadoId, setLiderSelecionadoId] = useState<string | null>(null);
   const [view, setView] = useState<"lista" | "novo">("lista");
-  const [abertos, setAbertos] = useState<string[]>([]);
   const [salvando, setSalvando] = useState(false);
   const [mensagem, setMensagem] = useState("");
   const [erroForm, setErroForm] = useState("");
@@ -51,7 +46,11 @@ export default function PastorLideres() {
     await recarregar();
   };
 
-  const alternar = (id: string) => setAbertos((a) => (a.includes(id) ? a.filter((x) => x !== id) : [...a, id]));
+  const liderSelecionado = lideres.find((l) => l.id === liderSelecionadoId) || null;
+
+  if (liderSelecionado) {
+    return <PastorLiderDetalhe dados={dados} lider={liderSelecionado} onVoltar={() => setLiderSelecionadoId(null)} />;
+  }
 
   return (
     <div className="flex-1 flex flex-col space-y-4 px-4 py-4 animate-fadeIn text-left font-sans">
@@ -131,71 +130,18 @@ export default function PastorLideres() {
               )}
 
               {lideres.map((l) => {
-                const ms = membros.filter((m) => m.liderId === l.id);
-                const rs = reunioes.filter((r) => r.liderId === l.id);
-                const ultima = rs[0];
-                const aberto = abertos.includes(l.id);
-                const wa = linkWhatsapp(l.celular);
-
+                const total = membros.filter((m) => m.liderId === l.id).length;
                 return (
-                  <div key={l.id} className={`${cardClasse} p-4 space-y-3`}>
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="min-w-0">
-                        <h3 className="text-sm font-bold text-slate-900 dark:text-white truncate">{l.nome}</h3>
-                        <p className="text-[0.6875rem] text-teal-700 dark:text-teal-400 font-bold truncate">{l.nomeGrupo || "GA sem nome"}</p>
-                        <p className="text-[0.625rem] text-gray-400 truncate">{l.email}</p>
-                      </div>
-                      {l.celular && (
-                        <div className="flex items-center gap-1.5 shrink-0">
-                          <a href={`tel:${limparFone(l.celular)}`} className="p-2 bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-200 rounded-lg" aria-label="Ligar">
-                            <Phone className="w-3.5 h-3.5" />
-                          </a>
-                          {wa && (
-                            <a href={wa} target="_blank" rel="noreferrer" className="p-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg" aria-label="WhatsApp">
-                              <MessageCircle className="w-3.5 h-3.5" />
-                            </a>
-                          )}
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="grid grid-cols-3 gap-2 text-center">
-                      <div className="bg-slate-50 dark:bg-zinc-950 rounded-xl py-2">
-                        <span className="block text-lg font-bold text-slate-900 dark:text-white leading-none">{ms.length}</span>
-                        <span className="text-[0.5rem] uppercase font-black text-gray-400">Membros</span>
-                      </div>
-                      <div className="bg-slate-50 dark:bg-zinc-950 rounded-xl py-2">
-                        <span className="block text-lg font-bold text-slate-900 dark:text-white leading-none">{rs.length}</span>
-                        <span className="text-[0.5rem] uppercase font-black text-gray-400">Reuniões</span>
-                      </div>
-                      <div className="bg-slate-50 dark:bg-zinc-950 rounded-xl py-2">
-                        <span className="block text-[0.6875rem] font-bold text-slate-900 dark:text-white leading-none pt-1">{ultima ? formatarData(ultima.data) : "—"}</span>
-                        <span className="text-[0.5rem] uppercase font-black text-gray-400">Última reunião</span>
-                      </div>
-                    </div>
-
-                    <button
-                      onClick={() => alternar(l.id)}
-                      className="w-full flex items-center justify-between text-[0.625rem] font-extrabold uppercase text-teal-700 dark:text-teal-400 cursor-pointer"
-                    >
-                      <span>{aberto ? "Ocultar membros" : "Ver membros"}</span>
-                      {aberto ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                    </button>
-
-                    {aberto && (
-                      <div className="flex flex-wrap gap-1 animate-fadeIn">
-                        {ms.length === 0 ? (
-                          <p className="text-[0.6875rem] text-gray-400 italic">Nenhum membro cadastrado.</p>
-                        ) : (
-                          ms.map((m) => (
-                            <span key={m.id} className="bg-teal-50 dark:bg-teal-950/30 text-teal-800 dark:text-teal-400 border border-teal-200/50 dark:border-teal-900/40 text-[0.625rem] font-bold px-2 py-0.5 rounded-lg">
-                              {m.nome}
-                            </span>
-                          ))
-                        )}
-                      </div>
-                    )}
-                  </div>
+                  <button
+                    key={l.id}
+                    onClick={() => setLiderSelecionadoId(l.id)}
+                    className={`${cardClasse} border-l-4 border-l-teal-500 p-4 flex items-center justify-between gap-3 text-left hover:shadow-lg hover:scale-[1.01] transition cursor-pointer`}
+                  >
+                    <h3 className="text-sm font-bold text-slate-900 dark:text-white truncate">{l.nome}</h3>
+                    <span className="shrink-0 flex items-center gap-1 text-[0.6875rem] font-black px-2.5 py-1 rounded-full bg-gradient-to-r from-teal-600 to-emerald-500 text-white shadow-sm">
+                      {total} {total === 1 ? "membro" : "membros"}
+                    </span>
+                  </button>
                 );
               })}
             </div>

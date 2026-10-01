@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { Sparkles, Search, ArrowLeft, ChevronRight } from "lucide-react";
+import { Sparkles, Search, ArrowLeft, ChevronRight, Users, ClipboardCheck, UserX, MapPinOff } from "lucide-react";
 import { useDadosPastor, nomeDoLider, formatarData, idadeDe, iniciais, registroDoMembro, ehTransicao, MembroP } from "./pastorUtils";
-import { Cabecalho, EstadoCarga, campoClasse, cardClasse } from "./PastorUi";
+import { Cabecalho, EstadoCarga, campoClasse, cardClasse, abasContainer, abaAtiva, abaInativa, KpiCard } from "./PastorUi";
 import { BarrasHorizontais, CardGrafico, Proporcao } from "./Graficos";
 import FichaMembro from "./FichaMembro";
 
@@ -60,18 +60,10 @@ export default function PastorTransicao() {
   };
   const porSituacao = contarPor((m) => m.status).map((i) => ({
     ...i,
-    cor: i.rotulo === "Ativo" ? "bg-teal-600" : i.rotulo === "Ausente" ? "bg-rose-500" : i.rotulo === "Esporádico" ? "bg-amber-500" : "bg-indigo-500"
+    cor: i.rotulo === "Ativo" ? "bg-gradient-to-r from-teal-600 to-emerald-400" : i.rotulo === "Ausente" ? "bg-gradient-to-r from-rose-500 to-pink-400" : i.rotulo === "Esporádico" ? "bg-gradient-to-r from-amber-500 to-orange-400" : "bg-gradient-to-r from-indigo-600 to-violet-400"
   }));
   const porGa = contarPor((m) => m.ga || "Sem G.A");
   const porLider = contarPor((m) => nomeDoLider(lideres, m.liderId));
-
-  const resumo = (rotulo: string, valor: string | number, detalhe: string) => (
-    <div className={`${cardClasse} p-3.5 space-y-1`}>
-      <span className="text-[0.5625rem] font-black uppercase tracking-wider text-gray-400">{rotulo}</span>
-      <span className="block text-2xl font-bold text-slate-950 dark:text-white leading-none">{valor}</span>
-      <span className="block text-[0.5625rem] text-gray-500 dark:text-zinc-400">{detalhe}</span>
-    </div>
-  );
 
   return (
     <div className="flex-1 flex flex-col space-y-4 px-4 py-4 animate-fadeIn text-left font-sans">
@@ -81,13 +73,13 @@ export default function PastorTransicao() {
         subtitulo={`${todos.length} ${todos.length === 1 ? "membro marcado" : "membros marcados"} como jovem em transição`}
       />
 
-      <div className="inline-flex self-start bg-white dark:bg-zinc-900 border border-gray-150 dark:border-zinc-800 rounded-xl p-1 gap-1">
+      <div className={abasContainer}>
         {([["lista", "Lista"], ["relatorio", "Relatório"]] as const).map(([id, label]) => (
           <button
             key={id}
             onClick={() => setAba(id)}
             className={`px-4 py-1.5 rounded-lg text-[0.6563rem] font-extrabold uppercase tracking-wider transition cursor-pointer ${
-              aba === id ? "bg-teal-700 text-white shadow-sm" : "text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800"
+              aba === id ? abaAtiva : abaInativa
             }`}
           >
             {label}
@@ -147,19 +139,19 @@ export default function PastorTransicao() {
 
       {!loading && !erro && aba === "relatorio" && (
         <div className="space-y-5 pb-6">
-          <section className="grid grid-cols-2 lg:grid-cols-4 gap-2.5">
-            {resumo("Em transição", todos.length, "membros marcados")}
-            {resumo("Presença média", presencaMedia === null ? "—" : `${presencaMedia}%`, "últimas 8 reuniões")}
-            {resumo("Ausentes", ausentes, "com 2+ faltas")}
-            {resumo("Sem G.A", semGa, "grupo não definido")}
+          <section className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+            <KpiCard rotulo="Em transição" valor={todos.length} Icon={Users} cor="emerald" />
+            <KpiCard rotulo="Presença média" valor={presencaMedia === null ? "—" : `${presencaMedia}%`} Icon={ClipboardCheck} cor="teal" />
+            <KpiCard rotulo="Ausentes" valor={ausentes} Icon={UserX} cor="rose" />
+            <KpiCard rotulo="Sem G.A" valor={semGa} Icon={MapPinOff} cor="amber" />
           </section>
 
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-5 items-start">
-            <CardGrafico titulo="Situação de presença">
+            <CardGrafico titulo="Situação de presença" cor="teal">
               {todos.length === 0 ? <p className="text-xs text-gray-400 italic">Sem dados.</p> : <BarrasHorizontais itens={porSituacao} />}
             </CardGrafico>
 
-            <CardGrafico titulo="Vida na igreja">
+            <CardGrafico titulo="Vida na igreja" cor="emerald">
               <div className="space-y-4">
                 <div>
                   <p className="text-[0.625rem] font-bold uppercase text-gray-400 mb-1.5">Batizados</p>
@@ -172,17 +164,17 @@ export default function PastorTransicao() {
               </div>
             </CardGrafico>
 
-            <CardGrafico titulo="Por G.A">
+            <CardGrafico titulo="Por G.A" cor="indigo">
               {todos.length === 0 ? <p className="text-xs text-gray-400 italic">Sem dados.</p> : <BarrasHorizontais itens={porGa} />}
             </CardGrafico>
 
-            <CardGrafico titulo="Por líder">
+            <CardGrafico titulo="Por líder" cor="amber">
               {todos.length === 0 ? <p className="text-xs text-gray-400 italic">Sem dados.</p> : <BarrasHorizontais itens={porLider} />}
             </CardGrafico>
           </div>
 
-          <section className={`${cardClasse} p-4 space-y-3`}>
-            <h2 className="text-[0.6875rem] font-black uppercase tracking-widest text-gray-400">Situação de cada membro</h2>
+          <section className={`${cardClasse} border-t-4 border-t-teal-500 p-4 space-y-3`}>
+            <h2 className="text-[0.6875rem] font-black uppercase tracking-widest text-teal-800 dark:text-teal-300">Situação de cada membro</h2>
             {todos.length === 0 ? (
               <p className="text-xs text-gray-400 italic py-3">Nenhum membro em transição.</p>
             ) : (

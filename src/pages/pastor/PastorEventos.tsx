@@ -2,7 +2,7 @@ import { useState } from "react";
 import { CalendarCheck, MapPin, Check, X, Users as UsersIcon, Loader2 } from "lucide-react";
 import { api } from "../../lib/api";
 import { useDadosPastor, nomeDoLider, formatarData, hojeISO, EventoP } from "./pastorUtils";
-import { Cabecalho, EstadoCarga, campoClasse, cardClasse } from "./PastorUi";
+import { Cabecalho, EstadoCarga, campoClasse, cardClasse, abasContainer, abaAtiva, abaInativa } from "./PastorUi";
 
 type Aba = "pendentes" | "proximos" | "todos";
 
@@ -73,7 +73,7 @@ export default function PastorEventos() {
 
       {!loading && !erro && (
         <>
-          <div className="inline-flex self-start bg-white dark:bg-zinc-900 border border-gray-150 dark:border-zinc-800 rounded-xl p-1 gap-1 flex-wrap">
+          <div className={abasContainer}>
             {([
               ["pendentes", `Aguardando aprovação (${pendentes.length})`],
               ["proximos", `Próximos (${proximos.length})`],
@@ -83,7 +83,7 @@ export default function PastorEventos() {
                 key={id}
                 onClick={() => setAba(id)}
                 className={`px-3.5 py-1.5 rounded-lg text-[0.6563rem] font-extrabold uppercase tracking-wider transition cursor-pointer ${
-                  aba === id ? "bg-teal-700 text-white shadow-sm" : "text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800"
+                  aba === id ? abaAtiva : abaInativa
                 }`}
               >
                 {label}
@@ -100,7 +100,7 @@ export default function PastorEventos() {
           ) : (
             <div className="grid grid-cols-1 lg:grid-cols-2 items-start gap-3 pb-6">
               {lista.map((e) => (
-                <div key={e.id} className={`${cardClasse} p-4 space-y-3`}>
+                <div key={e.id} className={`${cardClasse} border-l-4 p-4 space-y-3 ${!e.precisaAprovacao ? "border-l-slate-300" : e.aprovacaoStatus === "aprovado" ? "border-l-emerald-500" : e.aprovacaoStatus === "reprovado" ? "border-l-rose-500" : "border-l-amber-500"}`}>
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
                       <h3 className="text-sm font-bold text-slate-900 dark:text-white">{e.titulo}</h3>

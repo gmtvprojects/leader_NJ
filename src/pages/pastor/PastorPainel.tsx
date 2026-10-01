@@ -1,6 +1,6 @@
 import { Users, UserCog, CalendarDays, Sparkles, Cake, MapPin } from "lucide-react";
 import { EstadoDados, nomeDoLider, formatarData, hojeISO, ehTransicao } from "./pastorUtils";
-import { cardClasse } from "./PastorUi";
+import { cardClasse, KpiCard } from "./PastorUi";
 
 interface Props {
   estado: EstadoDados;
@@ -33,21 +33,6 @@ export default function PastorPainel({ estado, onSelectTab }: Props) {
 
   const proximosEventos = eventos.filter((e) => e.data >= hoje).sort((a, b) => a.data.localeCompare(b.data)).slice(0, 5);
 
-  const kpi = (rotulo: string, valor: string | number, detalhe: string, Icon: any, cor: string, aoClicar?: () => void) => (
-    <button
-      onClick={aoClicar}
-      disabled={!aoClicar}
-      className={`${cardClasse} p-3.5 text-left space-y-1 ${aoClicar ? "hover:border-teal-500 cursor-pointer" : "cursor-default"} transition`}
-    >
-      <div className="flex items-center justify-between">
-        <span className="text-[0.5625rem] font-black uppercase tracking-wider text-gray-400">{rotulo}</span>
-        <Icon className={`w-4 h-4 ${cor}`} />
-      </div>
-      <span className="block text-2xl font-bold text-slate-950 dark:text-white font-sans leading-none">{valor}</span>
-      <span className="block text-[0.5625rem] text-gray-500 dark:text-zinc-400">{detalhe}</span>
-    </button>
-  );
-
   const linhaNiver = ({ membro, dia }: { membro: (typeof membros)[number]; dia: number }, passou: boolean) => (
     <div key={membro.id} className={`py-2 flex items-center gap-3 ${passou ? "opacity-55" : ""}`}>
       <div className="w-10 h-10 rounded-xl bg-pink-50 dark:bg-pink-950/30 text-pink-600 dark:text-pink-400 flex flex-col items-center justify-center shrink-0 leading-none">
@@ -67,17 +52,17 @@ export default function PastorPainel({ estado, onSelectTab }: Props) {
   return (
     <div className="space-y-5">
       {/* INDICADORES */}
-      <section className="grid grid-cols-2 lg:grid-cols-4 gap-2.5">
-        {kpi("Líderes", lideres.length, "cadastrados", UserCog, "text-teal-600", () => onSelectTab("lideres"))}
-        {kpi("Membros", membros.length, "em todos os GAs", Users, "text-indigo-600", () => onSelectTab("membros"))}
-        {kpi("Aprovações", aprovacoesPendentes.length, "eventos aguardando", CalendarDays, "text-amber-600", () => onSelectTab("eventos"))}
-        {kpi("Transição J1", transicao.length, "membros em transição", Sparkles, "text-emerald-600", () => onSelectTab("transicao"))}
+      <section className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <KpiCard rotulo="Líderes" valor={lideres.length} Icon={UserCog} cor="teal" aoClicar={() => onSelectTab("lideres")} />
+        <KpiCard rotulo="Membros" valor={membros.length} Icon={Users} cor="indigo" aoClicar={() => onSelectTab("membros")} />
+        <KpiCard rotulo="Aprovações" valor={aprovacoesPendentes.length} Icon={CalendarDays} cor="amber" aoClicar={() => onSelectTab("eventos")} />
+        <KpiCard rotulo="Transição J1" valor={transicao.length} Icon={Sparkles} cor="emerald" aoClicar={() => onSelectTab("transicao")} />
       </section>
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-5 items-start">
         {/* ANIVERSARIANTES */}
-        <section className={`${cardClasse} p-4 space-y-3`}>
-          <h2 className="text-[0.6875rem] font-black uppercase tracking-widest text-gray-400 flex items-center gap-1.5">
+        <section className={`${cardClasse} border-t-4 border-t-pink-500 p-4 space-y-3`}>
+          <h2 className="text-[0.6875rem] font-black uppercase tracking-widest text-pink-700 dark:text-pink-300 flex items-center gap-1.5">
             <Cake className="w-3.5 h-3.5 text-pink-500" /> Aniversariantes
           </h2>
 
@@ -92,7 +77,7 @@ export default function PastorPainel({ estado, onSelectTab }: Props) {
             </div>
 
             <div>
-              <h3 className="text-[0.625rem] font-black uppercase tracking-wider text-gray-500 dark:text-zinc-400 mb-1">Neste mês</h3>
+              <h3 className="text-[0.625rem] font-black uppercase tracking-wider text-indigo-600 dark:text-indigo-300 mb-1">Neste mês</h3>
               {aniversariosMes.length === 0 ? (
                 <p className="text-xs text-gray-400 italic py-1.5">Nenhum outro aniversariante neste mês.</p>
               ) : (
@@ -103,9 +88,9 @@ export default function PastorPainel({ estado, onSelectTab }: Props) {
         </section>
 
         {/* PRÓXIMOS EVENTOS */}
-        <section className={`${cardClasse} p-4 space-y-3`}>
+        <section className={`${cardClasse} border-t-4 border-t-amber-500 p-4 space-y-3`}>
           <div className="flex items-center justify-between">
-            <h2 className="text-[0.6875rem] font-black uppercase tracking-widest text-gray-400 flex items-center gap-1.5">
+            <h2 className="text-[0.6875rem] font-black uppercase tracking-widest text-amber-700 dark:text-amber-300 flex items-center gap-1.5">
               <MapPin className="w-3.5 h-3.5 text-amber-600" /> Próximos eventos
             </h2>
             <button onClick={() => onSelectTab("eventos")} className="text-[0.5625rem] font-extrabold uppercase text-teal-700 dark:text-teal-400 hover:underline cursor-pointer">

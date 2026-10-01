@@ -13,6 +13,7 @@ interface ShellProps {
   onSelect: (id: string) => void;
   titulo: string;
   larguraMax?: string; // classe Tailwind de largura máxima do conteúdo
+  fundo?: string; // classes de fundo da página
   children: React.ReactNode;
 }
 
@@ -97,9 +98,9 @@ function MenuInferiorMobile({ nav, activeTab, onSelect }: Pick<ShellProps, "nav"
 }
 
 // Estrutura comum aos perfis: menu lateral (tablet/desktop), conteúdo e menu inferior (mobile)
-export default function Shell({ nav, activeTab, onSelect, titulo, larguraMax = "max-w-5xl", children }: ShellProps) {
+export default function Shell({ nav, activeTab, onSelect, titulo, larguraMax = "max-w-5xl", fundo = "bg-neutral-50 dark:bg-zinc-950", children }: ShellProps) {
   return (
-    <div className="min-h-screen bg-neutral-50 dark:bg-zinc-950 flex transition-colors duration-200">
+    <div className={`min-h-screen ${fundo} flex transition-colors duration-200`}>
 
       {/* MENU LATERAL (TABLET / DESKTOP) */}
       <aside className="hidden md:flex fixed inset-y-0 left-0 w-20 lg:w-60 flex-col bg-white dark:bg-zinc-900 border-r border-gray-100 dark:border-zinc-800/80 z-40 py-5 px-3">

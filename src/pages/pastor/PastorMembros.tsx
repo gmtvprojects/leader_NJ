@@ -56,10 +56,10 @@ export default function PastorMembros({ categoriaInicial = "todos" }: { categori
     const transicao = m.origemTransicao || m.status === "Transição" || m.faixa === "J1";
 
     return (
-      <div key={m.id} className={`${cardClasse} p-3.5 space-y-2.5 ${ausente ? "border-rose-200/80 dark:border-rose-950/50" : ""}`}>
+      <div key={m.id} className={`${cardClasse} border-l-4 p-3.5 space-y-2.5 ${ausente ? "border-l-rose-500" : transicao ? "border-l-emerald-500" : m.status === "Esporádico" ? "border-l-amber-500" : "border-l-teal-500"}`}>
         <div className="flex items-start justify-between gap-2">
           <div className="flex items-center gap-3 min-w-0">
-            <div className="w-11 h-11 rounded-full bg-teal-700 text-white flex items-center justify-center font-bold text-xs shrink-0">{iniciais(m.nome)}</div>
+            <div className="w-11 h-11 rounded-full bg-gradient-to-br from-teal-600 to-emerald-500 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-md shadow-teal-600/30">{iniciais(m.nome)}</div>
             <div className="min-w-0 space-y-0.5">
               <h4 className="text-xs font-bold text-slate-900 dark:text-white truncate">{m.nome}</h4>
               <p className="text-[0.625rem] text-gray-500 dark:text-zinc-400 truncate">
@@ -130,33 +130,17 @@ export default function PastorMembros({ categoriaInicial = "todos" }: { categori
 
       {!loading && !erro && (
         <>
-          {/* CATEGORIAS */}
-          <div className="flex flex-wrap gap-1.5">
-            {CATEGORIAS_MEMBRO.map((c) => {
-              const n = membros.filter(c.filtro).length;
-              return (
-                <button
-                  key={c.id}
-                  onClick={() => setCategoria(c.id)}
-                  className={`px-3 py-1.5 rounded-xl text-[0.6563rem] font-extrabold uppercase tracking-wider transition cursor-pointer border ${
-                    categoria === c.id
-                      ? "bg-teal-700 text-white border-teal-700 shadow-sm"
-                      : "bg-white dark:bg-zinc-900 text-slate-600 dark:text-zinc-400 border-gray-200 dark:border-zinc-800 hover:border-teal-500"
-                  }`}
-                >
-                  {c.label} <span className="opacity-70">({n})</span>
-                </button>
-              );
-            })}
-          </div>
-          <p className="text-[0.6875rem] text-gray-500 dark:text-zinc-400 -mt-1">{cat.descricao}</p>
-
-          {/* BUSCA E LÍDER */}
-          <div className="grid grid-cols-1 sm:grid-cols-[1fr_16rem] gap-2">
+          {/* BUSCA E FILTROS (SELECTS) */}
+          <div className="grid grid-cols-1 sm:grid-cols-[1fr_15rem_15rem] gap-2">
             <div className="relative">
-              <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <Search className="w-4 h-4 text-teal-500 absolute left-3 top-1/2 -translate-y-1/2" />
               <input value={busca} onChange={(e) => setBusca(e.target.value)} placeholder="Buscar por nome, G.A ou líder..." className={`${campoClasse} pl-9 rounded-2xl`} />
             </div>
+            <select value={categoria} onChange={(e) => setCategoria(e.target.value)} aria-label="Filtrar por categoria" className={`${campoClasse} rounded-2xl cursor-pointer`}>
+              {CATEGORIAS_MEMBRO.map((c) => (
+                <option key={c.id} value={c.id}>{c.label} ({membros.filter(c.filtro).length})</option>
+              ))}
+            </select>
             <select value={liderFiltro} onChange={(e) => setLiderFiltro(e.target.value)} aria-label="Filtrar por líder" className={`${campoClasse} rounded-2xl cursor-pointer`}>
               <option value="todos">Todos os líderes</option>
               {lideres.map((l) => (
@@ -165,7 +149,7 @@ export default function PastorMembros({ categoriaInicial = "todos" }: { categori
             </select>
           </div>
 
-          <p className="text-[0.625rem] font-semibold text-gray-400 uppercase tracking-widest">{lista.length} {lista.length === 1 ? "membro encontrado" : "membros encontrados"}</p>
+                    <p className="text-[0.625rem] font-black text-teal-700 dark:text-teal-400 uppercase tracking-widest">{lista.length} {lista.length === 1 ? "membro encontrado" : "membros encontrados"}</p>
 
           {lista.length === 0 ? (
             <div className={`${cardClasse} py-10 text-center text-xs text-gray-400`}>Nenhum membro nesta categoria.</div>
