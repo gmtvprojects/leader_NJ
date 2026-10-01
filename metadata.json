@@ -1,0 +1,6 @@
+{
+  "name": "Trilha de Formação",
+  "description": "Painel pastoral completo para controle de presença, transição Jovens 1 (17 anos) para Jovens 2 (18 a 30 anos), alocação em G.A, motivos de ausência e acompanhamento do líder.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
