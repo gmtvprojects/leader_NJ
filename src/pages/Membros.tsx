@@ -514,10 +514,10 @@ export default function Membros({ filtroInicial, liderId }: MembrosProps) {
             <button
               id="btn-adicionar-membro"
               onClick={() => handleNovoMembro(false)}
-              className="p-3 bg-teal-700 hover:bg-teal-600 text-white rounded-2xl shadow-md hover:scale-[1.02] cursor-pointer transition flex items-center gap-1"
+              className="fixed bottom-20 md:bottom-8 right-6 md:right-8 z-30 p-4 bg-teal-700 hover:bg-teal-600 text-white rounded-full shadow-lg hover:scale-105 active:scale-95 cursor-pointer transition-transform flex items-center justify-center"
               aria-label="Adicionar Novo Jovem"
             >
-              <Plus className="w-4 h-4" />
+              <Plus className="w-6 h-6" />
             </button>
           </div>
 
